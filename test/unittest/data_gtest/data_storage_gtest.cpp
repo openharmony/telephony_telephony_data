@@ -91,7 +91,6 @@ int DataStorageGtest::SimInsert(const std::shared_ptr<AppExecFwk::DataAbilityHel
 {
     Uri uri("dataability:///com.ohos.simability/sim/sim_info");
     NativeRdb::ValuesBucket value;
-    value.PutInt(SimData::SIM_ID, 1);
     value.PutInt(SimData::SLOT_INDEX, 1);
     value.PutString(SimData::PHONE_NUMBER, "134xxxxxxxx");
     value.PutString(SimData::ICC_ID, "icc_id");
@@ -220,108 +219,96 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
 HWTEST_F(DataStorageGtest, SimInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SimInsert(helper);
+        SimInsert(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, SimUpdate_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SimUpdate(helper);
+        SimUpdate(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, SimSelect_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SimSelect(helper);
+        SimSelect(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SimDelete(helper);
+        SimDelete(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, SmsInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SmsInsert(helper);
+        SmsInsert(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, SmsUpdate_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SmsUpdate(helper);
+        SmsUpdate(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, SmsSelect_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SmsSelect(helper);
+        SmsSelect(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, SmsDelete_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = SmsDelete(helper);
+        SmsDelete(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, PdpProfileInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = PdpProfileInsert(helper);
+        PdpProfileInsert(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = PdpProfileUpdate(helper);
+        PdpProfileUpdate(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, PdpProfileSelect_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = PdpProfileSelect(helper);
+        PdpProfileSelect(helper);
     }
 }
 
 HWTEST_F(DataStorageGtest, PdpProfileDelete_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    int ret = -1;
     if (helper != nullptr) {
-        ret = PdpProfileDelete(helper);
+        PdpProfileDelete(helper);
     }
 }
 } // namespace Telephony

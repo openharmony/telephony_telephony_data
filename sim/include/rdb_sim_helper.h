@@ -24,7 +24,7 @@ namespace Telephony {
 class RdbSimHelper : public RdbBaseHelper {
 public:
     enum class SimCardType {
-        MAIN = 0, MESSAGE, CELLULAR_DATA
+        MAIN = 0, VOICE, MESSAGE, CELLULAR_DATA
     };
 
     RdbSimHelper();

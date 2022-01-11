@@ -101,7 +101,7 @@ const std::string TABLE_SMS_MMS_INFO = "sms_mms_info";
 const std::string TABLE_SMS_SUBSECTION = "sms_subsection";
 const std::string TABLE_MMS_PROTOCOL = "mms_protocol";
 const std::string TABLE_MMS_PART = "mms_part";
-const std::string SMS_MMS_URI = "dataability://com.ohos.smsmmsability";
+const std::string SMS_MMS_URI = "dataability:///com.ohos.smsmmsability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_SMS_DATA_H

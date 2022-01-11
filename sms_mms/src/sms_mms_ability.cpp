@@ -84,7 +84,7 @@ int SmsMmsAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 std::shared_ptr<NativeRdb::AbsSharedResultSet> SmsMmsAbility::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> resultSet;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
     if (!IsInitOk()) {
         return resultSet;
     }

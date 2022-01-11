@@ -51,18 +51,13 @@ ohos_shared_library("tel_data_storage") {
     "aafwk_standard:want",
     "appexecfwk_standard:libeventhandler",
     "ces_standard:cesfwk_innerkits",
+    "hiviewdfx_hilog_native:libhilog",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_preferences",
     "native_appdatamgr:native_rdb",
     "safwk:system_ability_fwk",
   ]
-
-  if (is_standard_system) {
-    external_deps += [ "hiviewdfx_hilog_native:libhilog" ]
-  } else {
-    external_deps += [ "hilog:libhilog" ]
-  }
 
   part_name = "data_storage"
   subsystem_name = "telephony"

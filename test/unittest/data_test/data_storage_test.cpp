@@ -27,6 +27,8 @@
 #include "pdp_profile_data.h"
 #include "data_storage_log_wrapper.h"
 
+#include "resource_manager.h"
+
 namespace OHOS {
 namespace Telephony {
 using CmdProcessFunc = int (*)(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper);
@@ -84,9 +86,10 @@ int SimInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 {
     Uri uri("dataability:///com.ohos.simability/sim/sim_info");
     NativeRdb::ValuesBucket value;
-    value.PutInt(SimData::SIM_ID, 1);
     value.PutInt(SimData::SLOT_INDEX, 1);
     value.PutString(SimData::PHONE_NUMBER, "134xxxxxxxx");
+    value.PutString(SimData::ICC_ID, "icc_id");
+    value.PutString(SimData::CARD_ID, "card_id");
     return helper->Insert(uri, value);
 }
 
@@ -167,7 +170,7 @@ int SmsDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 
 int PdpProfileInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
     NativeRdb::ValuesBucket value;
     value.PutString(PdpProfileData::PROFILE_NAME, "frist_profile_name");
     value.PutString(PdpProfileData::MCC, "460");
@@ -261,6 +264,19 @@ int VerifyCmd(char inputCMD, std::shared_ptr<AppExecFwk::DataAbilityHelper> &hel
     return -1;
 }
 
+void ResourceTest()
+{
+    OHOS::Global::Resource::ResourceManager *rm = OHOS::Global::Resource::CreateResourceManager();
+    std::string outValue;
+    rm->GetStringByName("hello_ceshi", outValue);
+    DATA_STORAGE_LOGE("DataSimRdbHelper::ResourceTest outValue = %{public}s", outValue.c_str());
+    outValue = "";
+    rm->GetStringByName("hello_telephony", outValue);
+    DATA_STORAGE_LOGE("DataSimRdbHelper::ResourceTest outValue1 = %{public}s", outValue.c_str());
+    free(rm);
+    rm = nullptr;
+}
+
 void PrintfHint()
 {
     printf(
@@ -278,6 +294,7 @@ void PrintfHint()
         "s:PdpProfileUpdate()\n"
         "d:PdpProfileDelete()\n"
         "f:PdpProfileSelect()\n"
+        "g:ResourceTest()\n"
         "z:exit\n"
         "***********************************\n"
         "your choice: ");
@@ -297,6 +314,10 @@ void Looper()
             continue;
         }
         switch (inputCMD) {
+            case 'g': {
+                ResourceTest();
+                break;
+            }
             case 'z': {
                 loopFlag = false;
                 break;

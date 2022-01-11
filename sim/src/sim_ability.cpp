@@ -68,14 +68,14 @@ int SimAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 std::shared_ptr<NativeRdb::AbsSharedResultSet> SimAbility::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> resultSet;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
     if (!IsInitOk()) {
         return resultSet;
     }
     Uri tempUri = uri;
     SimUriType simUriType = ParseUriType(tempUri);
     if (simUriType == SimUriType::SIM_INFO) {
-        auto *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SIM_INFO);
+        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SIM_INFO);
         if (absRdbPredicates != nullptr) {
             ConvertPredicates(predicates, absRdbPredicates);
             resultSet = helper_.Query(*absRdbPredicates, columns);
@@ -102,7 +102,7 @@ int SimAbility::Update(
     SimUriType simUriType = ParseUriType(tempUri);
     switch (simUriType) {
         case SimUriType::SIM_INFO: {
-            auto *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SIM_INFO);
+            NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SIM_INFO);
             if (absRdbPredicates != nullptr) {
                 int changedRows = 0;
                 ConvertPredicates(predicates, absRdbPredicates);
@@ -116,6 +116,10 @@ int SimAbility::Update(
         }
         case SimUriType::SET_CARD: {
             result = SetCard(value);
+            if (result != NativeRdb::E_OK) {
+                DATA_STORAGE_LOGE("SimAbility::Update  SetCard fail!");
+                result = static_cast<int>(LoadProFileErrorType::SET_CARD_FAIL);
+            }
             break;
         }
         default:
@@ -128,8 +132,8 @@ int SimAbility::Update(
 int SimAbility::SetCard(const NativeRdb::ValuesBucket &value)
 {
     int result = DATA_STORAGE_ERROR;
-    if (!value.HasColumn(SimData::SIM_ID)) {
-        DATA_STORAGE_LOGE("SimAbility::Update##the sim_id in valuesBucket does not exist");
+    if (!value.HasColumn(SimData::SLOT_INDEX)) {
+        DATA_STORAGE_LOGE("SimAbility::Update##the slot_index in valuesBucket does not exist");
         return result;
     }
     if (!value.HasColumn(SimData::CARD_TYPE)) {
@@ -137,13 +141,13 @@ int SimAbility::SetCard(const NativeRdb::ValuesBucket &value)
         return result;
     }
     NativeRdb::ValueObject valueObject;
-    bool isExistSimId = value.GetObject(SimData::SIM_ID, valueObject);
-    if (!isExistSimId) {
-        DATA_STORAGE_LOGE("SimAbility::Update##failed to get sim_id value in valuesBucket");
+    bool isExistSlotId = value.GetObject(SimData::SLOT_INDEX, valueObject);
+    if (!isExistSlotId) {
+        DATA_STORAGE_LOGE("SimAbility::Update##failed to get slot_index value in valuesBucket");
         return result;
     }
-    int simId = 0;
-    valueObject.GetInt(simId);
+    int slotId = 0;
+    valueObject.GetInt(slotId);
 
     bool isExistCardType = value.GetObject(SimData::CARD_TYPE, valueObject);
     if (!isExistCardType) {
@@ -152,7 +156,7 @@ int SimAbility::SetCard(const NativeRdb::ValuesBucket &value)
     }
     int cardType = 0;
     valueObject.GetInt(cardType);
-    result = helper_.SetDefaultCardByType(simId, cardType);
+    result = helper_.SetDefaultCardByType(slotId, cardType);
     return result;
 }
 
@@ -166,7 +170,7 @@ int SimAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &p
     Uri tempUri = uri;
     SimUriType simUriType = ParseUriType(tempUri);
     if (simUriType == SimUriType::SIM_INFO) {
-        auto *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SIM_INFO);
+        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SIM_INFO);
         if (absRdbPredicates != nullptr) {
             ConvertPredicates(predicates, absRdbPredicates);
             int deletedRows = 0;

@@ -38,7 +38,7 @@ private:
     int CloseFile(FILE *f) const;
 
 private:
-    const char *PATH = "/system/etc/security/operator_configuration.json";
+    const char *PATH = "/system/etc/telephony/operator_configuration.json";
     const char *ITEM_VERSION = "version";
     const char *ITEM_OPERATOR_INFOS = "operator_infos";
     const char *ITEM_OPERATOR_NAME = "operator_name";

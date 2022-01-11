@@ -93,7 +93,7 @@ enum class BearingSystemType {
 
 const std::string TABLE_PDP_PROFILE = "pdp_profile";
 const std::string TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
-const std::string PDP_PROFILE_URI = "dataability://com.ohos.pdpprofileability";
+const std::string PDP_PROFILE_URI = "dataability:///com.ohos.pdpprofileability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_PDP_PROFILE_DATA_H

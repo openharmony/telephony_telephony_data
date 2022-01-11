@@ -28,7 +28,7 @@ namespace OHOS {
 namespace Telephony {
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 {
-    char *content;
+    char *content = nullptr;
     int ret = LoaderJsonFile(content);
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail!\n");
@@ -36,6 +36,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
+    delete content;
     JSONCPP_STRING err;
     Json::Value root;
     Json::CharReaderBuilder builder;
@@ -46,12 +47,8 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     }
     delete reader;
     const int apnVersion = root[ITEM_VERSION].asInt();
-    PreferencesUtil *utils = DelayedSingleton<PreferencesUtil>::GetInstance().get();
-    if (utils == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson utils is nullptr!\n");
-        return static_cast<int>(LoadProFileErrorType::TEL_PROFILE_UTIL_IS_NULL);
-    }
-    int profileVersion = utils->ObtainInt(APN_VERSION, 0);
+    int profileVersion =
+        DelayedSingleton<PreferencesUtil>::GetInstance()->ObtainInt(APN_VERSION, 0);
     if (apnVersion <= profileVersion) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson apnVersion <= profileVersion!\n");
         return static_cast<int>(LoadProFileErrorType::PDP_PROFILE_VERSION_IS_OLD);
@@ -62,13 +59,15 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserPdpProfileInfos(vec, itemRoots);
-    ret = utils->SaveInt(APN_VERSION, apnVersion);
-    if (ret == NativePreferences::E_OK) {
-        utils->Refresh();
-        ret = DATA_STORAGE_SUCCESS;
+    ret = DelayedSingleton<PreferencesUtil>::GetInstance()->
+        SaveInt(APN_VERSION, apnVersion);
+    if (ret != NativePreferences::E_OK) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson save apn version fail!");
+        return static_cast<int>(LoadProFileErrorType::SAVE_APN_VERSION_FAIL);
     }
+    DelayedSingleton<PreferencesUtil>::GetInstance()->Refresh();
     DATA_STORAGE_LOGI("ParserUtil::ParserPdpProfileJson##apnVersion = %{public}d\n", apnVersion);
-    return ret;
+    return DATA_STORAGE_SUCCESS;
 }
 
 void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root)
@@ -120,34 +119,45 @@ void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, 
 int ParserUtil::LoaderJsonFile(char *&content) const
 {
     size_t len = 0;
-    FILE *f = fopen(PATH, "rb");
+    char realPath[PATH_MAX] = {0x00};
+    if (realpath(PATH, realPath) == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile realpath fail! #PATH: %{public}s", PATH);
+        return static_cast<int>(LoadProFileErrorType::REALPATH_FAIL);
+    }
+    FILE *f = fopen(realPath, "rb");
     if (f == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile file is null!\n");
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile file is null!");
         return static_cast<int>(LoadProFileErrorType::OPEN_FILE_ERROR);
     }
     int ret_seek_end = fseek(f, 0, SEEK_END);
     if (ret_seek_end != 0) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_seek_end != 0!\n");
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_seek_end != 0!");
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     len = ftell(f);
     int ret_seek_set = fseek(f, 0, SEEK_SET);
     if (ret_seek_set != 0) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_seek_set != 0!\n");
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_seek_set != 0!");
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     if (len <= 0 || len > ULONG_MAX) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile len <= 0 or len > LONG_MAX!\n");
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile len <= 0 or len > LONG_MAX!");
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     content = (char *)malloc(len);
+    if (content == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile malloc content fail!");
+        CloseFile(f);
+        return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
+    }
     size_t ret_read = fread(content, 1, len, f);
     if (ret_read != len) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!\n");
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
         CloseFile(f);
+        delete content;
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     return CloseFile(f);
@@ -156,10 +166,8 @@ int ParserUtil::LoaderJsonFile(char *&content) const
 int ParserUtil::CloseFile(FILE *f) const
 {
     int ret_close = fclose(f);
-    free(f);
-    f = nullptr;
     if (ret_close != 0) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_close != 0!\n");
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_close != 0!");
         return static_cast<int>(LoadProFileErrorType::CLOSE_FILE_ERROR);
     }
     return DATA_STORAGE_SUCCESS;

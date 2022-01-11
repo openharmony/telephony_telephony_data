@@ -46,7 +46,7 @@ void RdbSimHelper::UpdateDbPath(const std::string &path)
 void RdbSimHelper::CreateSimInfoTableStr(std::string &createTableStr)
 {
     createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_SIM_INFO);
-    createTableStr.append("(").append(SimData::SIM_ID).append(" INTEGER PRIMARY KEY, ");
+    createTableStr.append("(").append(SimData::SIM_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
     createTableStr.append(SimData::ICC_ID).append(" TEXT NOT NULL, ");
     createTableStr.append(SimData::CARD_ID).append(" TEXT NOT NULL, ");
     createTableStr.append(SimData::SLOT_INDEX).append(" INTEGER DEFAULT -1, ");
@@ -55,17 +55,18 @@ void RdbSimHelper::CreateSimInfoTableStr(std::string &createTableStr)
     createTableStr.append(SimData::COUNTRY_CODE).append(" TEXT DEFAULT '', ");
     createTableStr.append(SimData::IMSI).append(" TEXT DEFAULT '', ");
     createTableStr.append(SimData::IS_MAIN_CARD).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append(SimData::IS_VOICE_CARD).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SimData::IS_MESSAGE_CARD).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SimData::IS_CELLULAR_DATA_CARD).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SimData::IS_ACTIVE).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SimData::CARD_TYPE).append(" INTEGER , ");
     createTableStr.append(SimData::LANGUAGE).append(" TEXT DEFAULT '', ");
-    createTableStr.append("UNIQUE (").append(SimData::SIM_ID).append(", ");
+    createTableStr.append("UNIQUE (");
     createTableStr.append(SimData::ICC_ID).append(", ");
     createTableStr.append(SimData::CARD_ID).append("))");
 }
 
-int32_t RdbSimHelper::SetDefaultCardByType(int32_t simId, int32_t type)
+int32_t RdbSimHelper::SetDefaultCardByType(int32_t slotId, int32_t type)
 {
     int result = BeginTransaction();
     if (result != NativeRdb::E_OK) {
@@ -73,8 +74,8 @@ int32_t RdbSimHelper::SetDefaultCardByType(int32_t simId, int32_t type)
         return result;
     }
     int updateState = 0;
-    int whereSate = 1;
-    result = UpdateCardStateByType(type, updateState, whereSate);
+    int whereState = 1;
+    result = UpdateCardStateByType(type, updateState, whereState);
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("RdbSimHelper::SetDefaultCardByType UpdateCardStateByType is error!");
         EndTransactionAction();
@@ -85,6 +86,10 @@ int32_t RdbSimHelper::SetDefaultCardByType(int32_t simId, int32_t type)
     switch (type) {
         case static_cast<int32_t>(SimCardType::MAIN): {
             values.PutInt(SimData::IS_MAIN_CARD, 1);
+            break;
+        }
+        case static_cast<int32_t>(SimCardType::VOICE): {
+            values.PutInt(SimData::IS_VOICE_CARD, 1);
             break;
         }
         case static_cast<int32_t>(SimCardType::MESSAGE): {
@@ -100,7 +105,7 @@ int32_t RdbSimHelper::SetDefaultCardByType(int32_t simId, int32_t type)
             return DATA_STORAGE_ERROR;
     }
     std::string whereClause;
-    whereClause.append(SimData::SIM_ID).append("=").append(std::to_string(simId));
+    whereClause.append(SimData::SLOT_INDEX).append("=").append(std::to_string(slotId));
     result = Update(changedRows, TABLE_SIM_INFO, values, whereClause);
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("RdbSimHelper::SetDefaultCardByType Update is error!");
@@ -120,6 +125,12 @@ int32_t RdbSimHelper::UpdateCardStateByType(int32_t type, int32_t updateState, i
             isExist = true;
             values.PutInt(SimData::IS_MAIN_CARD, updateState);
             whereClause.append(SimData::IS_MAIN_CARD).append("=").append(std::to_string(whereSate));
+            break;
+        }
+        case static_cast<int32_t>(SimCardType::VOICE): {
+            isExist = true;
+            values.PutInt(SimData::IS_VOICE_CARD, updateState);
+            whereClause.append(SimData::IS_VOICE_CARD).append("=").append(std::to_string(whereSate));
             break;
         }
         case static_cast<int32_t>(SimCardType::MESSAGE): {

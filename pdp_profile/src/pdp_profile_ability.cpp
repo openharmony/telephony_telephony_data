@@ -69,14 +69,14 @@ int PdpProfileAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &val
 std::shared_ptr<NativeRdb::AbsSharedResultSet> PdpProfileAbility::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> resultSet;
+    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
     if (!IsInitOk()) {
         return resultSet;
     }
     Uri tempUri = uri;
     PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
     if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
-        auto *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
+        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
         if (absRdbPredicates != nullptr) {
             ConvertPredicates(predicates, absRdbPredicates);
             resultSet = helper_.Query(*absRdbPredicates, columns);
@@ -141,7 +141,7 @@ int PdpProfileAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredic
     Uri tempUri = uri;
     PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
     if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
-        auto *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
+        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
         if (absRdbPredicates != nullptr) {
             ConvertPredicates(predicates, absRdbPredicates);
             int deletedRows = 0;
@@ -161,10 +161,13 @@ bool PdpProfileAbility::IsInitOk()
 {
     if (!initDatabaseDir) {
         DATA_STORAGE_LOGE("PdpProfileAbility::IsInitOk initDatabaseDir failed!");
-    } else if (!initRdbStore) {
+        return false;
+    }
+    if (!initRdbStore) {
         DATA_STORAGE_LOGE("PdpProfileAbility::IsInitOk initRdbStore failed!");
-    };
-    return initDatabaseDir && initRdbStore;
+        return false;
+    }
+    return true;
 }
 
 void PdpProfileAbility::InitUriMap()
