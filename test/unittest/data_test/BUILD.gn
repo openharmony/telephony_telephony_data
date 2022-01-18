@@ -33,7 +33,7 @@ ohos_executable("tel_data_storage_test") {
   ]
 
   external_deps = [
-    "aafwk_standard:want",
+    "ability_runtime:want",
     "appexecfwk_standard:libeventhandler",
     "ces_standard:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
