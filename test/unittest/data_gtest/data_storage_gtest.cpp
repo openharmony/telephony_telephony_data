@@ -216,6 +216,12 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
     return helper->Delete(uri, predicates);
 }
 
+HWTEST_F(DataStorageGtest, DataStorage_001, TestSize.Level0)
+{
+    CreateSmsHelper();
+    CreateSimHelper();
+}
+
 HWTEST_F(DataStorageGtest, SimInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
