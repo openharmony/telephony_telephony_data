@@ -14,6 +14,15 @@
 import("//build/ohos.gni")
 SOURCE_DIR = "//base/telephony/data_storage"
 
+ohos_hap("Telephony_Data_Storage") {
+  hap_profile = "./config/config.json"
+  shared_libraries = [ ":tel_data_storage" ]
+  certificate_profile = "./signature/datastorage.p7b"
+  hap_name = "Telephony_Data_Storage"
+  part_name = "data_storage"
+  subsystem_name = "telephony"
+}
+
 ohos_shared_library("tel_data_storage") {
   sources = [
     "$SOURCE_DIR/common/src/data_storage_log_wrapper.cpp",
