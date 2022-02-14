@@ -14,6 +14,7 @@
 */
 
 #include <iostream>
+#include <string>
 #include <vector>
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -170,11 +171,21 @@ int SmsDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 
 int PdpProfileInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 {
+    std::string profile_name;
+    std::string mcc;
+    std::string mnc;
     Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
     NativeRdb::ValuesBucket value;
-    value.PutString(PdpProfileData::PROFILE_NAME, "frist_profile_name");
-    value.PutString(PdpProfileData::MCC, "460");
-    value.PutString(PdpProfileData::MNC, "91");
+    std::cout << "------PdpProfileInsert------" << std::endl;
+    std::cout << "please input profile_name:" << std::endl;
+    std::cin >> profile_name;
+    std::cout << "please input mcc:" << std::endl;
+    std::cin >> mcc;
+    std::cout << "please input mnc:" << std::endl;
+    std::cin >> mnc;
+    value.PutString(PdpProfileData::PROFILE_NAME, profile_name);
+    value.PutString(PdpProfileData::MCC, mcc);
+    value.PutString(PdpProfileData::MNC, mnc);
     return helper->Insert(uri, value);
 }
 
@@ -210,6 +221,14 @@ int PdpProfileSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
     return -1;
 }
 
+int PdpProfileReset(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+{
+    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile/reset");
+    NativeRdb::ValuesBucket values;
+    NativeRdb::DataAbilityPredicates predicates;
+    return helper->Update(uri, values, predicates);
+}
+
 void Init()
 {
     g_simFuncMap['q'] = SimInsert;
@@ -224,6 +243,7 @@ void Init()
     g_pdpProfileFuncMap['s'] = PdpProfileUpdate;
     g_pdpProfileFuncMap['d'] = PdpProfileDelete;
     g_pdpProfileFuncMap['f'] = PdpProfileSelect;
+    g_pdpProfileFuncMap['h'] = PdpProfileReset;
 }
 
 int VerifyCmd(char inputCMD, std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper)
@@ -295,6 +315,7 @@ void PrintfHint()
         "d:PdpProfileDelete()\n"
         "f:PdpProfileSelect()\n"
         "g:ResourceTest()\n"
+        "h:PdpProfileReset()\n"
         "z:exit\n"
         "***********************************\n"
         "your choice: ");
