@@ -65,6 +65,7 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::BEARING_SYSTEM_TYPE).append(" INTEGER, ");
     createTableStr.append("UNIQUE (").append(PdpProfileData::MCC).append(", ");
+    createTableStr.append(PdpProfileData::MNC).append(", ");
     createTableStr.append(PdpProfileData::APN).append(", ");
     createTableStr.append(PdpProfileData::APN_TYPES).append(", ");
     createTableStr.append(PdpProfileData::IS_ROAMING_APN).append(", ");
@@ -84,6 +85,14 @@ int RdbPdpProfileHelper::ResetApn()
     }
     std::string pdpProfileStr;
     CreatePdpProfileTableStr(pdpProfileStr, TEMP_TABLE_PDP_PROFILE);
+    ret = ExecuteSql(pdpProfileStr);
+    if (ret != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn create table temp_pdp_profile ret = %{public}d", ret);
+        EndTransactionAction();
+        return ret;
+    }
+    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn create table success");
+
     ParserUtil util;
     std::vector<PdpProfile> vec;
     ret = util.ParserPdpProfileJson(vec);
@@ -98,18 +107,21 @@ int RdbPdpProfileHelper::ResetApn()
     }
     ret = ExecuteSql("drop table " + TABLE_PDP_PROFILE);
     if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::RestoreApn drop table ret = %{public}d", ret);
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn drop table ret = %{public}d", ret);
         EndTransactionAction();
         return ret;
     }
+    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn success");
+
     std::string sql;
     sql.append("alter table ").append(TEMP_TABLE_PDP_PROFILE).append(" rename to ").append(TABLE_PDP_PROFILE);
     ret = ExecuteSql(sql);
     if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::RestoreApn alter table ret = %{public}d", ret);
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn alter table ret = %{public}d", ret);
         EndTransactionAction();
         return ret;
     }
+    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn alter table success");
     return EndTransactionAction();
 }
 
