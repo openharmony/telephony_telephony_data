@@ -65,7 +65,6 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::BEARING_SYSTEM_TYPE).append(" INTEGER, ");
     createTableStr.append("UNIQUE (").append(PdpProfileData::MCC).append(", ");
-    createTableStr.append(PdpProfileData::MNC).append(", ");
     createTableStr.append(PdpProfileData::APN).append(", ");
     createTableStr.append(PdpProfileData::APN_TYPES).append(", ");
     createTableStr.append(PdpProfileData::IS_ROAMING_APN).append(", ");
@@ -80,23 +79,21 @@ int RdbPdpProfileHelper::ResetApn()
 {
     int ret = BeginTransaction();
     if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbSimHelper::SetDefaultCardByType BeginTransaction is error!");
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::RestoreApn BeginTransaction is error!");
         return ret;
     }
     std::string pdpProfileStr;
     CreatePdpProfileTableStr(pdpProfileStr, TEMP_TABLE_PDP_PROFILE);
     ret = ExecuteSql(pdpProfileStr);
     if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn create table temp_pdp_profile ret = %{public}d", ret);
-        EndTransactionAction();
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::RestoreApn CreatePdpProfileTableStr fail ret = %{public}d", ret);
         return ret;
     }
-    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn create table success");
-
     ParserUtil util;
     std::vector<PdpProfile> vec;
     ret = util.ParserPdpProfileJson(vec);
     if (ret != DATA_STORAGE_SUCCESS) {
+        RollBack();
         return ret;
     }
     for (size_t i = 0; i < vec.size(); i++) {
@@ -107,28 +104,35 @@ int RdbPdpProfileHelper::ResetApn()
     }
     ret = ExecuteSql("drop table " + TABLE_PDP_PROFILE);
     if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn drop table ret = %{public}d", ret);
-        EndTransactionAction();
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::RestoreApn drop table ret = %{public}d", ret);
+        RollBack();
         return ret;
     }
-    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn success");
-
     std::string sql;
     sql.append("alter table ").append(TEMP_TABLE_PDP_PROFILE).append(" rename to ").append(TABLE_PDP_PROFILE);
     ret = ExecuteSql(sql);
     if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn alter table ret = %{public}d", ret);
-        EndTransactionAction();
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::RestoreApn alter table ret = %{public}d", ret);
+        RollBack();
         return ret;
     }
-    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn alter table success");
-    return EndTransactionAction();
+    ret = CommitTransactionAction();
+    return ret;
 }
 
 int RdbPdpProfileHelper::EndTransactionAction()
 {
     int result = MarkAsCommit();
     result = EndTransaction();
+    return result;
+}
+
+int RdbPdpProfileHelper::CommitTransactionAction()
+{
+    int result = Commit();
+    if (result != NativeRdb::E_OK) {
+        RollBack();
+    }
     return result;
 }
 } // namespace Telephony

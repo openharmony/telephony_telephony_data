@@ -46,7 +46,8 @@
         "build": {
             "sub_component": [
                 "//base/telephony/data_storage:tel_data_storage",
-                "//base/telephony/data_storage:Telephony_Data_Storage"
+                "//base/telephony/data_storage:Telephony_Data_Storage",
+                "//base/telephony/data_storage/etc:telephony_pdp_profile"
             ],
             "inner_kits": [
             ],
