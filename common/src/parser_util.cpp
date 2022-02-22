@@ -46,12 +46,27 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
+    const int apnVersion = root[ITEM_VERSION].asInt();
+    int profileVersion =
+        DelayedSingleton<PreferencesUtil>::GetInstance()->ObtainInt(APN_VERSION, 0);
+    if (apnVersion <= profileVersion) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson apnVersion <= profileVersion!\n");
+        return static_cast<int>(LoadProFileErrorType::PDP_PROFILE_VERSION_IS_OLD);
+    }
     Json::Value itemRoots = root[ITEM_OPERATOR_INFOS];
     if (itemRoots.size() == 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson itemRoots size == 0!\n");
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserPdpProfileInfos(vec, itemRoots);
+    ret = DelayedSingleton<PreferencesUtil>::GetInstance()->
+        SaveInt(APN_VERSION, apnVersion);
+    if (ret != NativePreferences::E_OK) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson save apn version fail!");
+        return static_cast<int>(LoadProFileErrorType::SAVE_APN_VERSION_FAIL);
+    }
+    DelayedSingleton<PreferencesUtil>::GetInstance()->Refresh();
+    DATA_STORAGE_LOGI("ParserUtil::ParserPdpProfileJson##apnVersion = %{public}d\n", apnVersion);
     return DATA_STORAGE_SUCCESS;
 }
 

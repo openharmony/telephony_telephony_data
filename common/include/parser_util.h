@@ -39,6 +39,7 @@ private:
 
 private:
     const char *PATH = "/system/etc/telephony/pdp_profile.json";
+    const char *ITEM_VERSION = "version";
     const char *ITEM_OPERATOR_INFOS = "operator_infos";
     const char *ITEM_OPERATOR_NAME = "operator_name";
     const char *ITEM_AUTH_USER = "auth_user";

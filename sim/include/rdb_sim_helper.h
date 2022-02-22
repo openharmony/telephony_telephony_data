@@ -84,6 +84,13 @@ private:
      */
     int EndTransactionAction();
 
+    /**
+     * Commit the transaction action
+     *
+     * @return 0 is succeed else failed
+     */
+    int CommitTransactionAction();
+
 private:
     const std::string DB_NAME = "sim.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;

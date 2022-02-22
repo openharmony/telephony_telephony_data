@@ -78,7 +78,6 @@ int32_t RdbSimHelper::SetDefaultCardByType(int32_t slotId, int32_t type)
     result = UpdateCardStateByType(type, updateState, whereState);
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("RdbSimHelper::SetDefaultCardByType UpdateCardStateByType is error!");
-        EndTransactionAction();
         return result;
     }
     int changedRows = 0;
@@ -110,7 +109,7 @@ int32_t RdbSimHelper::SetDefaultCardByType(int32_t slotId, int32_t type)
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("RdbSimHelper::SetDefaultCardByType Update is error!");
     }
-    EndTransactionAction();
+    result = CommitTransactionAction();
     return result;
 }
 
@@ -159,6 +158,15 @@ int RdbSimHelper::EndTransactionAction()
 {
     int result = MarkAsCommit();
     result = EndTransaction();
+    return result;
+}
+
+int RdbSimHelper::CommitTransactionAction()
+{
+    int result = Commit();
+    if (result != NativeRdb::E_OK) {
+        RollBack();
+    }
     return result;
 }
 

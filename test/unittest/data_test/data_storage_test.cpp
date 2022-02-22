@@ -14,7 +14,6 @@
 */
 
 #include <iostream>
-#include <string>
 #include <vector>
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -23,12 +22,13 @@
 #include "abs_shared_result_set.h"
 #include "values_bucket.h"
 #include "uri.h"
+#include "resource_manager.h"
+#include "permission/permission_kit.h"
+
 #include "sim_data.h"
 #include "sms_mms_data.h"
 #include "pdp_profile_data.h"
 #include "data_storage_log_wrapper.h"
-
-#include "resource_manager.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -39,6 +39,10 @@ std::map<char, CmdProcessFunc> g_pdpProfileFuncMap;
 std::shared_ptr<AppExecFwk::DataAbilityHelper> simDataAbilityHelper = nullptr;
 std::shared_ptr<AppExecFwk::DataAbilityHelper> smsDataAbilityHelper = nullptr;
 std::shared_ptr<AppExecFwk::DataAbilityHelper> pdpProfileDataAbilityHelper = nullptr;
+const std::string bundleName = "com.ohos.telephonydataability";
+const std::string smsPermission("com.ohos.smsmmsability.DataAbilityShellProvider.PROVIDER");
+const std::string simPermission("com.ohos.simability.DataAbilityShellProvider.PROVIDER");
+const std::string pdpProfilePermission("com.ohos.pdpprofileability.DataAbilityShellProvider.PROVIDER");
 std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(
     int32_t systemAbilityId, std::shared_ptr<Uri> dataAbilityUri)
 {
@@ -54,6 +58,26 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(
         return nullptr;
     }
     return AppExecFwk::DataAbilityHelper::Creator(remoteObj, dataAbilityUri);
+}
+
+void ApplyPermission()
+{
+    std::vector <std::string> vec;
+    vec.push_back(smsPermission);
+    vec.push_back(simPermission);
+    vec.push_back(pdpProfilePermission);
+    Security::Permission::PermissionKit::AddSystemGrantedReqPermissions(bundleName, vec);
+    Security::Permission::PermissionKit::GrantSystemGrantedPermission(bundleName, smsPermission);
+    Security::Permission::PermissionKit::GrantSystemGrantedPermission(bundleName, simPermission);
+    Security::Permission::PermissionKit::GrantSystemGrantedPermission(bundleName, pdpProfilePermission);
+}
+
+void RemovePermission()
+{
+    Security::Permission::PermissionKit::RemoveSystemGrantedReqPermissions(bundleName);
+    Security::Permission::PermissionKit::RevokeSystemGrantedPermission(bundleName, smsPermission);
+    Security::Permission::PermissionKit::RevokeSystemGrantedPermission(bundleName, simPermission);
+    Security::Permission::PermissionKit::RevokeSystemGrantedPermission(bundleName, pdpProfilePermission);
 }
 
 std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateSimHelper()
@@ -81,6 +105,16 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> CreatePdpProfileHelper()
         pdpProfileDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
     }
     return pdpProfileDataAbilityHelper;
+}
+
+int SimSetCardByType(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+{
+    Uri uri("dataability:///com.ohos.simability/sim/sim_info/set_card");
+    NativeRdb::ValuesBucket value;
+    NativeRdb::DataAbilityPredicates predicates;
+    value.PutInt(SimData::SLOT_INDEX, 1);
+    value.PutInt(SimData::CARD_TYPE, 1);
+    return helper->Update(uri, value, predicates);
 }
 
 int SimInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
@@ -169,23 +203,21 @@ int SmsDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
     return helper->Delete(uri, predicates);
 }
 
+int PdpProfileReset(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+{
+    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile/reset");
+    NativeRdb::ValuesBucket values;
+    NativeRdb::DataAbilityPredicates predicates;
+    return helper->Update(uri, values, predicates);
+}
+
 int PdpProfileInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 {
-    std::string profile_name;
-    std::string mcc;
-    std::string mnc;
     Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
     NativeRdb::ValuesBucket value;
-    std::cout << "------PdpProfileInsert------" << std::endl;
-    std::cout << "please input profile_name:" << std::endl;
-    std::cin >> profile_name;
-    std::cout << "please input mcc:" << std::endl;
-    std::cin >> mcc;
-    std::cout << "please input mnc:" << std::endl;
-    std::cin >> mnc;
-    value.PutString(PdpProfileData::PROFILE_NAME, profile_name);
-    value.PutString(PdpProfileData::MCC, mcc);
-    value.PutString(PdpProfileData::MNC, mnc);
+    value.PutString(PdpProfileData::PROFILE_NAME, "frist_profile_name");
+    value.PutString(PdpProfileData::MCC, "460");
+    value.PutString(PdpProfileData::MNC, "91");
     return helper->Insert(uri, value);
 }
 
@@ -221,20 +253,13 @@ int PdpProfileSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
     return -1;
 }
 
-int PdpProfileReset(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
-{
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile/reset");
-    NativeRdb::ValuesBucket values;
-    NativeRdb::DataAbilityPredicates predicates;
-    return helper->Update(uri, values, predicates);
-}
-
 void Init()
 {
     g_simFuncMap['q'] = SimInsert;
     g_simFuncMap['w'] = SimUpdate;
     g_simFuncMap['e'] = SimSelect;
     g_simFuncMap['r'] = SimDelete;
+    g_simFuncMap['o'] = SimSetCardByType;
     g_smsFuncMap['t'] = SmsInsert;
     g_smsFuncMap['y'] = SmsUpdate;
     g_smsFuncMap['u'] = SmsSelect;
@@ -244,6 +269,7 @@ void Init()
     g_pdpProfileFuncMap['d'] = PdpProfileDelete;
     g_pdpProfileFuncMap['f'] = PdpProfileSelect;
     g_pdpProfileFuncMap['h'] = PdpProfileReset;
+    ApplyPermission();
 }
 
 int VerifyCmd(char inputCMD, std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper)
@@ -306,6 +332,7 @@ void PrintfHint()
         "w:SimUpdate()\n"
         "e:SimSelect()\n"
         "r:SimDelete()\n"
+        "o:SimSetCardByType()\n"
         "t:SmsInsert()\n"
         "y:SmsUpdate()\n"
         "u:SmsSelect()\n"
@@ -314,8 +341,8 @@ void PrintfHint()
         "s:PdpProfileUpdate()\n"
         "d:PdpProfileDelete()\n"
         "f:PdpProfileSelect()\n"
-        "g:ResourceTest()\n"
         "h:PdpProfileReset()\n"
+        "g:ResourceTest()\n"
         "z:exit\n"
         "***********************************\n"
         "your choice: ");
@@ -348,6 +375,7 @@ void Looper()
             }
         }
     }
+    RemovePermission();
 }
 } // namespace Telephony
 } // namespace OHOS
