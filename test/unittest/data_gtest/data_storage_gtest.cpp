@@ -216,12 +216,23 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
     return helper->Delete(uri, predicates);
 }
 
+
+/**
+ * @tc.number   DataStorage_001
+ * @tc.name     create sim and sms DataAbilityHelper
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, DataStorage_001, TestSize.Level0)
 {
     CreateSmsHelper();
     CreateSimHelper();
 }
 
+/**
+ * @tc.number   SimInsert_001
+ * @tc.name     insert sim data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SimInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
@@ -230,6 +241,11 @@ HWTEST_F(DataStorageGtest, SimInsert_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   SimUpdate_001
+ * @tc.name     update sim data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SimUpdate_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
@@ -238,6 +254,11 @@ HWTEST_F(DataStorageGtest, SimUpdate_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   SimSelect_001
+ * @tc.name     select sim data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SimSelect_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
@@ -246,6 +267,11 @@ HWTEST_F(DataStorageGtest, SimSelect_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   SimDelete_001
+ * @tc.name     delete sim data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
@@ -254,6 +280,11 @@ HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   SmsInsert_001
+ * @tc.name     insert sms data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SmsInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
@@ -262,6 +293,11 @@ HWTEST_F(DataStorageGtest, SmsInsert_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   SmsUpdate_001
+ * @tc.name     update sms data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SmsUpdate_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
@@ -270,6 +306,11 @@ HWTEST_F(DataStorageGtest, SmsUpdate_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   SmsSelect_001
+ * @tc.name     select sms data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SmsSelect_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
@@ -278,6 +319,11 @@ HWTEST_F(DataStorageGtest, SmsSelect_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   SmsDelete_001
+ * @tc.name     delete sms data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, SmsDelete_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
@@ -286,6 +332,11 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   PdpProfileInsert_001
+ * @tc.name     insert apn data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, PdpProfileInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
@@ -294,6 +345,11 @@ HWTEST_F(DataStorageGtest, PdpProfileInsert_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   PdpProfileUpdate_001
+ * @tc.name     update apn data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
@@ -302,6 +358,11 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   PdpProfileSelect_001
+ * @tc.name     select apn data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, PdpProfileSelect_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
@@ -310,6 +371,11 @@ HWTEST_F(DataStorageGtest, PdpProfileSelect_001, TestSize.Level1)
     }
 }
 
+/**
+ * @tc.number   PdpProfileDelete_001
+ * @tc.name     delete apn data
+ * @tc.desc     Function test
+ */
 HWTEST_F(DataStorageGtest, PdpProfileDelete_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();

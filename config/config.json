@@ -34,11 +34,8 @@
             "orientation": "unspecified",
             "type": "data",
             "uri": "dataability://com.ohos.smsmmsability",
-	    "srcLanguage":"c++",
-            "visible": true,
-	    "permissions": [
-		"com.ohos.smsmmsability.DataAbilityShellProvider.PROVIDER"
-	    ]
+            "srcLanguage":"c++",
+            "visible": true
         },
 	{
             "name": "SimAbility",
@@ -46,11 +43,8 @@
             "orientation": "unspecified",
             "type": "data",
             "uri": "dataability://com.ohos.simability",
-	    "srcLanguage":"c++",
-            "visible": true,
-	    "permissions": [
-		"com.ohos.simability.DataAbilityShellProvider.PROVIDER"
-	    ]
+            "srcLanguage":"c++",
+            "visible": true
         },
 	{
             "name": "PdpProfileAbility",
@@ -58,11 +52,8 @@
             "orientation": "unspecified",
             "type": "data",
             "uri": "dataability://com.ohos.pdpprofileability",
-	    "srcLanguage":"c++",
-            "visible": true,
-	    "permissions": [
-		"com.ohos.pdpprofileability.DataAbilityShellProvider.PROVIDER"
-	    ]
+            "srcLanguage":"c++",
+            "visible": true
         }]
     }
 }
