@@ -123,7 +123,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> SmsMmsAbility::Query(
     if (absRdbPredicates != nullptr) {
         ConvertPredicates(predicates, absRdbPredicates);
         resultSet = helper_.Query(*absRdbPredicates, columns);
-        free(absRdbPredicates);
+        delete absRdbPredicates;
         absRdbPredicates = nullptr;
     } else {
         DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsRdbPredicates is null!");
@@ -167,7 +167,7 @@ int SmsMmsAbility::Update(
         int changedRows = 0;
         ConvertPredicates(predicates, absRdbPredicates);
         result = helper_.Update(changedRows, value, *absRdbPredicates);
-        free(absRdbPredicates);
+        delete absRdbPredicates;
         absRdbPredicates = nullptr;
     } else {
         DATA_STORAGE_LOGE("SmsMmsAbility::Update  NativeRdb::AbsRdbPredicates is null!");
@@ -218,7 +218,7 @@ int SmsMmsAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates
         ConvertPredicates(predicates, absRdbPredicates);
         int deletedRows = 0;
         result = helper_.Delete(deletedRows, *absRdbPredicates);
-        free(absRdbPredicates);
+        delete absRdbPredicates;
         absRdbPredicates = nullptr;
     } else if (result == DATA_STORAGE_ERROR) {
         DATA_STORAGE_LOGE("SmsMmsAbility::Delete  NativeRdb::AbsRdbPredicates is null!");

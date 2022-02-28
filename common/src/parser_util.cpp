@@ -142,7 +142,7 @@ int ParserUtil::LoaderJsonFile(char *&content) const
     if (ret_read != len) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
         CloseFile(f);
-        delete content;
+        free(content);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     return CloseFile(f);

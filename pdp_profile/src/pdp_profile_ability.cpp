@@ -80,7 +80,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> PdpProfileAbility::Query(
         if (absRdbPredicates != nullptr) {
             ConvertPredicates(predicates, absRdbPredicates);
             resultSet = helper_.Query(*absRdbPredicates, columns);
-            free(absRdbPredicates);
+            delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
             DATA_STORAGE_LOGE("PdpProfileAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
@@ -123,7 +123,7 @@ int PdpProfileAbility::Update(
         int changedRows = 0;
         ConvertPredicates(predicates, absRdbPredicates);
         result = helper_.Update(changedRows, value, *absRdbPredicates);
-        free(absRdbPredicates);
+        delete absRdbPredicates;
         absRdbPredicates = nullptr;
     } else if (result == DATA_STORAGE_ERROR) {
         DATA_STORAGE_LOGE("PdpProfileAbility::Update  NativeRdb::AbsRdbPredicates is null!");
@@ -146,7 +146,7 @@ int PdpProfileAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredic
             ConvertPredicates(predicates, absRdbPredicates);
             int deletedRows = 0;
             result = helper_.Delete(deletedRows, *absRdbPredicates);
-            free(absRdbPredicates);
+            delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
             DATA_STORAGE_LOGE("PdpProfileAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
