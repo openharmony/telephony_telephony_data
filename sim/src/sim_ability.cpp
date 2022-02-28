@@ -79,7 +79,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> SimAbility::Query(
         if (absRdbPredicates != nullptr) {
             ConvertPredicates(predicates, absRdbPredicates);
             resultSet = helper_.Query(*absRdbPredicates, columns);
-            free(absRdbPredicates);
+            delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
             DATA_STORAGE_LOGE("SimAbility::Update  NativeRdb::AbsRdbPredicates is null!");
@@ -107,7 +107,7 @@ int SimAbility::Update(
                 int changedRows = 0;
                 ConvertPredicates(predicates, absRdbPredicates);
                 result = helper_.Update(changedRows, value, *absRdbPredicates);
-                free(absRdbPredicates);
+                delete absRdbPredicates;
                 absRdbPredicates = nullptr;
             } else {
                 DATA_STORAGE_LOGE("SimAbility::Update  NativeRdb::AbsRdbPredicates is null!");
@@ -175,7 +175,7 @@ int SimAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &p
             ConvertPredicates(predicates, absRdbPredicates);
             int deletedRows = 0;
             result = helper_.Delete(deletedRows, *absRdbPredicates);
-            free(absRdbPredicates);
+            delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
             DATA_STORAGE_LOGE("SimAbility::Update  NativeRdb::AbsRdbPredicates is null!");
