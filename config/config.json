@@ -30,6 +30,9 @@
         "abilities": [
         {
             "name": "SmsMmsAbility",
+            "permissions": [
+                "ohos.permission.READ_MESSAGES"
+            ],
             "launchType": "standard",
             "orientation": "unspecified",
             "type": "data",
@@ -37,8 +40,10 @@
             "srcLanguage":"c++",
             "visible": true
         },
-	{
+        {
             "name": "SimAbility",
+            "readPermission": "ohos.permission.GET_TELEPHONY_STATE",
+            "writePermission": "ohos.permission.SET_TELEPHONY_STATE",
             "launchType": "standard",
             "orientation": "unspecified",
             "type": "data",
@@ -46,8 +51,10 @@
             "srcLanguage":"c++",
             "visible": true
         },
-	{
+        {
             "name": "PdpProfileAbility",
+            "readPermission": "ohos.permission.GET_TELEPHONY_STATE",
+            "writePermission": "ohos.permission.SET_TELEPHONY_STATE",
             "launchType": "standard",
             "orientation": "unspecified",
             "type": "data",
