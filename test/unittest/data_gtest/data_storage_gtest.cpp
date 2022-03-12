@@ -236,7 +236,7 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
     return helper->Delete(uri, predicates);
 }
 
-
+#ifndef TEL_TEST_UNSUPPORT
 /**
  * @tc.number   DataStorage_001
  * @tc.name     create sim and sms DataAbilityHelper
@@ -572,5 +572,16 @@ HWTEST_F(DataStorageGtest, PdpProfileDelete_001, TestSize.Level1)
     resultSet->GetRowCount(count);
     ASSERT_EQ(count, 0);
 }
+#else // TEL_TEST_UNSUPPORT
+/**
+ * @tc.number   TelMockTest_001
+ * @tc.name     Test for unsupport platform
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, TelMockTest_001, TestSize.Level1)
+{
+    EXPECT_TRUE(true);
+}
+#endif // TEL_TEST_UNSUPPORT
 } // namespace Telephony
 } // namespace OHOS
