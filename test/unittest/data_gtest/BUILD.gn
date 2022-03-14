@@ -29,6 +29,10 @@ ohos_unittest("tel_data_storage_gtest") {
     "$SOURCE_DIR/sms_mms/include",
   ]
 
+  if ("${product_name}" == "rk3568" || "${product_name}" == "DAYU") {
+    defines = [ "TEL_TEST_UNSUPPORT" ]
+  }
+
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
