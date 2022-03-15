@@ -27,13 +27,13 @@ ohos_executable("tel_data_storage_test") {
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//utils/native/base:utils",
     "//utils/resources/systemres:systemres_hap",
   ]
 
   external_deps = [
     "ability_base:want",
+    "ability_base:zuri",
     "ces_standard:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
