@@ -178,7 +178,7 @@ int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<AppExecFwk::DataAbi
 {
     Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
     NativeRdb::ValuesBucket value;
-    value.PutString(PdpProfileData::PROFILE_NAME, "test_profile_name");
+    value.PutString(PdpProfileData::PROFILE_NAME, "frist_profile_name");
     value.PutString(PdpProfileData::MCC, "460");
     value.PutString(PdpProfileData::MNC, "91");
     return helper->Insert(uri, value);
@@ -188,36 +188,16 @@ int DataStorageGtest::PdpProfileUpdate(const std::shared_ptr<AppExecFwk::DataAbi
 {
     Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
     NativeRdb::ValuesBucket values;
-    values.PutString(PdpProfileData::MCC, "461");
-    values.PutString(PdpProfileData::MNC, "92");
+    values.PutString(PdpProfileData::PROFILE_NAME, "update_profile_name");
     NativeRdb::DataAbilityPredicates predicates;
-    predicates.EqualTo(PdpProfileData::PROFILE_NAME, "test_profile_name");
+    predicates.EqualTo(PdpProfileData::PROFILE_ID, "1");
     return helper->Update(uri, values, predicates);
 }
 
-std::shared_ptr<NativeRdb::AbsSharedResultSet> DataStorageGtest::PdpProfileSelectOne(
-    const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper,
-    NativeRdb::DataAbilityPredicates &predicates) const
+int DataStorageGtest::PdpProfileSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
 {
     Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
     std::vector<std::string> colume;
-    colume.push_back(PdpProfileData::PROFILE_NAME);
-    colume.push_back(PdpProfileData::MCC);
-    colume.push_back(PdpProfileData::MNC);
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
-    if (resultSet != nullptr) {
-        return resultSet;
-    }
-    return nullptr;
-}
-
-int DataStorageGtest::PdpProfileSelectAll(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
-{
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    std::vector<std::string> colume;
-    colume.push_back(PdpProfileData::PROFILE_NAME);
-    colume.push_back(PdpProfileData::MCC);
-    colume.push_back(PdpProfileData::MNC);
     NativeRdb::DataAbilityPredicates predicates;
     std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
     if (resultSet != nullptr) {
@@ -232,7 +212,7 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
 {
     Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
     NativeRdb::DataAbilityPredicates predicates;
-    predicates.EqualTo(PdpProfileData::PROFILE_NAME, "test_profile_name");
+    predicates.EqualTo(PdpProfileData::PROFILE_ID, "1");
     return helper->Delete(uri, predicates);
 }
 
@@ -360,56 +340,9 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, TestSize.Level1)
 HWTEST_F(DataStorageGtest, PdpProfileInsert_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    ASSERT_TRUE(helper != nullptr);
-
-    int res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    int count = PdpProfileSelectAll(helper);
-    ASSERT_TRUE(count > 0);
-
-    // insert test data into database
-    int insertId = PdpProfileInsert(helper);
-    printf("PdpProfileInsert insertId: %d\n", insertId);
-    ASSERT_TRUE(insertId > 0);
-
-    // query test data by profile_name
-    NativeRdb::DataAbilityPredicates predicates;
-    predicates.EqualTo(PdpProfileData::PROFILE_NAME, "test_profile_name");
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 1);
-
-    // check if profile_name, mcc, mnc is equal
-    int index = 0;
-    std::string resultProfileName;
-    std::string resultMcc;
-    std::string resultMnc;
-    resultSet->GoToRow(0);
-    resultSet->GetColumnIndex(PdpProfileData::PROFILE_NAME, index);
-    resultSet->GetString(index, resultProfileName);
-    printf("resultProfileName: %s\n", resultProfileName.c_str());
-    ASSERT_EQ(resultProfileName, "test_profile_name");
-
-    resultSet->GetColumnIndex(PdpProfileData::MCC, index);
-    resultSet->GetString(index, resultMcc);
-    printf("resultMcc: %s\n", resultMcc.c_str());
-    ASSERT_EQ(resultMcc, "460");
-
-    resultSet->GetColumnIndex(PdpProfileData::MNC, index);
-    resultSet->GetString(index, resultMnc);
-    printf("resultMnc: %s\n", resultMnc.c_str());
-    ASSERT_EQ(resultMnc, "91");
-
-    // delete test data
-    res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 0);
+    if (helper != nullptr) {
+        PdpProfileInsert(helper);
+    }
 }
 
 /**
@@ -420,60 +353,9 @@ HWTEST_F(DataStorageGtest, PdpProfileInsert_001, TestSize.Level1)
 HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    ASSERT_TRUE(helper != nullptr);
-
-    int res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    int count = PdpProfileSelectAll(helper);
-    ASSERT_TRUE(count > 0);
-    
-    // insert test data into database
-    int insertId = PdpProfileInsert(helper);
-    printf("PdpProfileInsert insertId: %d\n", insertId);
-    ASSERT_TRUE(insertId > 0);
-
-    // update test data
-    res = PdpProfileUpdate(helper);
-    ASSERT_EQ(res, 0);
-
-    // query test data by profile_name
-    NativeRdb::DataAbilityPredicates predicates;
-    predicates.EqualTo(PdpProfileData::PROFILE_NAME, "test_profile_name");
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 1);
-
-    // check if profile_name, mcc, mnc is equal
-    int index = 0;
-    std::string resultProfileName;
-    std::string resultMcc;
-    std::string resultMnc;
-    resultSet->GoToRow(0);
-    resultSet->GetColumnIndex(PdpProfileData::PROFILE_NAME, index);
-    resultSet->GetString(index, resultProfileName);
-    printf("resultProfileName: %s\n", resultProfileName.c_str());
-    ASSERT_EQ(resultProfileName, "test_profile_name");
-
-    resultSet->GetColumnIndex(PdpProfileData::MCC, index);
-    resultSet->GetString(index, resultMcc);
-    printf("resultMcc: %s\n", resultMcc.c_str());
-    ASSERT_EQ(resultMcc, "461");
-
-    resultSet->GetColumnIndex(PdpProfileData::MNC, index);
-    resultSet->GetString(index, resultMnc);
-    printf("resultMnc: %s\n", resultMnc.c_str());
-    ASSERT_EQ(resultMnc, "92");
-
-    // delete test data
-    res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 0);
+    if (helper != nullptr) {
+        PdpProfileUpdate(helper);
+    }
 }
 
 /**
@@ -484,55 +366,9 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, TestSize.Level1)
 HWTEST_F(DataStorageGtest, PdpProfileSelect_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    ASSERT_TRUE(helper != nullptr);
-
-    int res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    int count = PdpProfileSelectAll(helper);
-    ASSERT_TRUE(count > 0);
-
-    // insert test data into database
-    int insertId = PdpProfileInsert(helper);
-    printf("PdpProfileInsert insertId: %d\n", insertId);
-    ASSERT_TRUE(insertId > 0);
-
-    // query test data by profile_name
-    NativeRdb::DataAbilityPredicates predicates;
-    predicates.EqualTo(PdpProfileData::PROFILE_NAME, "test_profile_name");
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 1);
-
-    int index = 0;
-    std::string resultProfileName;
-    std::string resultMcc;
-    std::string resultMnc;
-    resultSet->GoToRow(0);
-    resultSet->GetColumnIndex(PdpProfileData::PROFILE_NAME, index);
-    resultSet->GetString(index, resultProfileName);
-    printf("resultProfileName: %s\n", resultProfileName.c_str());
-    ASSERT_EQ(resultProfileName, "test_profile_name");
-
-    resultSet->GetColumnIndex(PdpProfileData::MCC, index);
-    resultSet->GetString(index, resultMcc);
-    printf("resultMcc: %s\n", resultMcc.c_str());
-    ASSERT_EQ(resultMcc, "460");
-
-    resultSet->GetColumnIndex(PdpProfileData::MNC, index);
-    resultSet->GetString(index, resultMnc);
-    printf("resultMnc: %s\n", resultMnc.c_str());
-    ASSERT_EQ(resultMnc, "91");
-
-    // delete test data
-    res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 0);
+    if (helper != nullptr) {
+        PdpProfileSelect(helper);
+    }
 }
 
 /**
@@ -543,34 +379,9 @@ HWTEST_F(DataStorageGtest, PdpProfileSelect_001, TestSize.Level1)
 HWTEST_F(DataStorageGtest, PdpProfileDelete_001, TestSize.Level1)
 {
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
-    ASSERT_TRUE(helper != nullptr);
-
-    int res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    int count = PdpProfileSelectAll(helper);
-    ASSERT_TRUE(count > 0);
-
-    // insert test data into database
-    int insertId = PdpProfileInsert(helper);
-    printf("PdpProfileInsert insertId: %d\n", insertId);
-    ASSERT_TRUE(insertId > 0);
-
-    NativeRdb::DataAbilityPredicates predicates;
-    predicates.EqualTo(PdpProfileData::PROFILE_NAME, "test_profile_name");
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 1);
-
-    // delete test data
-    res = PdpProfileDelete(helper);
-    ASSERT_EQ(res, 0);
-
-    resultSet = PdpProfileSelectOne(helper, predicates);
-    ASSERT_TRUE(resultSet != nullptr);
-    resultSet->GetRowCount(count);
-    ASSERT_EQ(count, 0);
+    if (helper != nullptr) {
+        PdpProfileDelete(helper);
+    }
 }
 #else // TEL_TEST_UNSUPPORT
 /**
