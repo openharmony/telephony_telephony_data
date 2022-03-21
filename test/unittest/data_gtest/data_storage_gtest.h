@@ -58,10 +58,7 @@ public:
     int SmsDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
     int PdpProfileInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
     int PdpProfileUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int PdpProfileSelectAll(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> PdpProfileSelectOne(
-        const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper,
-        NativeRdb::DataAbilityPredicates &predicates) const;
+    int PdpProfileSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
     int PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
 
 private:
