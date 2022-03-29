@@ -226,5 +226,5 @@ void PdpProfileAbility::ConvertPredicates(
 }
 
 REGISTER_AA(PdpProfileAbility);
-}  // namespace AppExecFwk
+}  // namespace Telephony
 }  // namespace OHOS

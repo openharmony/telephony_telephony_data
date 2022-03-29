@@ -84,6 +84,10 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateSimHelper()
 {
     if (simDataAbilityHelper == nullptr) {
         std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(SIM_URI);
+        if (dataAbilityUri == nullptr) {
+            DATA_STORAGE_LOGE("CreateSimHelper dataAbilityUri is nullptr");
+            return nullptr;
+        }
         simDataAbilityHelper = CreateDataAHelper(TELEPHONY_CORE_SERVICE_SYS_ABILITY_ID, dataAbilityUri);
     }
     return simDataAbilityHelper;
@@ -93,6 +97,10 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateSmsHelper()
 {
     if (smsDataAbilityHelper == nullptr) {
         std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(SMS_MMS_URI);
+        if (dataAbilityUri == nullptr) {
+            DATA_STORAGE_LOGE("CreateSmsHelper dataAbilityUri is nullptr");
+            return nullptr;
+        }
         smsDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
     }
     return smsDataAbilityHelper;
@@ -102,6 +110,10 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> CreatePdpProfileHelper()
 {
     if (pdpProfileDataAbilityHelper == nullptr) {
         std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(PDP_PROFILE_URI);
+        if (dataAbilityUri == nullptr) {
+            DATA_STORAGE_LOGE("CreatePdpProfileHelper dataAbilityUri is nullptr");
+            return nullptr;
+        }
         pdpProfileDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
     }
     return pdpProfileDataAbilityHelper;

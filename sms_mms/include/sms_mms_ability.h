@@ -81,6 +81,6 @@ private:
     bool initDatabaseDir = false;
     bool initRdbStore = false;
 };
-} // namespace OHOS
 } // namespace Telephony
+} // namespace OHOS
 #endif // DATA_STORAGE_SMS_MMS_ABILITY_H

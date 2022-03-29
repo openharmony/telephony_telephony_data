@@ -232,7 +232,7 @@ bool SmsMmsAbility::IsInitOk()
         DATA_STORAGE_LOGE("SmsMmsAbility::IsInitOk initDatabaseDir failed!");
     } else if (!initRdbStore) {
         DATA_STORAGE_LOGE("SmsMmsAbility::IsInitOk initRdbStore failed!");
-    };
+    }
     return initDatabaseDir && initRdbStore;
 }
 
