@@ -192,7 +192,7 @@ bool SimAbility::IsInitOk()
         DATA_STORAGE_LOGE("SimAbility::IsInitOk initDatabaseDir failed!");
     } else if (!initRdbStore) {
         DATA_STORAGE_LOGE("SimAbility::IsInitOk initRdbStore failed!");
-    };
+    }
     return initDatabaseDir && initRdbStore;
 }
 
@@ -251,5 +251,5 @@ void SimAbility::ConvertPredicates(
 }
 
 REGISTER_AA(SimAbility);
-}  // namespace AppExecFwk
+}  // namespace Telephony
 }  // namespace OHOS

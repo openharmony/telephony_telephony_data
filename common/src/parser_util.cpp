@@ -132,7 +132,7 @@ int ParserUtil::LoaderJsonFile(char *&content) const
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    content = (char *)malloc(len);
+    content = static_cast<char *>(malloc(len));
     if (content == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile malloc content fail!");
         CloseFile(f);
