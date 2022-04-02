@@ -30,7 +30,8 @@ void PdpProfileAbility::OnStart(const AppExecFwk::Want &want)
 {
     DATA_STORAGE_LOGI("PdpProfileAbility::OnStart\n");
     Ability::OnStart(want);
-    std::string path = GetDatabaseDir();
+    std::string path = GetAbilityContext()->GetDatabaseDir();
+    DATA_STORAGE_LOGI("GetDatabaseDir: %{public}s", path.c_str());
     if (!path.empty()) {
         initDatabaseDir = true;
         path.append("/");
