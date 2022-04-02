@@ -19,6 +19,7 @@ ohos_hap("Telephony_Data_Storage") {
   shared_libraries = [ ":tel_data_storage" ]
   certificate_profile = "./signature/datastorage.p7b"
   hap_name = "Telephony_Data_Storage"
+  module_install_dir = "app/com.ohos.telephonydataability"
   part_name = "data_storage"
   subsystem_name = "telephony"
 }
