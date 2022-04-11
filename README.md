@@ -22,7 +22,7 @@ The data storage module stores persistent data of key modules of the Telephony s
 
 **Figure 1** Architecture of the data storage module<a name="fig13267152558"></a> 
 
-![](figures/zh-cn_architecture-of-the-data-storage-module.png)
+![](figures/en-us_architecture-of-the-data-storage-module.png)
 
 ## Directory Structure<a name="section124mcpsimp"></a> 
 
