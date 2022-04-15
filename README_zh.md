@@ -79,9 +79,9 @@
 
 | 模块           | **所需权限**                                                 |
 | -------------- | ------------------------------------------------------------ |
-| 短彩信模块     | com.ohos.smsmmsability.DataAbilityShellProvider.PROVIDER     |
-| SIM卡模块      | com.ohos.simability.DataAbilityShellProvider.PROVIDER        |
-| 网络运营商模块 | com.ohos.pdpprofileability.DataAbilityShellProvider.PROVIDER |
+| 短彩信模块     | ohos.permission.READ_MESSAGES                                |
+| SIM卡模块      | ohos.permission.GET_TELEPHONY_STATE<br />ohos.permission.SET_TELEPHONY_STATE |
+| 网络运营商模块 | ohos.permission.GET_TELEPHONY_STATE<br />ohos.permission.SET_TELEPHONY_STATE |
 
 ## 使用说明<a name="section163mcpsimp"></a>
 
