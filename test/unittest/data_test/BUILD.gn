@@ -41,7 +41,7 @@ ohos_executable("tel_data_storage_test") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
   ]
