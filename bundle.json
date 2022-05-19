@@ -35,7 +35,9 @@
                 "common_event_service",
                 "dmsfwk_standard",
                 "hiviewdfx_hilog_native",
-                "native_appdatamgr",
+                "relational_store",
+                "dataability",
+                "preferences",
                 "safwk",
                 "utils_base"
             ],
