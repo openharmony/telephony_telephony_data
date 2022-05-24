@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base\telephony/data_storage/data_storage_aafwk.gni")
 import("//build/ohos.gni")
 SOURCE_DIR = "//base/telephony/data_storage"
 
@@ -25,8 +26,8 @@ ohos_executable("tel_data_storage_test") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_inner_api_path}/ability_manager:ability_manager",
+    "${aafwk_kits_path}/ability/native:abilitykit_native",
     "//utils/native/base:utils",
     "//utils/resources/systemres:systemres_hap",
   ]
