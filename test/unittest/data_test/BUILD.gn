@@ -29,7 +29,7 @@ ohos_executable("tel_data_storage_test") {
     "${aafwk_inner_api_path}/ability_manager:ability_manager",
     "${aafwk_kits_path}/ability/native:abilitykit_native",
     "//utils/native/base:utils",
-    "//utils/resources/systemres:systemres_hap",
+    "//utils/system_resources/systemres:systemres_hap",
   ]
 
   external_deps = [
