@@ -109,6 +109,10 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec)
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyJson LoaderJsonFile is fail!\n");
         return ret;
     }
+    if (content == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::content is nullptr!\n");
+        return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
     delete content;
@@ -146,7 +150,7 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec)
 
 void ParserUtil::ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root)
 {
-    for (int i = 0; i < root.size(); i++) {
+    for (int i = 0; i < (int)root.size(); i++) {
         Json::Value itemRoot = root[i];
         OpKey bean;
         Json::Value ruleRoot = itemRoot[ITEM_RULE];
