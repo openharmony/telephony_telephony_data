@@ -55,8 +55,8 @@ ohos_shared_library("tel_data_storage") {
   ]
 
   deps = [
-    "${aafwk_inner_api_path}/ability_manager:ability_manager",
-    "${aafwk_kits_path}/ability/native:abilitykit_native",
+    "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
+    "${ability_runtime_kits_path}/ability/native:abilitykit_native",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
