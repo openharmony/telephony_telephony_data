@@ -38,6 +38,7 @@ ohos_unittest("tel_data_storage_gtest") {
   deps = [
     "${aafwk_inner_api_path}/ability_manager:ability_manager",
     "${aafwk_path}/frameworks/native/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/native/ability/native:data_ability_helper",
     "//utils/native/base:utils",
   ]
 
