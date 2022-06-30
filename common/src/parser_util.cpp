@@ -55,7 +55,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 
 void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root)
 {
-    for (int i = 0; i < root.size(); i++) {
+    for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
         Json::Value itemRoot = root[i];
         PdpProfile bean;
         bean.profileName = itemRoot[ITEM_OPERATOR_NAME].asString();
