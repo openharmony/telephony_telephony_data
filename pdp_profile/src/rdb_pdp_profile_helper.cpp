@@ -15,9 +15,9 @@
 
 #include "rdb_pdp_profile_helper.h"
 
+#include "parser_util.h"
 #include "pdp_profile_data.h"
 #include "rdb_pdp_profile_callback.h"
-#include "parser_util.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -126,9 +126,8 @@ int RdbPdpProfileHelper::ResetApn()
 
 int RdbPdpProfileHelper::EndTransactionAction()
 {
-    int result = MarkAsCommit();
-    result = EndTransaction();
-    return result;
+    MarkAsCommit();
+    return EndTransaction();
 }
 
 int RdbPdpProfileHelper::CommitTransactionAction()

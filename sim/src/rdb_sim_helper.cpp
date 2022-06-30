@@ -15,8 +15,8 @@
 
 #include "rdb_sim_helper.h"
 
-#include "rdb_sim_callback.h"
 #include "data_storage_errors.h"
+#include "rdb_sim_callback.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -156,9 +156,8 @@ int32_t RdbSimHelper::UpdateCardStateByType(int32_t type, int32_t updateState, i
 
 int RdbSimHelper::EndTransactionAction()
 {
-    int result = MarkAsCommit();
-    result = EndTransaction();
-    return result;
+    MarkAsCommit();
+    return EndTransaction();
 }
 
 int RdbSimHelper::CommitTransactionAction()

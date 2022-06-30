@@ -15,14 +15,12 @@
 
 #include "parser_util.h"
 
+#include <climits>
 #include <cstdio>
 #include <cstring>
 
-#include <climits>
-
-#include "preferences_util.h"
 #include "data_storage_log_wrapper.h"
-
+#include "preferences_util.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -36,7 +34,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
-    delete content;
+    free(content);
     JSONCPP_STRING err;
     Json::Value root;
     Json::CharReaderBuilder builder;
