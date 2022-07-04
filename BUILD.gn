@@ -67,7 +67,7 @@ ohos_shared_library("tel_data_storage") {
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "preference:native_preference",
+    "preferences:native_preferences",
     "relational_store:native_appdatafwk",
     "relational_store:native_dataability",
     "relational_store:native_rdb",
