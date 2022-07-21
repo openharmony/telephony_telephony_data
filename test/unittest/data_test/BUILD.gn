@@ -45,7 +45,7 @@ ohos_executable("tel_data_storage_test") {
     "relational_store:native_rdb",
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
   defines += [
     "TELEPHONY_LOG_TAG = \"DataStorageUTest\"",
