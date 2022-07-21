@@ -29,13 +29,13 @@ ohos_executable("tel_data_storage_test") {
   deps = [
     "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
     "${ability_runtime_path}/frameworks/native/ability/native:abilitykit_native",
-    "//utils/native/base:utils",
     "//utils/system_resources/systemres:systemres_hap",
   ]
 
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
+    "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",

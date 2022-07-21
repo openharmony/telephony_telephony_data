@@ -42,12 +42,12 @@ ohos_unittest("tel_data_storage_gtest") {
     "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
     "${ability_runtime_path}/frameworks/native/ability/native:abilitykit_native",
     "${ability_runtime_path}/frameworks/native/ability/native:data_ability_helper",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
+    "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
