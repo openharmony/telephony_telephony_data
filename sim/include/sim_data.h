@@ -37,8 +37,8 @@ public:
     static constexpr const char *IS_CELLULAR_DATA_CARD = "is_cellular_data_card";
 };
 
-const std::string TABLE_SIM_INFO = "sim_info";
-const std::string SIM_URI = "dataability:///com.ohos.simability";
+constexpr const char *TABLE_SIM_INFO = "sim_info";
+constexpr const char *SIM_URI = "dataability:///com.ohos.simability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_SIM_DATA_H

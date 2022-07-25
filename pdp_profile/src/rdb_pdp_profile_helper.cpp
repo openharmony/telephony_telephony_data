@@ -104,7 +104,7 @@ int RdbPdpProfileHelper::ResetApn()
         int64_t id;
         Insert(id, value, TEMP_TABLE_PDP_PROFILE);
     }
-    ret = ExecuteSql("drop table " + TABLE_PDP_PROFILE);
+    ret = ExecuteSql("drop table " + std::string(TABLE_PDP_PROFILE));
     if (ret != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn drop table ret = %{public}d", ret);
         RollBack();

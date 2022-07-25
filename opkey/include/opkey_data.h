@@ -47,9 +47,9 @@ struct OpKey {
     int ruleId;
 };
 
-const std::string MCCMNC_INDEX = "mccmncIndex";
-const std::string TABLE_OPKEY_INFO = "opkey_info";
-const std::string OPKEY_URI = "dataability:///com.ohos.opkeyability";
+constexpr const char *MCCMNC_INDEX = "mccmncIndex";
+constexpr const char *TABLE_OPKEY_INFO = "opkey_info";
+constexpr const char *OPKEY_URI = "dataability:///com.ohos.opkeyability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_OPKEY_DATA_H

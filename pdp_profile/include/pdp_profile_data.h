@@ -91,9 +91,9 @@ enum class BearingSystemType {
     IS95AS
 };
 
-const std::string TABLE_PDP_PROFILE = "pdp_profile";
-const std::string TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
-const std::string PDP_PROFILE_URI = "dataability:///com.ohos.pdpprofileability";
+constexpr const char *TABLE_PDP_PROFILE = "pdp_profile";
+constexpr const char *TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
+constexpr const char *PDP_PROFILE_URI = "dataability:///com.ohos.pdpprofileability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_PDP_PROFILE_DATA_H
