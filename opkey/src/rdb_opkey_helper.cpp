@@ -58,7 +58,7 @@ void RdbOpKeyHelper::CreateOpKeyInfoTableStr(std::string &createTableStr)
     createTableStr.append(OpKeyData::SPN).append(" TEXT , ");
     createTableStr.append(OpKeyData::ICCID).append(" TEXT , ");
     createTableStr.append(OpKeyData::OPERATOR_NAME).append(" TEXT , ");
-    createTableStr.append(OpKeyData::OPERATOR_KEY).append(" INTEGER DEFAULT -1, ");
+    createTableStr.append(OpKeyData::OPERATOR_KEY).append(" TEXT DEFAULT '-1', ");
     createTableStr.append(OpKeyData::OPERATOR_KEY_EXT).append(" TEXT DEFAULT '', ");
     createTableStr.append(OpKeyData::RULE_ID).append(" INTEGER DEFAULT 0, ");
     createTableStr.append("UNIQUE (").append(OpKeyData::MCCMNC).append(", ");

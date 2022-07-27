@@ -17,14 +17,13 @@
 #define DATA_STORAGE_PDP_OPERATOR_PARSER_UTIL_H
 
 #include <iostream>
-#include <vector>
 #include <json/json.h>
+#include <vector>
 
-#include "rdb_store.h"
-
-#include "pdp_profile_data.h"
-#include "opkey_data.h"
 #include "data_storage_errors.h"
+#include "opkey_data.h"
+#include "pdp_profile_data.h"
+#include "rdb_store.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -33,7 +32,8 @@ public:
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
-    int ParserOpKeyJson(std::vector<OpKey> &vec);
+    bool ParseFromCustomSystem(std::vector<OpKey> &vec);
+    int ParserOpKeyJson(std::vector<OpKey> &vec, const char *path);
     void ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root);
     void ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const OpKey &bean);
 
@@ -67,7 +67,7 @@ private:
     const char *ITEM_MMS_IP_ADDRESS = "mms_ip_addr";
     const char *ITEM_HOME_URL = "home_url";
     const std::string APN_VERSION = "apn_version";
-    const char *OPKEY_INFO_PATH = "/system/etc/telephony/OpkeyInfo.json";
+    const char *OPKEY_INFO_PATH = "etc/telephony/OpkeyInfo.json";
     const char *ITEM_OPERATOR_ID = "operator_id";
     const char *ITEM_RULE = "rule";
     const char *ITEM_MCCMNC = "mcc_mnc";
@@ -79,9 +79,6 @@ private:
     const char *ITEM_OPERATOR_NAME_OPKEY = "operator_name";
     const char *ITEM_OPERATOR_KEY = "operator_key";
     const char *ITEM_OPERATOR_KEY_EXT = "operator_key_ext";
-    const std::string OPKEY_VERSION = "version";
-    const std::string SAVE_OPKEY_VERSION = "opkey_version";
-    const int DEFAULT_OPKEY_VERSION = -1;
 };
 } // namespace Telephony
 } // namespace OHOS

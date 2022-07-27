@@ -42,7 +42,7 @@ struct OpKey {
     std::string spn;
     std::string iccid;
     std::string operatorName;
-    int operatorKey;
+    std::string operatorKey;
     std::string operatorKeyExt;
     int ruleId;
 };

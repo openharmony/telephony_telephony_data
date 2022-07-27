@@ -49,8 +49,7 @@ void RdbOpKeyCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string
 {
     ParserUtil util;
     std::vector<OpKey> vec;
-    int resultCode = util.ParserOpKeyJson(vec);
-    if (resultCode != DATA_STORAGE_SUCCESS) {
+    if (!util.ParseFromCustomSystem(vec)) {
         return;
     }
     ClearData(rdbStore);
