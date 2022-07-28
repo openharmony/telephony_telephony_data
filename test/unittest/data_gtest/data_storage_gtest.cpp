@@ -115,14 +115,14 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> DataStorageGtest::CreateOpKeyHelp
 
 int DataStorageGtest::OpKeyInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
 {
-    int opkey = 110;
+    std::string opkey = "110";
     Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
     NativeRdb::ValuesBucket value;
     value.PutInt(OpKeyData::ID, 1);
     value.PutString(OpKeyData::MCCMNC, "460");
     value.PutString(OpKeyData::GID1, "gid1");
     value.PutString(OpKeyData::OPERATOR_NAME, "name");
-    value.PutInt(OpKeyData::OPERATOR_KEY, opkey);
+    value.PutString(OpKeyData::OPERATOR_KEY, opkey);
     return helper->Insert(uri, value);
 }
 

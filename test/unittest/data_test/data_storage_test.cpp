@@ -132,14 +132,14 @@ int SimSetCardByType(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 
 int OpKeyInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 {
-    int opkey = 1435;
+    std::string opkey = "1435";
     Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
     NativeRdb::ValuesBucket value;
     value.PutInt(OpKeyData::ID, 1);
     value.PutString(OpKeyData::MCCMNC, "46000");
     value.PutString(OpKeyData::GID1, "gid1");
     value.PutString(OpKeyData::OPERATOR_NAME, "Mobile");
-    value.PutInt(OpKeyData::OPERATOR_KEY, opkey);
+    value.PutString(OpKeyData::OPERATOR_KEY, opkey);
     return helper->Insert(uri, value);
 }
 

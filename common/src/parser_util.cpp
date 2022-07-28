@@ -18,10 +18,11 @@
 #include <climits>
 #include <cstdio>
 #include <cstring>
+#include <unistd.h>
 
+#include "config_policy_utils.h"
 #include "data_storage_log_wrapper.h"
 #include "preferences_util.h"
-
 namespace OHOS {
 namespace Telephony {
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
@@ -99,10 +100,32 @@ void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, 
     value.PutString(PdpProfileData::APN_ROAM_PROTOCOL, bean.roamPdpProtocol);
 }
 
-int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec)
+bool ParserUtil::ParseFromCustomSystem(std::vector<OpKey> &vec)
+{
+    DATA_STORAGE_LOGI("ParserUtil ParseFromCustomSystem");
+    CfgFiles *cfgFiles = GetCfgFiles(OPKEY_INFO_PATH);
+    if (cfgFiles == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil ParseFromCustomSystem cfgFiles is null");
+        return false;
+    }
+    char *filePath = nullptr;
+    int result = DATA_STORAGE_ERROR;
+    for (int32_t i = MAX_CFG_POLICY_DIRS_CNT - 1; i >= 0; i--) {
+        filePath = cfgFiles->paths[i];
+        if (filePath && *filePath != '\0') {
+            if (ParserOpKeyJson(vec, filePath) == DATA_STORAGE_SUCCESS) {
+                result = DATA_STORAGE_SUCCESS;
+            }
+        }
+    }
+    FreeCfgFiles(cfgFiles);
+    return result == DATA_STORAGE_SUCCESS;
+}
+
+int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
 {
     char *content = nullptr;
-    int ret = LoaderJsonFile(content, OPKEY_INFO_PATH);
+    int ret = LoaderJsonFile(content, path);
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyJson LoaderJsonFile is fail!\n");
         return ret;
@@ -123,20 +146,6 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec)
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
-    int version = -1;
-    std::string versionStr = root[OPKEY_VERSION].asString();
-    if (versionStr.empty()) {
-        version = -1;
-    } else {
-        version = atoi(versionStr.c_str());
-    }
-    int oldversion = PreferencesUtil::GetInstance()->ObtainInt(SAVE_OPKEY_VERSION, DEFAULT_OPKEY_VERSION);
-    DATA_STORAGE_LOGI("ParserUtil::ParserOpKeyJson version =  %{public}d oldversion = %{public}d", version, oldversion);
-    if (version == oldversion) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyJson version no change");
-        return VERSION_NO_CHANGE;
-    }
-    PreferencesUtil::GetInstance()->SaveInt(SAVE_OPKEY_VERSION, version);
     Json::Value itemRoots = root[ITEM_OPERATOR_ID];
     if (itemRoots.size() == 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos itemRoots size == 0!\n");
@@ -159,12 +168,7 @@ void ParserUtil::ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root)
         bean.spn = ruleRoot[ITEM_SPN].asString();
         bean.iccid = ruleRoot[ITEM_ICCID].asString();
         bean.operatorName = itemRoot[ITEM_OPERATOR_NAME_OPKEY].asString();
-        std::string operatorKeyStr = itemRoot[ITEM_OPERATOR_KEY].asString();
-        if (operatorKeyStr.empty()) {
-            bean.operatorKey = DEFAULT_OPKEY_VERSION;
-        } else {
-            bean.operatorKey = atoi(operatorKeyStr.c_str());
-        }
+        bean.operatorKey = itemRoot[ITEM_OPERATOR_KEY].asString();
         bean.operatorKeyExt = itemRoot[ITEM_OPERATOR_KEY_EXT].asString();
         int ruleId = static_cast<int32_t>(RuleID::RULE_EMPTY);
         if (!bean.mccmnc.empty()) {
@@ -199,7 +203,7 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
     value.PutString(OpKeyData::SPN, bean.spn);
     value.PutString(OpKeyData::ICCID, bean.iccid);
     value.PutString(OpKeyData::OPERATOR_NAME, bean.operatorName);
-    value.PutInt(OpKeyData::OPERATOR_KEY, bean.operatorKey);
+    value.PutString(OpKeyData::OPERATOR_KEY, bean.operatorKey);
     value.PutString(OpKeyData::OPERATOR_KEY_EXT, bean.operatorKeyExt);
     value.PutInt(OpKeyData::RULE_ID, bean.ruleId);
 }
