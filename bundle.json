@@ -45,10 +45,16 @@
             ]
         },
         "build": {
-            "sub_component": [
-                "//base/telephony/data_storage:tel_data_storage",
-                "//base/telephony/data_storage:Telephony_Data_Storage"
-            ],
+            "group_type": {
+                "base_group": [
+                ],
+                "fwk_group": [
+                ],
+                "service_group": [
+                    "//base/telephony/data_storage:tel_data_storage",
+                    "//base/telephony/data_storage:Telephony_Data_Storage"
+                ]
+            },
             "inner_kits": [
             ],
             "test": [
