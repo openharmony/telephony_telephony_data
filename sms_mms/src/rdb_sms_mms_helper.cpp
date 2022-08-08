@@ -162,18 +162,30 @@ int RdbSmsMmsHelper::InsertSmsMmsInfo(int64_t &id, const NativeRdb::ValuesBucket
 
 int32_t RdbSmsMmsHelper::BatchInsertSmsMmsInfo(int64_t &id, const std::vector<NativeRdb::ValuesBucket> &values)
 {
-    int32_t ret = BeginTransaction();
-    if (ret != NativeRdb::E_OK) {
-        return ret;
+    int32_t result = BeginTransaction();
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("RdbSmsMmsHelper::BatchInsertSmsMmsInfo BeginTransaction is error!");
+        return result;
     }
     for (const NativeRdb::ValuesBucket &item : values) {
-        ret = InsertSmsMmsInfo(id, item);
-        if (ret != NativeRdb::E_OK) {
-            break;
+        result = InsertSmsMmsInfo(id, item);
+        if (result != NativeRdb::E_OK) {
+            DATA_STORAGE_LOGE("RdbSmsMmsHelper::InsertSmsMmsInfo error result = %{public}d", result);
+            RollBack();
+            return result;
         }
     }
-    ret = EndTransaction();
-    return ret;
+    result = CommitTransactionAction();
+    return result;
+}
+
+int RdbSmsMmsHelper::CommitTransactionAction()
+{
+    int result = Commit();
+    if (result != NativeRdb::E_OK) {
+        RollBack();
+    }
+    return result;
 }
 
 std::unique_ptr<NativeRdb::AbsSharedResultSet> RdbSmsMmsHelper::QueryMaxGroupId()
