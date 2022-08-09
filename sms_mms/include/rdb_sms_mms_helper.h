@@ -52,6 +52,13 @@ public:
     int32_t BatchInsertSmsMmsInfo(int64_t &id, const std::vector<NativeRdb::ValuesBucket> &values);
 
     /**
+     * Commit the transaction action
+     *
+     * @return 0 is succeed else failed
+     */
+    int CommitTransactionAction();
+
+    /**
      * Statistics sms_mms_info table unread quantity
      *
      * @return unique_ptr<NativeRdb::AbsSharedResultSet>

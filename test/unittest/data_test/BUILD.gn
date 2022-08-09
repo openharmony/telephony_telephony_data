@@ -29,6 +29,8 @@ ohos_executable("tel_data_storage_test") {
   deps = [
     "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
     "${ability_runtime_path}/frameworks/native/ability/native:abilitykit_native",
+    "${ability_runtime_path}/frameworks/native/ability/native:data_ability_helper",
+    "//utils/native/base:utils",
     "//utils/system_resources/systemres:systemres_hap",
   ]
 
@@ -47,7 +49,7 @@ ohos_executable("tel_data_storage_test") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
-  defines += [
+  defines = [
     "TELEPHONY_LOG_TAG = \"DataStorageUTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]

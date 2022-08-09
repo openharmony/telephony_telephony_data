@@ -202,6 +202,22 @@ int DataStorageGtest::SimDelete(const std::shared_ptr<AppExecFwk::DataAbilityHel
     return helper->Delete(uri, predicates);
 }
 
+int DataStorageGtest::SmsBatchInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+{
+    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    std::vector<NativeRdb::ValuesBucket> values;
+    NativeRdb::ValuesBucket value;
+    int batchNum = 100;
+    for (int i = 0; i < batchNum; i++) {
+        value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
+        value.PutString(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
+        value.PutInt(SmsMmsInfo::GROUP_ID, 1);
+        values.push_back(value);
+        value.Clear();
+    }
+    return helper->BatchInsert(uri, values);
+}
+
 int DataStorageGtest::SmsInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
 {
     Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
@@ -400,6 +416,19 @@ HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     if (helper != nullptr) {
         SimDelete(helper);
+    }
+}
+
+/**
+ * @tc.number   SmsBatchInsert_001
+ * @tc.name     batch insert sms data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, SmsBatchInsert_001, TestSize.Level1)
+{
+    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
+    if (helper != nullptr) {
+        SmsBatchInsert(helper);
     }
 }
 

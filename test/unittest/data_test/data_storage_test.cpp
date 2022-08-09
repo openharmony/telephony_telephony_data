@@ -221,6 +221,22 @@ int SimDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
     return helper->Delete(uri, predicates);
 }
 
+int SmsBatchInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+{
+    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    std::vector<NativeRdb::ValuesBucket> values;
+    NativeRdb::ValuesBucket value;
+    int batchNum = 100;
+    for (int i = 0; i < batchNum; i++) {
+        value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
+        value.PutString(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
+        value.PutInt(SmsMmsInfo::GROUP_ID, 1);
+        values.push_back(value);
+        value.Clear();
+    }
+    return helper->BatchInsert(uri, values);
+}
+
 int SmsInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
 {
     Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
@@ -325,6 +341,7 @@ void Init()
     g_smsFuncMap['y'] = SmsUpdate;
     g_smsFuncMap['u'] = SmsSelect;
     g_smsFuncMap['i'] = SmsDelete;
+    g_smsFuncMap['p'] = SmsBatchInsert;
     g_pdpProfileFuncMap['a'] = PdpProfileInsert;
     g_pdpProfileFuncMap['s'] = PdpProfileUpdate;
     g_pdpProfileFuncMap['d'] = PdpProfileDelete;
@@ -401,31 +418,31 @@ void ResourceTest()
 
 void PrintfHint()
 {
-    printf(
-        "\n**********Unit Test Start**********\n"
-        "usage: please input a cmd num:\n"
-        "q:SimInsert()\n"
-        "w:SimUpdate()\n"
-        "e:SimSelect()\n"
-        "r:SimDelete()\n"
-        "o:SimSetCardByType()\n"
-        "t:SmsInsert()\n"
-        "y:SmsUpdate()\n"
-        "u:SmsSelect()\n"
-        "i:SmsDelete()\n"
-        "a:PdpProfileInsert()\n"
-        "s:PdpProfileUpdate()\n"
-        "d:PdpProfileDelete()\n"
-        "f:PdpProfileSelect()\n"
-        "h:PdpProfileReset()\n"
-        "g:ResourceTest()\n"
-        "x:OpKeyInsert()\n"
-        "c:OpKeyUpdate()\n"
-        "v:OpKeySelect()\n"
-        "b:OpKeyDelete()\n"
-        "z:exit\n"
-        "***********************************\n"
-        "your choice: ");
+    printf("\n**********Unit Test Start**********\n"
+           "usage: please input a cmd num:\n"
+           "q:SimInsert()\n"
+           "w:SimUpdate()\n"
+           "e:SimSelect()\n"
+           "r:SimDelete()\n"
+           "o:SimSetCardByType()\n"
+           "t:SmsInsert()\n"
+           "y:SmsUpdate()\n"
+           "u:SmsSelect()\n"
+           "i:SmsDelete()\n"
+           "p:SmsBatchInsert()\n"
+           "a:PdpProfileInsert()\n"
+           "s:PdpProfileUpdate()\n"
+           "d:PdpProfileDelete()\n"
+           "f:PdpProfileSelect()\n"
+           "h:PdpProfileReset()\n"
+           "g:ResourceTest()\n"
+           "x:OpKeyInsert()\n"
+           "c:OpKeyUpdate()\n"
+           "v:OpKeySelect()\n"
+           "b:OpKeyDelete()\n"
+           "z:exit\n"
+           "***********************************\n"
+           "your choice: ");
 }
 
 void Looper()
