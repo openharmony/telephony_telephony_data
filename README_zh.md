@@ -33,6 +33,9 @@
 ├─ common                           # 公共、通用文件
 │  ├─ include                       
 │  └─ src                           
+├─ opkey                            # 随卡框架
+│  ├─ include
+│  └─ src
 ├─ pdp_profile                      # 网络运营商
 │  ├─ include                       
 │  └─ src                           
@@ -82,6 +85,7 @@
 | 短彩信模块     | ohos.permission.READ_MESSAGES                                |
 | SIM卡模块      | ohos.permission.GET_TELEPHONY_STATE<br />ohos.permission.SET_TELEPHONY_STATE |
 | 网络运营商模块 | ohos.permission.GET_TELEPHONY_STATE<br />ohos.permission.SET_TELEPHONY_STATE |
+| 随卡框架模块 | ohos.permission.GET_TELEPHONY_STATE<br />ohos.permission.SET_TELEPHONY_STATE |
 
 ## 使用说明<a name="section163mcpsimp"></a>
 
