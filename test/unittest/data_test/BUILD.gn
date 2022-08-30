@@ -30,7 +30,6 @@ ohos_executable("tel_data_storage_test") {
     "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
     "${ability_runtime_path}/frameworks/native/ability/native:abilitykit_native",
     "${ability_runtime_path}/frameworks/native/ability/native:data_ability_helper",
-    "//utils/native/base:utils",
     "//utils/system_resources/systemres:systemres_hap",
   ]
 
