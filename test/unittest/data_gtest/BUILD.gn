@@ -34,9 +34,6 @@ ohos_unittest("tel_data_storage_gtest") {
     "TELEPHONY_LOG_TAG = \"DataStorageGtest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
-  if ("${product_name}" == "rk3568" || "${product_name}" == "DAYU") {
-    defines += [ "TEL_TEST_UNSUPPORT" ]
-  }
 
   deps = [
     "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
