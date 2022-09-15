@@ -64,15 +64,11 @@ ohos_shared_library("tel_data_storage") {
     "ability_base:want",
     "ability_base:zuri",
     "c_utils:utils",
-    "common_event_service:cesfwk_innerkits",
     "config_policy:configpolicy_util",
-    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "preferences:native_preferences",
-    "relational_store:native_appdatafwk",
     "relational_store:native_dataability",
     "relational_store:native_rdb",
-    "safwk:system_ability_fwk",
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"DataStorage\"",
