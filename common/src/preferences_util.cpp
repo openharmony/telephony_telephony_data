@@ -17,12 +17,10 @@
 
 #include "preferences.h"
 #include "preferences_helper.h"
+#include "preferences_observer.h"
 #include "string"
 
 namespace OHOS {
-namespace NativePreferences {
-class PreferencesObserver;
-}
 namespace Telephony {
 PreferencesUtil::PreferencesUtil() {}
 PreferencesUtil::~PreferencesUtil() {}

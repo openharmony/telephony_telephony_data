@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,10 +60,10 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::AUTH_TYPE).append(" INTEGER, ");
     createTableStr.append(PdpProfileData::AUTH_USER).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::AUTH_PWD).append(" TEXT DEFAULT '', ");
-    createTableStr.append(PdpProfileData::APN_TYPES).append(" INTEGER, ");
+    createTableStr.append(PdpProfileData::APN_TYPES).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::IS_ROAMING_APN).append(" INTEGER, ");
-    createTableStr.append(PdpProfileData::APN_PROTOCOL).append(" INTEGER, ");
-    createTableStr.append(PdpProfileData::APN_ROAM_PROTOCOL).append(" INTEGER, ");
+    createTableStr.append(PdpProfileData::APN_PROTOCOL).append(" TEXT DEFAULT '', ");
+    createTableStr.append(PdpProfileData::APN_ROAM_PROTOCOL).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::HOME_URL).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MMS_IP_ADDRESS).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append(" TEXT DEFAULT '', ");
