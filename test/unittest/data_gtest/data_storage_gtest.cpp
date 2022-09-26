@@ -410,6 +410,7 @@ HWTEST_F(DataStorageGtest, SimSelect_001, TestSize.Level1)
  * @tc.number   SimDelete_001
  * @tc.name     delete sim data
  * @tc.desc     Function test
+ * @tc.require: I5LACE
  */
 HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
 {
@@ -423,6 +424,7 @@ HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
  * @tc.number   SmsBatchInsert_001
  * @tc.name     batch insert sms data
  * @tc.desc     Function test
+ * @tc.require: I5LACE
  */
 HWTEST_F(DataStorageGtest, SmsBatchInsert_001, TestSize.Level1)
 {
@@ -436,6 +438,7 @@ HWTEST_F(DataStorageGtest, SmsBatchInsert_001, TestSize.Level1)
  * @tc.number   SmsInsert_001
  * @tc.name     insert sms data
  * @tc.desc     Function test
+ * @tc.require: I5LACE
  */
 HWTEST_F(DataStorageGtest, SmsInsert_001, TestSize.Level1)
 {
@@ -475,6 +478,7 @@ HWTEST_F(DataStorageGtest, SmsSelect_001, TestSize.Level1)
  * @tc.number   SmsDelete_001
  * @tc.name     delete sms data
  * @tc.desc     Function test
+ * @tc.require: I5LACE
  */
 HWTEST_F(DataStorageGtest, SmsDelete_001, TestSize.Level1)
 {
