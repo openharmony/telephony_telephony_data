@@ -57,11 +57,12 @@ private:
 #define TELEPHONY_LOG_TAG "DataStorage"
 #endif
 
-#ifndef DATA_LOG_DOMAIN
-#define DATA_LOG_DOMAIN 0xD001F08
+#ifndef LOG_DOMAIN
+#define LOG_DOMAIN 0xD001F08
 #endif
 
-static constexpr OHOS::HiviewDFX::HiLogLabel DATA_STORAGE_LABEL = {LOG_CORE, DATA_LOG_DOMAIN, TELEPHONY_LOG_TAG};
+static constexpr OHOS::HiviewDFX::HiLogLabel DATA_STORAGE_LABEL = {LOG_CORE, LOG_DOMAIN,
+    TELEPHONY_LOG_TAG};
 
 #define DATA_STORAGE_FILENAME (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
 

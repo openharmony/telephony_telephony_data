@@ -53,7 +53,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     JSONCPP_STRING err;
     Json::Value root;
     Json::CharReaderBuilder builder;
-    Json::CharReader* reader(builder.newCharReader());
+    Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson reader is error!\n");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
@@ -87,8 +87,8 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
         bean.apn = itemRoot[ITEM_APN].asString();
         bean.apnTypes = itemRoot[ITEM_APN_TYPES].asString();
         bean.mmsIpAddress = itemRoot[ITEM_MMS_IP_ADDRESS].asString();
-        bean.proxyIpAddress =  itemRoot[ITEM_IP_ADDRESS].asString();
-        bean.homeUrl =  itemRoot[ITEM_HOME_URL].asString();
+        bean.proxyIpAddress = itemRoot[ITEM_IP_ADDRESS].asString();
+        bean.homeUrl = itemRoot[ITEM_HOME_URL].asString();
         vec.push_back(bean);
     }
 }
@@ -154,7 +154,7 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
     JSONCPP_STRING err;
     Json::Value root;
     Json::CharReaderBuilder builder;
-    Json::CharReader* reader(builder.newCharReader());
+    Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos reader is error!\n");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
@@ -225,7 +225,7 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
 int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
 {
     size_t len = 0;
-    char realPath[PATH_MAX] = {0x00};
+    char realPath[PATH_MAX] = { 0x00 };
     if (realpath(path, realPath) == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile realpath fail! #PATH: %{public}s", path);
         return static_cast<int>(LoadProFileErrorType::REALPATH_FAIL);
