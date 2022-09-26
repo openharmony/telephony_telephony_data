@@ -248,22 +248,30 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    if (len == 0 || len > ULONG_MAX) {
+    if (len == 0 || len > MAX_BYTE_LEN) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile len <= 0 or len > LONG_MAX!");
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    content = static_cast<char *>(malloc(len));
+    content = static_cast<char *>(malloc(len + 1));
     if (content == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile malloc content fail!");
+        CloseFile(f);
+        return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
+    }
+    if (memset_s(content, len + 1, 0, len + 1) != EOK) {
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile memset_s failed");
+        free(content);
+        content = nullptr;
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     size_t ret_read = fread(content, 1, len, f);
     if (ret_read != len) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
-        CloseFile(f);
         free(content);
+        content = nullptr;
+        CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     return CloseFile(f);

@@ -85,6 +85,7 @@ private:
     const char *ITEM_OPERATOR_NAME_OPKEY = "operator_name";
     const char *ITEM_OPERATOR_KEY = "operator_key";
     const char *ITEM_OPERATOR_KEY_EXT = "operator_key_ext";
+    const int MAX_BYTE_LEN = 10 * 1024 * 1024;
 };
 } // namespace Telephony
 } // namespace OHOS
