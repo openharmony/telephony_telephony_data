@@ -1,10 +1,10 @@
 {
-    "name": "@ohos/data_storage",
+    "name": "@ohos/telephony_data",
     "version": "3.1.0",
     "description": "telephony data storage service",
     "publishAs": "code-segment",
     "homePage": "https://gitee.com/openharmony",
-    "repository": "https://gitee.com/openharmony/telephony_data_storage",
+    "repository": "https://gitee.com/openharmony/telephony_telephony_data",
     "license": "Apache License 2.0",
     "language": "",
     "private": false,
@@ -14,10 +14,10 @@
     "author": {},
     "contributors": [],
     "segment": {
-        "destPath": "base/telephony/data_storage"
+        "destPath": "base/telephony/telephony_data"
     },
     "component": {
-        "name": "data_storage",
+        "name": "telephony_data",
         "subsystem": "telephony",
         "syscap": [
             "SystemCapability.Telephony.DataStorage"
@@ -49,14 +49,14 @@
                 "fwk_group": [
                 ],
                 "service_group": [
-                    "//base/telephony/data_storage:tel_data_storage",
-                    "//base/telephony/data_storage:Telephony_Data_Storage"
+                    "//base/telephony/telephony_data:tel_telephony_data",
+                    "//base/telephony/telephony_data:Telephony_Telephony_Data"
                 ]
             },
             "inner_kits": [
             ],
             "test": [
-                "//base/telephony/data_storage/test:unittest"
+                "//base/telephony/telephony_data/test:unittest"
             ]
         }
     }
