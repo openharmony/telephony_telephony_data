@@ -1,5 +1,5 @@
 {
-    "name": "@ohos/data_storage",
+    "name": "@ohos/telephony_data",
     "version": "3.1.0",
     "description": "telephony data storage service",
     "publishAs": "code-segment",
@@ -50,7 +50,7 @@
                 ],
                 "service_group": [
                     "//base/telephony/telephony_data:tel_telephony_data",
-                    "//base/telephony/telephony_data:Telephony_Telephony_Data"
+                    "//base/telephony/telephony_data:Telephony_Data_Storage"
                 ]
             },
             "inner_kits": [

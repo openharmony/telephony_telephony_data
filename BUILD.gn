@@ -15,11 +15,11 @@ import("//base/telephony/telephony_data/data_storage_ability_runtime.gni")
 import("//build/ohos.gni")
 SOURCE_DIR = "//base/telephony/telephony_data"
 
-ohos_hap("Telephony_Telephony_Data") {
+ohos_hap("Telephony_Data_Storage") {
   hap_profile = "./config/config.json"
   shared_libraries = [ ":tel_telephony_data" ]
   certificate_profile = "./signature/datastorage.p7b"
-  hap_name = "Telephony_Telephony_Data"
+  hap_name = "Telephony_Data_Storage"
   module_install_dir = "app/com.ohos.telephonydataability"
   part_name = "telephony_data"
   subsystem_name = "telephony"
