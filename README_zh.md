@@ -3,9 +3,7 @@
 -   [简介](#section117mcpsimp)
 -   [目录](#section124mcpsimp)
 -   [约束](#section128mcpsimp)
--   [说明](#section134mcpsimp)
-    -   [接口说明](#section136mcpsimp)
-    -   [权限说明](#section137mcpsimp)
+-   [接口说明](#section136mcpsimp)
 
 -   [使用说明](#section163mcpsimp)
     -   [插入接口参数说明](#section1099113151207)
@@ -13,14 +11,14 @@
     -   [更新接口参数说明](#section1099113151207)
     -   [查询接口参数说明](#section1096113151208)
     -   [接口调用代码示例](#section1558565082915)
-    
+
 -   [相关仓](#section206mcpsimp)
 
 ## 简介<a name="section117mcpsimp"></a>
 
 数据库及持久化模块负责电话服务子系统中的SIM卡/短彩信等模块持久化数据存储，提供DataAbility访问接口。
 
-**图 1**  数据库及持久化架构图<a name="fig13267152558"></a>  
+**图 1**  数据库及持久化架构图<a name="fig13267152558"></a>
 
 ![](figures/zh-cn_architecture-of-the-data-storage-module.png)
 
@@ -28,25 +26,26 @@
 
 ```
 /base/telephony/data_storage     # 数据库及持久化
-├─ BUILD.gn                         # 编译gn脚本
-├─ README.md                        # Readme文档
-├─ common                           # 公共、通用文件
-│  ├─ include                       
-│  └─ src                           
+├─ common                           # 通用文件
+│  ├─ include                      # 头文件目录
+│  └─ src                          # 实现代码目录
+├─ config                           # config.json配置文件
+├─ figures                          # Readme资源文件
 ├─ opkey                            # 随卡框架
-│  ├─ include
-│  └─ src
+│  ├─ include　　　　              # 头文件目录
+│  └─ src　　　　　　              # 实现代码目录
 ├─ pdp_profile                      # 网络运营商
-│  ├─ include                       
-│  └─ src                           
+│  ├─ include                      # 头文件目录
+│  └─ src                          # 实现代码目录
+├─ signature                        # 签名文件
 ├─ sim                              # sim卡
-│  ├─ include                       
-│  └─ src                           
+│  ├─ include                      # 头文件目录
+│  └─ src                          # 实现代码目录
 ├─ sms_mms                          # 短彩信
-│  ├─ include                      
-│  └─ src                           
-├─ ohos.build                       # 编译build
+│  ├─ include                      # 头文件目录
+│  └─ src                          # 实现代码目录
 └─ test                             # 测试相关
+   └── unit_test                   # 单元测试相关代码
 ```
 
 ## 约束<a name="section128mcpsimp"></a>
@@ -60,8 +59,6 @@
 - 使用场景：当用户需要获取电话服务子系统中的SIM卡/短彩信等模块持久化数据时,可通过DataAbilityHelper提供的增/删/改/查接口来获取数据。
 
   访问时需要提供对应的权限和URI。
-
-## 说明<a name="section134mcpsimp"></a>
 
 ### 接口说明<a name="section136mcpsimp"></a>
 
