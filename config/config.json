@@ -21,7 +21,8 @@
         "deviceType": [
             "tv",
             "car",
-            "default"
+            "default",
+            "tablet"
         ],
         "distro": {
             "deliveryWithInstall": true,
