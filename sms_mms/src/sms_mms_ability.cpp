@@ -37,7 +37,12 @@ void SmsMmsAbility::OnStart(const AppExecFwk::Want &want)
 {
     DATA_STORAGE_LOGI("SmsMmsAbility::OnStart\n");
     Ability::OnStart(want);
-    std::string path = GetAbilityContext()->GetDatabaseDir();
+    auto abilityContext = GetAbilityContext();
+    if (abilityContext == nullptr) {
+        DATA_STORAGE_LOGE("SmsMmsAbility::OnStart GetAbilityContext is null");
+        return;
+    }
+    std::string path = abilityContext->GetDatabaseDir();
     DATA_STORAGE_LOGI("GetDatabaseDir: %{public}s", path.c_str());
     if (!path.empty()) {
         initDatabaseDir = true;
