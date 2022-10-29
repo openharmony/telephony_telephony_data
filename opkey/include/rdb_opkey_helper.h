@@ -73,7 +73,6 @@ private:
 private:
     const std::string DB_NAME = "opkey.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;
-    const int VERSION = 1;
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace Telephony {
+const int VERSION = 1;
 RdbOpKeyHelper::RdbOpKeyHelper()
 {
 }
@@ -80,9 +81,8 @@ void RdbOpKeyHelper::CreateOpKeyInfoIndexStr(std::string &createIndexStr)
 
 int RdbOpKeyHelper::EndTransactionAction()
 {
-    int result = MarkAsCommit();
-    result = EndTransaction();
-    return result;
+    MarkAsCommit();
+    return EndTransaction();
 }
 
 int RdbOpKeyHelper::CommitTransactionAction()
