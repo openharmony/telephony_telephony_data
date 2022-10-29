@@ -13,38 +13,38 @@
     -   [Parameters of the Update API](#section1099113151207)
     -   [Parameters of the Query API](#section1096113151208)
     -   [Sample Code](#section1558565082915)
-    
+
 -   [Repositories Involved](#section206mcpsimp)
 
 ## Introduction<a name="section117mcpsimp"></a>
 
 The data storage module stores persistent data of key modules of the Telephony subsystem, such as the SIM cards and SMS modules, and provides the **DataAbility** API for data access.
 
-**Figure 1** Architecture of the data storage module<a name="fig13267152558"></a> 
+**Figure 1** Architecture of the data storage module<a name="fig13267152558"></a>
 
 ![](figures/en-us_architecture-of-the-data-storage-module.png)
 
-## Directory Structure<a name="section124mcpsimp"></a> 
+## Directory Structure<a name="section124mcpsimp"></a>
 
 ```
 /base/telephony/data_storage     # Data storage
 ├─ BUILD.gn                         # Build script (gn)
 ├─ README.md                        # Readme
 ├─ common                           # Public and common files
-│  ├─ include                       
-│  └─ src                           
+│  ├─ include
+│  └─ src
 ├─ opkey                            # opkey framework
 │  ├─ include
 │  └─ src
 ├─ pdp_profile                      # Network carrier
-│  ├─ include                       
-│  └─ src                           
+│  ├─ include
+│  └─ src
 ├─ sim                              # SIM card
-│  ├─ include                       
-│  └─ src                           
+│  ├─ include
+│  └─ src
 ├─ sms_mms                          # SMS/MMS
-│  ├─ include                      
-│  └─ src                           
+│  ├─ include
+│  └─ src
 ├─ ohos.build                       # Build code
 └─ test                             # Test code
 ```
@@ -142,7 +142,7 @@ The following provides the procedure and sample code for you to query, insert, d
 1. Call **SystemAbilityManagerClient** to obtain a **SystemAbilityManager** object.
 2. Call **saManager** to obtain an **IRemoteObject** object based on the specified service ID.
 3. Call **IRemoteObject** to create a **DataAbilityHelper** object.
-4. Call **DataAbilityHelper::Query** to query data, and call the other related APIs to process data. 
+4. Call **DataAbilityHelper::Query** to query data, and call the other related APIs to process data.
 
    Sample code for creating a **DataAbilityHelper** instance:
    ```
@@ -167,7 +167,7 @@ The following provides the procedure and sample code for you to query, insert, d
    Sample code for querying SMS/MMS messages:
    ```
    std::shared_ptr<NativeRdb::AbsSharedResultSet> SmsSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
-   {	
+   {
        // Resource path
        Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
        // Fields in the query result
