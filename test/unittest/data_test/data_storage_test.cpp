@@ -51,7 +51,7 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(
         return nullptr;
     }
     auto remoteObj = saManager->GetSystemAbility(systemAbilityId);
-    while (remoteObj == nullptr) {
+    if (remoteObj == nullptr) {
         DATA_STORAGE_LOGE("DataSimRdbHelper GetSystemAbility Service Failed.");
         return nullptr;
     }
