@@ -84,10 +84,9 @@ private:
 private:
     RdbOpKeyHelper helper_;
     std::mutex lock_;
-    std::map<std::string, OpKeyUriType> opKeyUriMap;
-    bool initDatabaseDir = false;
-    bool initRdbStore = false;
-    int CHANGED_ROWS = 0;
+    std::map<std::string, OpKeyUriType> opKeyUriMap_;
+    bool initDatabaseDir_ = false;
+    bool initRdbStore_ = false;
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -33,6 +33,7 @@ namespace OHOS {
 using AppExecFwk::AbilityLoader;
 using AppExecFwk::Ability;
 namespace Telephony {
+const int32_t CHANGED_ROWS = 0;
 void OpKeyAbility::OnStart(const AppExecFwk::Want &want)
 {
     DATA_STORAGE_LOGI("OpKeyAbility::OnStart\n");
@@ -45,19 +46,19 @@ void OpKeyAbility::OnStart(const AppExecFwk::Want &want)
     std::string path = abilityContext->GetDatabaseDir();
     DATA_STORAGE_LOGI("GetDatabaseDir: %{public}s", path.c_str());
     if (!path.empty()) {
-        initDatabaseDir = true;
+        initDatabaseDir_ = true;
         path.append("/");
         helper_.UpdateDbPath(path);
         InitUriMap();
         int rdbInitCode = helper_.Init();
         if (rdbInitCode == NativeRdb::E_OK) {
-            initRdbStore = true;
+            initRdbStore_ = true;
         } else {
             DATA_STORAGE_LOGE("OpKeyAbility::OnStart rdb init failed!");
-            initRdbStore = false;
+            initRdbStore_ = false;
         }
     } else {
-        initDatabaseDir = false;
+        initDatabaseDir_ = false;
         DATA_STORAGE_LOGE("OpKeyAbility::OnStart##the databaseDir is empty!");
     }
 }
@@ -164,12 +165,12 @@ int OpKeyAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates 
 
 bool OpKeyAbility::IsInitOk()
 {
-    if (!initDatabaseDir) {
-        DATA_STORAGE_LOGE("OpKeyAbility::IsInitOk initDatabaseDir failed!");
+    if (!initDatabaseDir_) {
+        DATA_STORAGE_LOGE("OpKeyAbility::IsInitOk initDatabaseDir_ failed!");
         return false;
     }
-    if (!initRdbStore) {
-        DATA_STORAGE_LOGE("OpKeyAbility::IsInitOk initRdbStore failed!");
+    if (!initRdbStore_) {
+        DATA_STORAGE_LOGE("OpKeyAbility::IsInitOk initRdbStore_ failed!");
         return false;
     }
     return true;
@@ -177,7 +178,7 @@ bool OpKeyAbility::IsInitOk()
 
 void OpKeyAbility::InitUriMap()
 {
-    opKeyUriMap = {
+    opKeyUriMap_ = {
         {"/opkey/opkey_info", OpKeyUriType::OPKEY_INFO}
     };
 }
@@ -208,8 +209,8 @@ OpKeyUriType OpKeyAbility::ParseUriType(Uri &uri)
         std::string path = tempUri.GetPath();
         if (!path.empty()) {
             DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##path = %{public}s\n", path.c_str());
-            std::map<std::string, OpKeyUriType>::iterator it = opKeyUriMap.find(path);
-            if (it != opKeyUriMap.end()) {
+            std::map<std::string, OpKeyUriType>::iterator it = opKeyUriMap_.find(path);
+            if (it != opKeyUriMap_.end()) {
                 opKeyUriType = it->second;
                 DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##opKeyUriType = %{public}d\n",
                     opKeyUriType);
