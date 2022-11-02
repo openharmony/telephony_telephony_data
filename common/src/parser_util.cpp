@@ -39,6 +39,34 @@
 
 namespace OHOS {
 namespace Telephony {
+const char *PATH = "/system/etc/telephony/pdp_profile.json";
+const char *ITEM_OPERATOR_INFOS = "operator_infos";
+const char *ITEM_OPERATOR_NAME = "operator_name";
+const char *ITEM_AUTH_USER = "auth_user";
+const char *ITEM_AUTH_PWD = "auth_pwd";
+const char *ITEM_AUTH_TYPE = "auth_type";
+const char *ITEM_MCC = "mcc";
+const char *ITEM_MNC = "mnc";
+const char *ITEM_APN = "apn";
+const char *ITEM_APN_TYPES = "apn_types";
+const char *ITEM_IP_ADDRESS = "ip_addr";
+const char *ITEM_MMS_IP_ADDRESS = "mms_ip_addr";
+const char *ITEM_HOME_URL = "home_url";
+const char *APN_VERSION = "apn_version";
+const char *OPKEY_INFO_PATH = "etc/telephony/OpkeyInfo.json";
+const char *ITEM_OPERATOR_ID = "operator_id";
+const char *ITEM_RULE = "rule";
+const char *ITEM_MCCMNC = "mcc_mnc";
+const char *ITEM_GID_ONE = "gid1";
+const char *ITEM_GID_TWO = "gid2";
+const char *ITEM_IMSI = "imsi";
+const char *ITEM_SPN = "spn";
+const char *ITEM_ICCID = "iccid";
+const char *ITEM_OPERATOR_NAME_OPKEY = "operator_name";
+const char *ITEM_OPERATOR_KEY = "operator_key";
+const char *ITEM_OPERATOR_KEY_EXT = "operator_key_ext";
+const int MAX_BYTE_LEN = 10 * 1024 * 1024;
+
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 {
     char *content = nullptr;
@@ -50,6 +78,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     const int contentLength = strlen(content);
     const std::string rawJson(content);
     free(content);
+    content = nullptr;
     JSONCPP_STRING err;
     Json::Value root;
     Json::CharReaderBuilder builder;
@@ -59,6 +88,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
+    reader = nullptr;
     Json::Value itemRoots = root[ITEM_OPERATOR_INFOS];
     if (itemRoots.size() == 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson itemRoots size == 0!\n");
@@ -150,7 +180,8 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
     }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
-    delete content;
+    free(content);
+    content = nullptr;
     JSONCPP_STRING err;
     Json::Value root;
     Json::CharReaderBuilder builder;
@@ -160,6 +191,7 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
+    reader = nullptr;
     Json::Value itemRoots = root[ITEM_OPERATOR_ID];
     if (itemRoots.size() == 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos itemRoots size == 0!\n");
@@ -224,7 +256,7 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
 
 int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
 {
-    size_t len = 0;
+    long len = 0;
     char realPath[PATH_MAX] = { 0x00 };
     if (realpath(path, realPath) == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile realpath fail! #PATH: %{public}s", path);
@@ -241,14 +273,14 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    len = static_cast<size_t>(ftell(f));
+    len = ftell(f);
     int ret_seek_set = fseek(f, 0, SEEK_SET);
     if (ret_seek_set != 0) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_seek_set != 0!");
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    if (len == 0 || len > MAX_BYTE_LEN) {
+    if (len == 0 || len > static_cast<long>(MAX_BYTE_LEN)) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile len <= 0 or len > LONG_MAX!");
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
