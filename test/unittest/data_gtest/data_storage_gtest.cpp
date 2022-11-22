@@ -15,11 +15,12 @@
 
 #include "data_storage_gtest.h"
 
+#include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
+#include "opkey_data.h"
+#include "pdp_profile_data.h"
 #include "sim_data.h"
 #include "sms_mms_data.h"
-#include "pdp_profile_data.h"
-#include "opkey_data.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -309,7 +310,7 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
  * @tc.name     create sim and sms DataAbilityHelper
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, DataStorage_001, TestSize.Level0)
+HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
 {
     CreateSmsHelper();
     CreateSimHelper();
@@ -320,12 +321,14 @@ HWTEST_F(DataStorageGtest, DataStorage_001, TestSize.Level0)
  * @tc.name     insert opkey data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, OpKeyInsert_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     if (helper != nullptr) {
-        OpKeyInsert(helper);
+        ret = OpKeyInsert(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -333,12 +336,14 @@ HWTEST_F(DataStorageGtest, OpKeyInsert_001, TestSize.Level1)
  * @tc.name     update opkey data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, OpKeyUpdate_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     if (helper != nullptr) {
-        OpKeyUpdate(helper);
+        ret = OpKeyUpdate(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -346,12 +351,14 @@ HWTEST_F(DataStorageGtest, OpKeyUpdate_001, TestSize.Level1)
  * @tc.name     select opkey data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, OpKeySelect_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     if (helper != nullptr) {
-        OpKeySelect(helper);
+        ret = OpKeySelect(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -359,12 +366,14 @@ HWTEST_F(DataStorageGtest, OpKeySelect_001, TestSize.Level1)
  * @tc.name     delete opkey data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, OpKeyDelete_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     if (helper != nullptr) {
-        OpKeyDelete(helper);
+        ret = OpKeyDelete(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -372,12 +381,14 @@ HWTEST_F(DataStorageGtest, OpKeyDelete_001, TestSize.Level1)
  * @tc.name     insert sim data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, SimInsert_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     if (helper != nullptr) {
-        SimInsert(helper);
+        ret = SimInsert(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -385,12 +396,14 @@ HWTEST_F(DataStorageGtest, SimInsert_001, TestSize.Level1)
  * @tc.name     update sim data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, SimUpdate_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     if (helper != nullptr) {
-        SimUpdate(helper);
+        ret = SimUpdate(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -398,12 +411,14 @@ HWTEST_F(DataStorageGtest, SimUpdate_001, TestSize.Level1)
  * @tc.name     select sim data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, SimSelect_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     if (helper != nullptr) {
-        SimSelect(helper);
+        ret = SimSelect(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -412,12 +427,14 @@ HWTEST_F(DataStorageGtest, SimSelect_001, TestSize.Level1)
  * @tc.desc     Function test
  * @tc.require: I5LACE
  */
-HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     if (helper != nullptr) {
-        SimDelete(helper);
+        ret = SimDelete(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -426,12 +443,14 @@ HWTEST_F(DataStorageGtest, SimDelete_001, TestSize.Level1)
  * @tc.desc     Function test
  * @tc.require: I5LACE
  */
-HWTEST_F(DataStorageGtest, SmsBatchInsert_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     if (helper != nullptr) {
-        SmsBatchInsert(helper);
+        ret = SmsBatchInsert(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -440,12 +459,14 @@ HWTEST_F(DataStorageGtest, SmsBatchInsert_001, TestSize.Level1)
  * @tc.desc     Function test
  * @tc.require: I5LACE
  */
-HWTEST_F(DataStorageGtest, SmsInsert_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     if (helper != nullptr) {
-        SmsInsert(helper);
+        ret = SmsInsert(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -453,12 +474,14 @@ HWTEST_F(DataStorageGtest, SmsInsert_001, TestSize.Level1)
  * @tc.name     update sms data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, SmsUpdate_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     if (helper != nullptr) {
-        SmsUpdate(helper);
+        ret = SmsUpdate(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -466,12 +489,14 @@ HWTEST_F(DataStorageGtest, SmsUpdate_001, TestSize.Level1)
  * @tc.name     select sms data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, SmsSelect_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     if (helper != nullptr) {
-        SmsSelect(helper);
+        ret = SmsSelect(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -480,12 +505,14 @@ HWTEST_F(DataStorageGtest, SmsSelect_001, TestSize.Level1)
  * @tc.desc     Function test
  * @tc.require: I5LACE
  */
-HWTEST_F(DataStorageGtest, SmsDelete_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     if (helper != nullptr) {
-        SmsDelete(helper);
+        ret = SmsDelete(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -493,12 +520,14 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, TestSize.Level1)
  * @tc.name     insert apn data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, PdpProfileInsert_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     if (helper != nullptr) {
-        PdpProfileInsert(helper);
+        ret = PdpProfileInsert(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -506,12 +535,14 @@ HWTEST_F(DataStorageGtest, PdpProfileInsert_001, TestSize.Level1)
  * @tc.name     update apn data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     if (helper != nullptr) {
-        PdpProfileUpdate(helper);
+        ret = PdpProfileUpdate(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -519,12 +550,14 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, TestSize.Level1)
  * @tc.name     select apn data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, PdpProfileSelect_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     if (helper != nullptr) {
-        PdpProfileSelect(helper);
+        ret = PdpProfileSelect(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -532,12 +565,14 @@ HWTEST_F(DataStorageGtest, PdpProfileSelect_001, TestSize.Level1)
  * @tc.name     delete apn data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, PdpProfileDelete_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, PdpProfileDelete_001, Function | MediumTest | Level1)
 {
+    int ret = DATA_STORAGE_ERROR;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     if (helper != nullptr) {
-        PdpProfileDelete(helper);
+        ret = PdpProfileDelete(helper);
     }
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 #else // TEL_TEST_UNSUPPORT
 /**
@@ -545,7 +580,7 @@ HWTEST_F(DataStorageGtest, PdpProfileDelete_001, TestSize.Level1)
  * @tc.name     Test for unsupport platform
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, TelMockTest_001, TestSize.Level1)
+HWTEST_F(DataStorageGtest, TelMockTest_001, Function | MediumTest | Level1)
 {
     EXPECT_TRUE(true);
 }
