@@ -299,7 +299,7 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     size_t ret_read = fread(content, 1, len, f);
-    if (ret_read != len) {
+    if (ret_read != static_cast<size_t>(len)) {
         DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
         free(content);
         content = nullptr;
