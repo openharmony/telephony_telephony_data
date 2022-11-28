@@ -17,20 +17,116 @@
 #define DATA_STORAGE_GTEST_H
 
 #include <iostream>
+#include <list>
 #include <securec.h>
 
-#include "gtest/gtest.h"
-
-#include "iservice_registry.h"
-#include "system_ability_definition.h"
+#include "abs_shared_result_set.h"
+#include "accesstoken_kit.h"
 #include "data_ability_helper.h"
 #include "data_ability_predicates.h"
-#include "abs_shared_result_set.h"
+#include "gtest/gtest.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+#include "token_setproc.h"
 #include "values_bucket.h"
 
 namespace OHOS {
 namespace Telephony {
+using namespace Security::AccessToken;
 using namespace testing::ext;
+using Security::AccessToken::AccessTokenID;
+
+HapInfoParams testStateRegistryParams = {
+    .bundleName = "tel_telephony_data_gtest",
+    .userID = 1,
+    .instIndex = 0,
+    .appIDDesc = "test",
+};
+
+PermissionDef testNetPermGetTelephonyStateDef = {
+    .permissionName = "ohos.permission.GET_TELEPHONY_STATE",
+    .bundleName = "tel_telephony_data_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test data storage",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testNetGetTelephonyState = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.GET_TELEPHONY_STATE",
+    .resDeviceID = { "local" },
+};
+
+PermissionDef testNetPermSetTelephonyStateDef = {
+    .permissionName = "ohos.permission.SET_TELEPHONY_STATE",
+    .bundleName = "tel_telephony_data_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test data storage",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testNetSetTelephonyState = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.SET_TELEPHONY_STATE",
+    .resDeviceID = { "local" },
+};
+
+PermissionDef testPermReadMessagesDef = {
+    .permissionName = "ohos.permission.READ_MESSAGES",
+    .bundleName = "tel_telephony_data_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test data storage",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testPermReadMessages = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.READ_MESSAGES",
+    .resDeviceID = { "local" },
+};
+
+HapPolicyParams testPolicyParams = {
+    .apl = APL_SYSTEM_BASIC,
+    .domain = "test.domain",
+    .permList = { testNetPermGetTelephonyStateDef, testNetPermSetTelephonyStateDef, testPermReadMessagesDef },
+    .permStateList = { testNetGetTelephonyState, testNetSetTelephonyState, testPermReadMessages },
+};
+
+class AccessToken {
+public:
+    AccessToken()
+    {
+        currentID_ = GetSelfTokenID();
+        AccessTokenIDEx tokenIdEx = AccessTokenKit::AllocHapToken(testStateRegistryParams, testPolicyParams);
+        accessID_ = tokenIdEx.tokenIdExStruct.tokenID;
+        SetSelfTokenID(accessID_);
+    }
+    ~AccessToken()
+    {
+        AccessTokenKit::DeleteToken(accessID_);
+        SetSelfTokenID(currentID_);
+    }
+
+private:
+    AccessTokenID currentID_ = 0;
+    AccessTokenID accessID_ = 0;
+};
+
 class DataStorageGtest : public testing::Test {
 public:
     static void SetUpTestCase();
