@@ -304,7 +304,6 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
     return helper->Delete(uri, predicates);
 }
 
-#ifndef TEL_TEST_UNSUPPORT
 /**
  * @tc.number   DataStorage_001
  * @tc.name     create sim and sms DataAbilityHelper
@@ -316,6 +315,7 @@ HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
     CreateSimHelper();
 }
 
+#ifdef TEL_TEST_UNSUPPORT
 /**
  * @tc.number   OpKeyInsert_001
  * @tc.name     insert opkey data
