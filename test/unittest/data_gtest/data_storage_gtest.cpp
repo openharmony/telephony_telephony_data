@@ -28,6 +28,25 @@ using namespace testing::ext;
 void DataStorageGtest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
+    const char **perms = new const char *[4];
+    perms[0] = "ohos.permission.READ_MESSAGES";
+    perms[1] = "ohos.permission.ANSWER_CALL";
+    perms[2] = "ohos.permission.SET_TELEPHONY_STATE";
+    perms[3] = "ohos.permission.GET_TELEPHONY_STATE";
+
+    NativeTokenInfoParams testCallInfoParams = {
+        .dcapsNum = 0,
+        .permsNum = 4,
+        .aclsNum = 0,
+        .dcaps = nullptr,
+        .perms = perms,
+        .acls = nullptr,
+        .processName = "telephony_data_gtest",
+        .aplStr = "system_basic",
+    };
+    Security::AccessToken::AccessTokenID currentID_ = GetAccessTokenId(&testCallInfoParams);
+    SetSelfTokenID(currentID_);
+    Security::AccessToken::AccessTokenKit::ReloadNativeTokenInfo();
 }
 
 void DataStorageGtest::TearDownTestCase(void)
@@ -304,6 +323,7 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
     return helper->Delete(uri, predicates);
 }
 
+#ifndef TEL_TEST_UNSUPPORT
 /**
  * @tc.number   DataStorage_001
  * @tc.name     create sim and sms DataAbilityHelper
@@ -311,12 +331,12 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
  */
 HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
 {
-    AccessToken token;
-    CreateSmsHelper();
-    CreateSimHelper();
+    std::shared_ptr<AppExecFwk::DataAbilityHelper> smsHelper = CreateSmsHelper();
+    ASSERT_TRUE(smsHelper != nullptr);
+    std::shared_ptr<AppExecFwk::DataAbilityHelper> simHelper = CreateSimHelper();
+    ASSERT_TRUE(simHelper != nullptr);
 }
 
-#ifdef TEL_TEST_UNSUPPORT
 /**
  * @tc.number   OpKeyInsert_001
  * @tc.name     insert opkey data
@@ -324,10 +344,10 @@ HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
  */
 HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
-    OpKeyInsert(helper);
+    int ret = OpKeyInsert(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -337,10 +357,10 @@ HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
-    OpKeyUpdate(helper);
+    int ret = OpKeyUpdate(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -350,10 +370,10 @@ HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
  */
 HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
-    OpKeySelect(helper);
+    int ret = OpKeySelect(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -363,10 +383,10 @@ HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
-    OpKeyDelete(helper);
+    int ret = OpKeyDelete(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -376,10 +396,10 @@ HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
-    SimInsert(helper);
+    int ret = SimInsert(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -389,10 +409,10 @@ HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
-    SimUpdate(helper);
+    int ret = SimUpdate(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -402,10 +422,10 @@ HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
-    SimSelect(helper);
+    int ret = SimSelect(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -416,10 +436,10 @@ HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
-    SimDelete(helper);
+    int ret = SimDelete(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -430,10 +450,10 @@ HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
-    SmsBatchInsert(helper);
+    int ret = SmsBatchInsert(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -444,10 +464,10 @@ HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
-    SmsInsert(helper);
+    int ret = SmsInsert(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -457,10 +477,10 @@ HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
-    SmsUpdate(helper);
+    int ret = SmsUpdate(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -470,10 +490,10 @@ HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
-    SmsSelect(helper);
+    int ret = SmsSelect(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -484,10 +504,10 @@ HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
-    SmsDelete(helper);
+    int ret = SmsDelete(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -497,10 +517,10 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
-    PdpProfileInsert(helper);
+    int ret = PdpProfileInsert(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -510,10 +530,10 @@ HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
-    PdpProfileUpdate(helper);
+    int ret = PdpProfileUpdate(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -523,10 +543,10 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
  */
 HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
-    PdpProfileSelect(helper);
+    int ret = PdpProfileSelect(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
 /**
@@ -536,10 +556,10 @@ HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileDelete_001, Function | MediumTest | Level1)
 {
-    AccessToken token;
     std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
-    PdpProfileDelete(helper);
+    int ret = PdpProfileDelete(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 #else // TEL_TEST_UNSUPPORT
 /**
