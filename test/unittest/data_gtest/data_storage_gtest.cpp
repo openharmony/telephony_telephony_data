@@ -25,18 +25,21 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
+const int PERMS_NUM = 4;
+
 void DataStorageGtest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
-    const char **perms = new const char *[4];
-    perms[0] = "ohos.permission.READ_MESSAGES";
-    perms[1] = "ohos.permission.ANSWER_CALL";
-    perms[2] = "ohos.permission.SET_TELEPHONY_STATE";
-    perms[3] = "ohos.permission.GET_TELEPHONY_STATE";
+    const char *perms[PERMS_NUM] = {
+        "ohos.permission.READ_MESSAGES",
+        "ohos.permission.ANSWER_CALL",
+        "ohos.permission.SET_TELEPHONY_STATE",
+        "ohos.permission.GET_TELEPHONY_STATE",
+    };
 
     NativeTokenInfoParams testCallInfoParams = {
         .dcapsNum = 0,
-        .permsNum = 4,
+        .permsNum = PERMS_NUM,
         .aclsNum = 0,
         .dcaps = nullptr,
         .perms = perms,
