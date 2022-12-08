@@ -58,13 +58,6 @@ private:
     void CreatePdpProfileTableStr(std::string &createTableStr, const std::string &tableName);
 
     /**
-     * End the transaction action
-     *
-     * @return 0 is succeed else failed
-     */
-    int EndTransactionAction();
-
-    /**
      * Commit the transaction action
      *
      * @return 0 is succeed else failed

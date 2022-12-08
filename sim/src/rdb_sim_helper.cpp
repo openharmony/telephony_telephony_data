@@ -159,12 +159,6 @@ int32_t RdbSimHelper::UpdateCardStateByType(int32_t type, int32_t updateState, i
     return result;
 }
 
-int RdbSimHelper::EndTransactionAction()
-{
-    MarkAsCommit();
-    return EndTransaction();
-}
-
 int RdbSimHelper::CommitTransactionAction()
 {
     int result = Commit();

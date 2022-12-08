@@ -157,29 +157,11 @@ int RdbBaseHelper::RollBack()
     return ret;
 }
 
-int RdbBaseHelper::MarkAsCommit()
-{
-    int ret = IsExistStore();
-    if (ret == NativeRdb::E_OK) {
-        ret = store_->MarkAsCommit();
-    }
-    return ret;
-}
-
 int RdbBaseHelper::Commit()
 {
     int ret = IsExistStore();
     if (ret == NativeRdb::E_OK) {
         ret = store_->Commit();
-    }
-    return ret;
-}
-
-int RdbBaseHelper::EndTransaction()
-{
-    int ret = IsExistStore();
-    if (ret == NativeRdb::E_OK) {
-        ret = store_->EndTransaction();
     }
     return ret;
 }

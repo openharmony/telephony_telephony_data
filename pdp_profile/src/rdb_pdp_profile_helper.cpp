@@ -128,12 +128,6 @@ int RdbPdpProfileHelper::ResetApn()
     return ret;
 }
 
-int RdbPdpProfileHelper::EndTransactionAction()
-{
-    MarkAsCommit();
-    return EndTransaction();
-}
-
 int RdbPdpProfileHelper::CommitTransactionAction()
 {
     int result = Commit();

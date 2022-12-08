@@ -79,12 +79,6 @@ void RdbOpKeyHelper::CreateOpKeyInfoIndexStr(std::string &createIndexStr)
     createIndexStr.append("([").append(OpKeyData::MCCMNC).append("])");
 }
 
-int RdbOpKeyHelper::EndTransactionAction()
-{
-    MarkAsCommit();
-    return EndTransaction();
-}
-
 int RdbOpKeyHelper::CommitTransactionAction()
 {
     int result = Commit();

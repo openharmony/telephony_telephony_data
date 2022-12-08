@@ -58,9 +58,7 @@ public:
         NativeRdb::RdbOpenCallback &openCallback, int &errCode);
     int BeginTransaction();
     int RollBack();
-    int MarkAsCommit();
     int Commit();
-    int EndTransaction();
 
     void ReplaceAllStr(std::string &path, const std::string &oldStr, const std::string &newStr);
 

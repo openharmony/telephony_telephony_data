@@ -57,13 +57,6 @@ private:
     void CreateOpKeyInfoIndexStr(std::string &createIndexStr);
 
     /**
-     * End the transaction action
-     *
-     * @return 0 is succeed else failed
-     */
-    int EndTransactionAction();
-
-    /**
      * Commit the transaction action
      *
      * @return 0 is succeed else failed

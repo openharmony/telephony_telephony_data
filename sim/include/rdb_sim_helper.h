@@ -81,13 +81,6 @@ private:
     int32_t UpdateCardStateByType(int32_t type, int32_t updateState, int32_t whereSate);
 
     /**
-     * End the transaction action
-     *
-     * @return 0 is succeed else failed
-     */
-    int EndTransactionAction();
-
-    /**
      * Commit the transaction action
      *
      * @return 0 is succeed else failed
