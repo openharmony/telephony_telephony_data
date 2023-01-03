@@ -43,6 +43,8 @@ void OpKeyAbility::OnStart(const AppExecFwk::Want &want)
         DATA_STORAGE_LOGE("OpKeyAbility::OnStart GetAbilityContext is null");
         return;
     }
+    // switch database dir to el1 for init before unlock
+    abilityContext->SwitchArea(0);
     std::string path = abilityContext->GetDatabaseDir();
     DATA_STORAGE_LOGI("GetDatabaseDir: %{public}s", path.c_str());
     if (!path.empty()) {
