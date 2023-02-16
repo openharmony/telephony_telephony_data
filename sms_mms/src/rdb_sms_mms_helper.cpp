@@ -58,6 +58,7 @@ void RdbSmsMmsHelper::CreateSmsMmsInfoTableStr(std::string &createTableStr)
 {
     createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_SMS_MMS_INFO);
     createTableStr.append("(").append(SmsMmsInfo::MSG_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
+    createTableStr.append(SmsMmsInfo::SLOT_ID).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SmsMmsInfo::RECEIVER_NUMBER).append(" TEXT , ");
     createTableStr.append(SmsMmsInfo::SENDER_NUMBER).append(" TEXT , ");
     createTableStr.append(SmsMmsInfo::IS_SENDER).append(" INTEGER DEFAULT 0, ");
@@ -114,6 +115,7 @@ void RdbSmsMmsHelper::CreateSmsSubsectionTableStr(std::string &createTableStr)
 {
     createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_SMS_SUBSECTION);
     createTableStr.append("(").append(SmsSubsection::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
+    createTableStr.append(SmsMmsInfo::SLOT_ID).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SmsSubsection::SMS_SUBSECTION_ID).append(" INTEGER , ");
     createTableStr.append(SmsSubsection::RECEIVER_NUMBER).append(" TEXT NOT NULL, ");
     createTableStr.append(SmsSubsection::SENDER_NUMBER).append(" TEXT NOT NULL, ");
