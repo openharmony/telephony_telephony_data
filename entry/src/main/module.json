@@ -1,0 +1,71 @@
+{
+  "module": {
+    "name": "telephonydata",
+    "type": "entry",
+    "srcEntrance": "./ets/Application/TelephonyDataAbilityStage.ts",
+    "description": "$string:app_name",
+    "mainElement": "MainAbility",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "",
+    "abilities": [
+      {
+        "name": "MainAbility",
+        "srcEntrance": "",
+        "description": "dataability_description",
+        "visible": false
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "OpKeyAbility",
+        "srcEntrance": "./ets/DataShareExtAbility/DataShareExtAbility.ts",
+        "readPermission": "ohos.permission.GET_TELEPHONY_STATE",
+        "writePermission": "ohos.permission.SET_TELEPHONY_STATE",
+        "description": "dataability_description",
+        "type": "dataShare",
+        "uri": "datashare://com.ohos.opkeyability",
+        "visible": true,
+        "srcLanguage": "c++"
+      },
+      {
+        "name": "PdpProfileAbility",
+        "srcEntrance": "./ets/DataShareExtAbility/DataShareExtAbility.ts",
+        "readPermission": "ohos.permission.GET_TELEPHONY_STATE",
+        "writePermission": "ohos.permission.SET_TELEPHONY_STATE",
+        "description": "dataability_description",
+        "type": "dataShare",
+        "uri": "datashare://com.ohos.pdpprofileability",
+        "visible": true,
+        "srcLanguage": "c++"
+      },
+      {
+        "name": "SimAbility",
+        "srcEntrance": "./ets/DataShareExtAbility/DataShareExtAbility.ts",
+        "readPermission": "ohos.permission.GET_TELEPHONY_STATE",
+        "writePermission": "ohos.permission.SET_TELEPHONY_STATE",
+        "description": "dataability_description",
+        "type": "dataShare",
+        "uri": "datashare://com.ohos.simability",
+        "visible": true,
+        "srcLanguage": "c++"
+      },
+      {
+        "name": "SmsMmsAbility",
+        "srcEntrance": "./ets/DataShareExtAbility/DataShareExtAbility.ts",
+        "permissions": [
+          "ohos.permission.READ_MESSAGES"
+        ],
+        "description": "dataability_description",
+        "type": "dataShare",
+        "uri": "datashare://com.ohos.smsmmsability",
+        "visible": true,
+        "srcLanguage": "c++"
+      }
+    ]
+  }
+}

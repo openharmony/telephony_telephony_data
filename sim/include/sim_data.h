@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,7 @@ public:
 };
 
 constexpr const char *TABLE_SIM_INFO = "sim_info";
-constexpr const char *SIM_URI = "dataability:///com.ohos.simability";
+constexpr const char *SIM_URI = "datashare:///com.ohos.simability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_SIM_DATA_H

@@ -16,7 +16,7 @@
 
 ## 简介<a name="section117mcpsimp"></a>
 
-数据库及持久化模块负责电话服务子系统中的SIM卡/短彩信等模块持久化数据存储，提供DataAbility访问接口。
+数据库及持久化模块负责电话服务子系统中的SIM卡/短彩信等模块持久化数据存储，提供DataShare访问接口。
 
 **图 1**  数据库及持久化架构图<a name="fig13267152558"></a>
 
@@ -29,7 +29,6 @@
 ├─ common                           # 通用文件
 │  ├─ include                      # 头文件目录
 │  └─ src                          # 实现代码目录
-├─ config                           # config.json配置文件
 ├─ figures                          # Readme资源文件
 ├─ opkey                            # 随卡框架
 │  ├─ include　　　　              # 头文件目录
@@ -56,7 +55,7 @@
 
 - 硬件约束：无
 
-- 使用场景：当用户需要获取电话服务子系统中的SIM卡/短彩信等模块持久化数据时,可通过DataAbilityHelper提供的增/删/改/查接口来获取数据。
+- 使用场景：当用户需要获取电话服务子系统中的SIM卡/短彩信等模块持久化数据时,可通过DataShareHelper提供的增/删/改/查接口来获取数据。
 
   访问时需要提供对应的权限和URI。
 
@@ -68,10 +67,10 @@
 
 | 接口定义                                                     | **接口描述** |
 | ------------------------------------------------------------ | ------------ |
-| int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) | 插入数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
-| int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) | 删除数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
-| int Update( const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) | 更新数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
-| std::shared_ptr\<NativeRdb::AbsSharedResultSet\> Query( const Uri &uri, const std::vector\<std::string\> &columns, const NativeRdb::DataAbilityPredicates &predicates) | 查询数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| int Insert(Uri &uri, const DataShare::DataShareValuesBucket &value) | 插入数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| int Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates) | 删除数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| int Update(Uri &uri, const DataSharePredicates &predicates, const DataShareValuesBucket &value) | 更新数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| std::shared_ptr\<DataShare::DataShareResultSet\> Query(Uri &uri, const DataSharePredicates &predicates, std::vector\<std::string\> &columns) | 查询数据     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
 
 **表 2**  权限说明
 
@@ -106,7 +105,6 @@
 | 参数       | 说明                                  |
 | ---------- | ------------------------------------- |
 | uri        | 资源路径                              |
-| value      | 数据集合,字段对应当前操作的表结构字段 |
 | predicates | 删除条件                              |
 
 ### 更新接口参数说明<a name="section1097113151210"></a>
@@ -119,6 +117,7 @@
 | ---------- | -------- |
 | uri        | 资源路径 |
 | predicates | 更新条件 |
+| value      | 数据集合,字段对应当前操作的表结构字段 |
 
 ### 查询接口参数说明<a name="section1096113151208"></a>
 
@@ -129,8 +128,8 @@
 | 参数       | 说明           |
 | ---------- | -------------- |
 | uri        | 资源路径       |
-| columns    | 查询返回的字段 |
 | predicates | 查询条件       |
+| columns    | 查询返回的字段 |
 
 ### 接口调用代码示例<a name="section1558565082915"></a>
 
@@ -138,12 +137,13 @@
 
 1. 使用SystemAbilityManagerClient获得SystemAbilityManager对象。
 2. 使用saManager获得指定服务Id的IRemoteObject对象。
-3. 使用IRemoteObject创建DataAbilityHelper对象。
-4. 调用DataAbilityHelper::Query接口访问，并接收处理返回的数据。  
+3. 使用IRemoteObject创建DataShareHelper对象。
+4. 调用DataShareHelper::Query接口访问，并接收处理返回的数据。  
 
-   创建DataAbilityHelper:
+   创建DataShareHelper:
    ```
-   std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(int32_t systemAbilityId)
+   std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateDataShareHelper(
+       int32_t systemAbilityId, std::string &uri)
    {
        //通过SystemAbilityManagerClient获得SystemAbilityManager
        auto saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -157,50 +157,50 @@
            DATA_STORAGE_LOGE("DataSimRdbHelper GetSystemAbility Service Failed.");
            return nullptr;
        }
-       // 创建DataAbilityHelper
-       return AppExecFwk::DataAbilityHelper::Creator(remoteObj);
+       // 创建DataShareHelper
+       return DataShare::DataShareHelper::Creator(remoteObj, uri);
    }
    ```
    查询短彩信信息:
    ```
-   std::shared_ptr<NativeRdb::AbsSharedResultSet> SmsSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+   std::shared_ptr<DataShare::DataShareResultSet> DataStorageGtest::SmsSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper)
    {	
        // 资源路径
-       Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+       Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
        //查询返回的字段
-       std::vector<std::string> colume;
+       std::vector<std::string> columns;
        // 发送者号码
-       colume.push_back("sender_number");
+       columns.push_back("sender_number");
        // 消息标题
-       colume.push_back("msg_title");
+       columns.push_back("msg_title");
        // 消息内容
-       colume.push_back("msg_content");
+       columns.push_back("msg_content");
        // 查询谓词
-       NativeRdb::DataAbilityPredicates predicates;
-       // 调用DataAbilityHelper::Query接口查询
-       return helper->Query(uri, colume, predicates);
+       DataShare::DataSharePredicates predicates;
+       // 调用DataShareHelper::Query接口查询
+       return helper->Query(uri, predicates, columns);
    }
    ```
    插入短彩信信息:
    ```
-   int SmsInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+   int SmsInsert(std::shared_ptr<DataShare::DataShareHelper> &helper)
    {
-       Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-       NativeRdb::ValuesBucket value;
+       Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+       DataShare::DataShareValuesBucket value;
        // 接收者号码
-       value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "138XXXXXXXX");
+       value.Put(SmsMmsInfo::RECEIVER_NUMBER, "138XXXXXXXX");
        // 消息内容
-       value.PutString(SmsMmsInfo::MSG_CONTENT, "ceshi");
-       value.PutInt(SmsMmsInfo::GROUP_ID, 1);
+       value.Put(SmsMmsInfo::MSG_CONTENT, "ceshi");
+       value.Put(SmsMmsInfo::GROUP_ID, 1);
        return helper->Insert(uri, value);
    }
    ```
    删除短彩信信息:
    ```
-    int SmsDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+    int SmsDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
     {
-        Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-        NativeRdb::DataAbilityPredicates predicates;
+        Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+        DataShare::DataSharePredicates predicates;
         // 删除MSG_ID为1的信息
         predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
         return helper->Delete(uri, predicates);
@@ -208,16 +208,16 @@
    ```
    更新短彩信信息：
    ```
-   int SmsUpdate(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+   int SmsUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
    {
-       Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-       NativeRdb::ValuesBucket values;
+       Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+       DataShare::DataShareValuesBucket values;
        // 信息内容
-       values.PutString(SmsMmsInfo::MSG_CONTENT, "hi ohos");
-       NativeRdb::DataAbilityPredicates predicates;
+       values.Put(SmsMmsInfo::MSG_CONTENT, "hi ohos");
+       DataShare::DataSharePredicates predicates;
        // 信息Id
        predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
-       return helper->Update(uri, values, predicates);
+       return helper->Update(uri, predicates, values);
    }
    ```
 

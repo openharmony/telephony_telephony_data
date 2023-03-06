@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,8 @@
 
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
+#include "datashare_helper.h"
+#include "datashare_predicates.h"
 #include "opkey_data.h"
 #include "pdp_profile_data.h"
 #include "sim_data.h"
@@ -67,10 +69,10 @@ void DataStorageGtest::TearDown(void)
     // step 3: input testcase teardown step
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> DataStorageGtest::CreateDataAHelper(
-    int32_t systemAbilityId, std::shared_ptr<Uri> dataAbilityUri) const
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateDataShareHelper(
+    int32_t systemAbilityId, std::string &uri) const
 {
-    DATA_STORAGE_LOGI("DataStorageGtest::CreateDataAHelper");
+    DATA_STORAGE_LOGI("DataStorageGtest::CreateDataShareHelper");
     auto saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (saManager == nullptr) {
         DATA_STORAGE_LOGE("DataStorageGtest Get system ability mgr failed.");
@@ -81,134 +83,138 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> DataStorageGtest::CreateDataAHelp
         DATA_STORAGE_LOGE("DataStorageGtest GetSystemAbility Service Failed.");
         return nullptr;
     }
-    return AppExecFwk::DataAbilityHelper::Creator(remoteObj, dataAbilityUri);
+    return DataShare::DataShareHelper::Creator(remoteObj, uri);
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> DataStorageGtest::CreateSimHelper()
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateSimHelper()
 {
-    if (simDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(SIM_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreateSimHelper dataAbilityUri is nullptr");
+    if (simDataHelper == nullptr) {
+        std::string uri(SIM_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreateSimHelper uri is nullptr");
             return nullptr;
         }
-        simDataAbilityHelper = CreateDataAHelper(TELEPHONY_CORE_SERVICE_SYS_ABILITY_ID, dataAbilityUri);
+        simDataHelper = CreateDataShareHelper(TELEPHONY_CORE_SERVICE_SYS_ABILITY_ID, uri);
     }
-    return simDataAbilityHelper;
+    return simDataHelper;
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> DataStorageGtest::CreateSmsHelper()
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateSmsHelper()
 {
-    if (smsDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(SMS_MMS_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreateSmsHelper dataAbilityUri is nullptr");
+    if (smsDataHelper == nullptr) {
+        std::string uri(SMS_MMS_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreateSmsHelper uri is nullptr");
             return nullptr;
         }
-        smsDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
+        smsDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
-    return smsDataAbilityHelper;
+    return smsDataHelper;
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> DataStorageGtest::CreatePdpProfileHelper()
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreatePdpProfileHelper()
 {
-    if (pdpProfileDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(PDP_PROFILE_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreatePdpProfileHelper dataAbilityUri is nullptr");
+    if (pdpProfileDataHelper == nullptr) {
+        std::string uri(PDP_PROFILE_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreatePdpProfileHelper uri is nullptr");
             return nullptr;
         }
-        pdpProfileDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
+        pdpProfileDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
-    return pdpProfileDataAbilityHelper;
+    return pdpProfileDataHelper;
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> DataStorageGtest::CreateOpKeyHelper()
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateOpKeyHelper()
 {
-    if (opKeyDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(OPKEY_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreateOpKeyHelper dataAbilityUri is nullptr");
+    if (opKeyDataHelper == nullptr) {
+        std::string uri(OPKEY_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreateOpKeyHelper uri is nullptr");
             return nullptr;
         }
-        opKeyDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
+        opKeyDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
-    return opKeyDataAbilityHelper;
+    return opKeyDataHelper;
 }
 
-int DataStorageGtest::OpKeyInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::OpKeyInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
     std::string opkey = "110";
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    NativeRdb::ValuesBucket value;
-    value.PutInt(OpKeyData::ID, 1);
-    value.PutString(OpKeyData::MCCMNC, "460");
-    value.PutString(OpKeyData::GID1, "gid1");
-    value.PutString(OpKeyData::OPERATOR_NAME, "name");
-    value.PutString(OpKeyData::OPERATOR_KEY, opkey);
-    return helper->Insert(uri, value);
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    DataShare::DataShareValuesBucket value;
+    value.Put(OpKeyData::ID, 1);
+    value.Put(OpKeyData::MCCMNC, "460");
+    value.Put(OpKeyData::GID1, "gid1");
+    value.Put(OpKeyData::OPERATOR_NAME, "name");
+    value.Put(OpKeyData::OPERATOR_KEY, opkey);
+    auto ret = helper->Insert(uri, value);
+    DATA_STORAGE_LOGI("OpKeyInsert ret: %{public}d", ret);
+    return ret;
 }
 
-int DataStorageGtest::OpKeyUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::OpKeyUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    NativeRdb::ValuesBucket values;
-    values.PutString(OpKeyData::OPERATOR_NAME, "name2");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    DataShare::DataShareValuesBucket values;
+    values.Put(OpKeyData::OPERATOR_NAME, "name2");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(OpKeyData::OPERATOR_KEY, "123");
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int DataStorageGtest::OpKeySelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::OpKeySelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    DATA_STORAGE_LOGI("OpKeySelect begin.");
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
+        DATA_STORAGE_LOGE("OpKeySelectret cnt: %{public}d", count);
         return count;
     }
     return -1;
 }
 
-int DataStorageGtest::OpKeyDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::OpKeyDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(OpKeyData::ID, "1");
     return helper->Delete(uri, predicates);
 }
 
-int DataStorageGtest::SimInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SimInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
-    NativeRdb::ValuesBucket value;
-    value.PutInt(SimData::SLOT_INDEX, 1);
-    value.PutString(SimData::PHONE_NUMBER, "134xxxxxxxx");
-    value.PutString(SimData::ICC_ID, "icc_id");
-    value.PutString(SimData::CARD_ID, "card_id");
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
+    DataShare::DataShareValuesBucket value;
+    value.Put(SimData::SLOT_INDEX, 1);
+    value.Put(SimData::PHONE_NUMBER, "134xxxxxxxx");
+    value.Put(SimData::ICC_ID, "icc_id");
+    value.Put(SimData::CARD_ID, "card_id");
     return helper->Insert(uri, value);
 }
 
-int DataStorageGtest::SimUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SimUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
     std::string slot = std::to_string(1);
-    NativeRdb::ValuesBucket values;
-    values.PutString(SimData::SHOW_NAME, "China Mobile");
-    NativeRdb::DataAbilityPredicates predicates;
+    DataShare::DataShareValuesBucket values;
+    values.Put(SimData::SHOW_NAME, "China Mobile");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SimData::SLOT_INDEX, slot);
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int DataStorageGtest::SimSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SimSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
@@ -217,111 +223,113 @@ int DataStorageGtest::SimSelect(const std::shared_ptr<AppExecFwk::DataAbilityHel
     return -1;
 }
 
-int DataStorageGtest::SimDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SimDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SimData::SLOT_INDEX, "1");
     return helper->Delete(uri, predicates);
 }
 
-int DataStorageGtest::SmsBatchInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SmsBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    std::vector<NativeRdb::ValuesBucket> values;
-    NativeRdb::ValuesBucket value;
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    std::vector<DataShare::DataShareValuesBucket> values;
+    DataShare::DataShareValuesBucket value;
     int batchNum = 100;
     for (int i = 0; i < batchNum; i++) {
-        value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
-        value.PutString(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
-        value.PutInt(SmsMmsInfo::GROUP_ID, 1);
+        value.Put(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
+        value.Put(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
+        value.Put(SmsMmsInfo::GROUP_ID, 1);
         values.push_back(value);
         value.Clear();
     }
     return helper->BatchInsert(uri, values);
 }
 
-int DataStorageGtest::SmsInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SmsInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    NativeRdb::ValuesBucket value;
-    value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
-    value.PutString(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
-    value.PutInt(SmsMmsInfo::GROUP_ID, 1);
-    value.PutInt(SmsMmsInfo::IS_SENDER, 0);
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    DataShare::DataShareValuesBucket value;
+    value.Put(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
+    value.Put(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
+    value.Put(SmsMmsInfo::GROUP_ID, 1);
+    value.Put(SmsMmsInfo::IS_SENDER, 0);
     return helper->Insert(uri, value);
 }
 
-int DataStorageGtest::SmsUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SmsUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    NativeRdb::ValuesBucket values;
-    values.PutString(SmsMmsInfo::MSG_CONTENT, "The second test text message content");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    DataShare::DataShareValuesBucket values;
+    values.Put(SmsMmsInfo::MSG_CONTENT, "The second test text message content");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int DataStorageGtest::SmsSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SmsSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
+        DATA_STORAGE_LOGI("SmsSelect count: %{public}d", count);
         return count;
     }
     return -1;
 }
 
-int DataStorageGtest::SmsDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::SmsDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
     return helper->Delete(uri, predicates);
 }
 
-int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    NativeRdb::ValuesBucket value;
-    value.PutString(PdpProfileData::PROFILE_NAME, "frist_profile_name");
-    value.PutString(PdpProfileData::MCC, "460");
-    value.PutString(PdpProfileData::MNC, "91");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    DataShare::DataShareValuesBucket value;
+    value.Put(PdpProfileData::PROFILE_NAME, "frist_profile_name");
+    value.Put(PdpProfileData::MCC, "460");
+    value.Put(PdpProfileData::MNC, "91");
     return helper->Insert(uri, value);
 }
 
-int DataStorageGtest::PdpProfileUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::PdpProfileUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    NativeRdb::ValuesBucket values;
-    values.PutString(PdpProfileData::PROFILE_NAME, "update_profile_name");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    DataShare::DataShareValuesBucket values;
+    values.Put(PdpProfileData::PROFILE_NAME, "update_profile_name");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(PdpProfileData::PROFILE_ID, "1");
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int DataStorageGtest::PdpProfileSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::PdpProfileSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
+        std::cout << "count is " << count;
         return count;
     }
     return -1;
 }
 
-int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const
+int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(PdpProfileData::PROFILE_ID, "1");
     return helper->Delete(uri, predicates);
 }
@@ -334,9 +342,9 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbi
  */
 HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> smsHelper = CreateSmsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> smsHelper = CreateSmsHelper();
     ASSERT_TRUE(smsHelper != nullptr);
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> simHelper = CreateSimHelper();
+    std::shared_ptr<DataShare::DataShareHelper> simHelper = CreateSimHelper();
     ASSERT_TRUE(simHelper != nullptr);
 }
 
@@ -347,7 +355,7 @@ HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
  */
 HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyInsert(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -360,7 +368,7 @@ HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyUpdate(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -373,7 +381,7 @@ HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
  */
 HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeySelect(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -386,7 +394,7 @@ HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateOpKeyHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyDelete(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -399,7 +407,7 @@ HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimInsert(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -412,7 +420,7 @@ HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimUpdate(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -425,7 +433,7 @@ HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimSelect(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -439,7 +447,7 @@ HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSimHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimDelete(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -453,7 +461,7 @@ HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsBatchInsert(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -467,7 +475,7 @@ HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsInsert(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -480,7 +488,7 @@ HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsUpdate(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -493,7 +501,7 @@ HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsSelect(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -507,7 +515,7 @@ HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreateSmsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsDelete(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -520,7 +528,7 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileInsert(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -533,7 +541,7 @@ HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileUpdate(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -546,7 +554,7 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
  */
 HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileSelect(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
@@ -559,7 +567,7 @@ HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileDelete_001, Function | MediumTest | Level1)
 {
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = CreatePdpProfileHelper();
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileDelete(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);

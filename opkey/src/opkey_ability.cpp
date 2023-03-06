@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,13 +19,16 @@
 #include "ability_loader.h"
 #include "abs_rdb_predicates.h"
 #include "abs_shared_result_set.h"
-#include "data_ability_predicates.h"
+#include "datashare_ext_ability.h"
+#include "datashare_predicates.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "opkey_data.h"
 #include "predicates_utils.h"
 #include "rdb_errno.h"
+#include "rdb_utils.h"
+#include "telephony_datashare_stub_impl.h"
 #include "uri.h"
 #include "utility"
 
@@ -34,13 +37,32 @@ using AppExecFwk::AbilityLoader;
 using AppExecFwk::Ability;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
-void OpKeyAbility::OnStart(const AppExecFwk::Want &want)
+
+OpKeyAbility::OpKeyAbility() : DataShareExtAbility()
 {
-    DATA_STORAGE_LOGI("OpKeyAbility::OnStart\n");
-    Ability::OnStart(want);
-    auto abilityContext = GetAbilityContext();
+}
+
+OpKeyAbility::~OpKeyAbility()
+{
+}
+
+OpKeyAbility* OpKeyAbility::Create()
+{
+    DATA_STORAGE_LOGI("OpKeyAbility::Create begin.");
+    auto self =  new OpKeyAbility();
+    self->DoInit();
+    return self;
+}
+
+void OpKeyAbility::DoInit()
+{
+    if (initDatabaseDir_ && initRdbStore_) {
+        DATA_STORAGE_LOGI("DoInit has done");
+        return;
+    }
+    auto abilityContext = AbilityRuntime::Context::GetApplicationContext();
     if (abilityContext == nullptr) {
-        DATA_STORAGE_LOGE("OpKeyAbility::OnStart GetAbilityContext is null");
+        DATA_STORAGE_LOGE("DoInit GetAbilityContext is null");
         return;
     }
     // switch database dir to el1 for init before unlock
@@ -56,16 +78,37 @@ void OpKeyAbility::OnStart(const AppExecFwk::Want &want)
         if (rdbInitCode == NativeRdb::E_OK) {
             initRdbStore_ = true;
         } else {
-            DATA_STORAGE_LOGE("OpKeyAbility::OnStart rdb init failed!");
+            DATA_STORAGE_LOGE("DoInit rdb init failed!");
             initRdbStore_ = false;
         }
     } else {
+        DATA_STORAGE_LOGE("DoInit##databaseDir is empty!");
         initDatabaseDir_ = false;
-        DATA_STORAGE_LOGE("OpKeyAbility::OnStart##the databaseDir is empty!");
     }
 }
 
-int OpKeyAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
+sptr<IRemoteObject> OpKeyAbility::OnConnect(const AAFwk::Want &want)
+{
+    DATA_STORAGE_LOGI("OpKeyAbility::OnConnect begin.");
+    Extension::OnConnect(want);
+    sptr<DataShare::TelephonyDataShareStubImpl> remoteObject = new (std::nothrow) DataShare::TelephonyDataShareStubImpl(
+        std::static_pointer_cast<OpKeyAbility>(shared_from_this()));
+    if (remoteObject == nullptr) {
+        DATA_STORAGE_LOGE("%{public}s No memory allocated for DataShareStubImpl", __func__);
+        return nullptr;
+    }
+    DATA_STORAGE_LOGI("OpKeyAbility %{public}s end.", __func__);
+    return remoteObject->AsObject();
+}
+
+void OpKeyAbility::OnStart(const AppExecFwk::Want &want)
+{
+    DATA_STORAGE_LOGI("OpKeyAbility::OnStart");
+    Extension::OnStart(want);
+    DoInit();
+}
+
+int OpKeyAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
     if (!IsInitOk()) {
         return DATA_STORAGE_ERROR;
@@ -75,40 +118,44 @@ int OpKeyAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     OpKeyUriType opKeyUriType = ParseUriType(tempUri);
     int64_t id = DATA_STORAGE_ERROR;
     if (opKeyUriType == OpKeyUriType::OPKEY_INFO) {
-        helper_.Insert(id, value, TABLE_OPKEY_INFO);
+        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+        helper_.Insert(id, values, TABLE_OPKEY_INFO);
     } else {
         DATA_STORAGE_LOGE("OpKeyAbility::Insert failed##uri = %{public}s", uri.ToString().c_str());
     }
     return id;
 }
 
-std::shared_ptr<NativeRdb::AbsSharedResultSet> OpKeyAbility::Query(
-    const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
+std::shared_ptr<DataShare::DataShareResultSet> OpKeyAbility::Query(
+    const Uri &uri, const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns)
 {
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
+    std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult = nullptr;
     if (!IsInitOk()) {
-        return resultSet;
+        return nullptr;
     }
     Uri tempUri = uri;
     OpKeyUriType opKeyUriType = ParseUriType(tempUri);
     if (opKeyUriType == OpKeyUriType::OPKEY_INFO) {
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_OPKEY_INFO);
         if (absRdbPredicates != nullptr) {
-            ConvertPredicates(predicates, absRdbPredicates);
-            resultSet = helper_.Query(*absRdbPredicates, columns);
+            NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
+            std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper_.Query(rdbPredicates, columns);
+            auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
+            sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
             delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
-            DATA_STORAGE_LOGE("OpKeyAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
+            DATA_STORAGE_LOGE("OpKeyAbility::Query  NativeRdb::AbsRdbPredicates is null!");
         }
     } else {
         DATA_STORAGE_LOGE("OpKeyAbility::Query failed##uri = %{public}s", uri.ToString().c_str());
     }
-    return resultSet;
+    return sharedPtrResult;
 }
 
 int OpKeyAbility::Update(
-    const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
+    const Uri &uri, const DataShare::DataSharePredicates &predicates,
+    const DataShare::DataShareValuesBucket &value)
 {
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
@@ -129,8 +176,9 @@ int OpKeyAbility::Update(
     }
     if (absRdbPredicates != nullptr) {
         int changedRows = CHANGED_ROWS;
-        ConvertPredicates(predicates, absRdbPredicates);
-        result = helper_.Update(changedRows, value, *absRdbPredicates);
+        NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
+        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+        result = helper_.Update(changedRows, values, rdbPredicates);
         delete absRdbPredicates;
         absRdbPredicates = nullptr;
     } else if (result == DATA_STORAGE_ERROR) {
@@ -139,7 +187,7 @@ int OpKeyAbility::Update(
     return result;
 }
 
-int OpKeyAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
+int OpKeyAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
 {
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
@@ -151,16 +199,16 @@ int OpKeyAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates 
     if (opKeyUriType == OpKeyUriType::OPKEY_INFO) {
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_OPKEY_INFO);
         if (absRdbPredicates != nullptr) {
-            ConvertPredicates(predicates, absRdbPredicates);
+            NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
             int deletedRows = CHANGED_ROWS;
-            result = helper_.Delete(deletedRows, *absRdbPredicates);
+            result = helper_.Delete(deletedRows, rdbPredicates);
             delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
             DATA_STORAGE_LOGE("OpKeyAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
         }
     } else {
-        DATA_STORAGE_LOGE("OpKeyAbility::Delete failed##uri = %{public}s\n", uri.ToString().c_str());
+        DATA_STORAGE_LOGE("OpKeyAbility::Delete failed##uri = %{public}s", uri.ToString().c_str());
     }
     return result;
 }
@@ -187,14 +235,14 @@ void OpKeyAbility::InitUriMap()
 
 std::string OpKeyAbility::GetType(const Uri &uri)
 {
-    DATA_STORAGE_LOGI("OpKeyAbility::GetType##uri = %{public}s\n", uri.ToString().c_str());
+    DATA_STORAGE_LOGI("OpKeyAbility::GetType##uri = %{public}s", uri.ToString().c_str());
     std::string retval(uri.ToString());
     return retval;
 }
 
 int OpKeyAbility::OpenFile(const Uri &uri, const std::string &mode)
 {
-    DATA_STORAGE_LOGI("OpKeyAbility::OpenFile##uri = %{public}s\n", uri.ToString().c_str());
+    DATA_STORAGE_LOGI("OpKeyAbility::OpenFile##uri = %{public}s", uri.ToString().c_str());
     Uri tempUri = uri;
     OpKeyUriType opKeyUriType = ParseUriType(tempUri);
     return static_cast<int>(opKeyUriType);
@@ -202,7 +250,7 @@ int OpKeyAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 OpKeyUriType OpKeyAbility::ParseUriType(Uri &uri)
 {
-    DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType start\n");
+    DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType start");
     OpKeyUriType opKeyUriType = OpKeyUriType::UNKNOW;
     std::string uriPath = uri.ToString();
     if (!uriPath.empty()) {
@@ -210,11 +258,11 @@ OpKeyUriType OpKeyAbility::ParseUriType(Uri &uri)
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
         if (!path.empty()) {
-            DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##path = %{public}s\n", path.c_str());
+            DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##path = %{public}s", path.c_str());
             std::map<std::string, OpKeyUriType>::iterator it = opKeyUriMap_.find(path);
             if (it != opKeyUriMap_.end()) {
                 opKeyUriType = it->second;
-                DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##opKeyUriType = %{public}d\n",
+                DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##opKeyUriType = %{public}d",
                     opKeyUriType);
             }
         }
@@ -222,16 +270,11 @@ OpKeyUriType OpKeyAbility::ParseUriType(Uri &uri)
     return opKeyUriType;
 }
 
-void OpKeyAbility::ConvertPredicates(
-    const NativeRdb::DataAbilityPredicates &dataPredicates, NativeRdb::AbsRdbPredicates *absRdbPredicates)
+OHOS::NativeRdb::RdbPredicates OpKeyAbility::ConvertPredicates(
+    const std::string &tableName, const DataShare::DataSharePredicates &predicates)
 {
-    NativeRdb::PredicatesUtils::SetWhereClauseAndArgs(
-        absRdbPredicates, dataPredicates.GetWhereClause(), dataPredicates.GetWhereArgs());
-    NativeRdb::PredicatesUtils::SetAttributes(absRdbPredicates, dataPredicates.IsDistinct(),
-        dataPredicates.GetIndex(), dataPredicates.GetGroup(), dataPredicates.GetOrder(), dataPredicates.GetLimit(),
-        dataPredicates.GetOffset());
+    OHOS::NativeRdb::RdbPredicates res = RdbDataShareAdapter::RdbUtils::ToPredicates(predicates, tableName);
+    return res;
 }
-
-REGISTER_AA(OpKeyAbility);
 } // namespace Telephony
 } // namespace OHOS

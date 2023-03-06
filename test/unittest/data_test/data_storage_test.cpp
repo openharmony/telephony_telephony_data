@@ -1,24 +1,24 @@
 /*
-* Copyright (C) 2021 Huawei Device Co., Ltd.
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include <iostream>
 #include <vector>
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
-#include "data_ability_helper.h"
-#include "data_ability_predicates.h"
+#include "datashare_helper.h"
+#include "datashare_predicates.h"
 #include "abs_shared_result_set.h"
 #include "values_bucket.h"
 #include "uri.h"
@@ -32,19 +32,19 @@
 
 namespace OHOS {
 namespace Telephony {
-using CmdProcessFunc = int (*)(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper);
+using CmdProcessFunc = int (*)(std::shared_ptr<DataShare::DataShareHelper> helper);
 std::map<char, CmdProcessFunc> g_simFuncMap;
 std::map<char, CmdProcessFunc> g_smsFuncMap;
 std::map<char, CmdProcessFunc> g_pdpProfileFuncMap;
 std::map<char, CmdProcessFunc> g_opKeyFuncMap;
-std::shared_ptr<AppExecFwk::DataAbilityHelper> simDataAbilityHelper = nullptr;
-std::shared_ptr<AppExecFwk::DataAbilityHelper> smsDataAbilityHelper = nullptr;
-std::shared_ptr<AppExecFwk::DataAbilityHelper> pdpProfileDataAbilityHelper = nullptr;
-std::shared_ptr<AppExecFwk::DataAbilityHelper> opKeyDataAbilityHelper = nullptr;
-std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(
-    int32_t systemAbilityId, std::shared_ptr<Uri> dataAbilityUri)
+std::shared_ptr<DataShare::DataShareHelper> simDataHelper = nullptr;
+std::shared_ptr<DataShare::DataShareHelper> smsDataHelper = nullptr;
+std::shared_ptr<DataShare::DataShareHelper> pdpProfileDataHelper = nullptr;
+std::shared_ptr<DataShare::DataShareHelper> opKeyDataHelper = nullptr;
+std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(
+    int32_t systemAbilityId, std::string &uri)
 {
-    DATA_STORAGE_LOGI("DataSimRdbHelper::CreateDataAHelper ");
+    DATA_STORAGE_LOGI("DataSimRdbHelper::CreateDataShareHelper ");
     auto saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (saManager == nullptr) {
         DATA_STORAGE_LOGE("DataSimRdbHelper Get system ability mgr failed.");
@@ -55,7 +55,7 @@ std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(
         DATA_STORAGE_LOGE("DataSimRdbHelper GetSystemAbility Service Failed.");
         return nullptr;
     }
-    return AppExecFwk::DataAbilityHelper::Creator(remoteObj, dataAbilityUri);
+    return DataShare::DataShareHelper::Creator(remoteObj, uri);
 }
 
 void ApplyPermission()
@@ -68,98 +68,98 @@ void RemovePermission()
     return;
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateSimHelper()
+std::shared_ptr<DataShare::DataShareHelper> CreateSimHelper()
 {
-    if (simDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(SIM_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreateSimHelper dataAbilityUri is nullptr");
+    if (simDataHelper == nullptr) {
+        std::string uri(SIM_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreateSimHelper uri is nullptr");
             return nullptr;
         }
-        simDataAbilityHelper = CreateDataAHelper(TELEPHONY_CORE_SERVICE_SYS_ABILITY_ID, dataAbilityUri);
+        simDataHelper = CreateDataShareHelper(TELEPHONY_CORE_SERVICE_SYS_ABILITY_ID, uri);
     }
-    return simDataAbilityHelper;
+    return simDataHelper;
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateSmsHelper()
+std::shared_ptr<DataShare::DataShareHelper> CreateSmsHelper()
 {
-    if (smsDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(SMS_MMS_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreateSmsHelper dataAbilityUri is nullptr");
+    if (smsDataHelper == nullptr) {
+        std::string uri(SMS_MMS_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreateSmsHelper uri is nullptr");
             return nullptr;
         }
-        smsDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
+        smsDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
-    return smsDataAbilityHelper;
+    return smsDataHelper;
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> CreatePdpProfileHelper()
+std::shared_ptr<DataShare::DataShareHelper> CreatePdpProfileHelper()
 {
-    if (pdpProfileDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(PDP_PROFILE_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreatePdpProfileHelper dataAbilityUri is nullptr");
+    if (pdpProfileDataHelper == nullptr) {
+        std::string uri(PDP_PROFILE_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreatePdpProfileHelper uri is nullptr");
             return nullptr;
         }
-        pdpProfileDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
+        pdpProfileDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
-    return pdpProfileDataAbilityHelper;
+    return pdpProfileDataHelper;
 }
 
-std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateOpKeyHelper()
+std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyHelper()
 {
-    if (opKeyDataAbilityHelper == nullptr) {
-        std::shared_ptr<Uri> dataAbilityUri = std::make_shared<Uri>(OPKEY_URI);
-        if (dataAbilityUri == nullptr) {
-            DATA_STORAGE_LOGE("CreateOpKeyHelper dataAbilityUri is nullptr");
+    if (opKeyDataHelper == nullptr) {
+        std::string uri(OPKEY_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreateOpKeyHelper uri is nullptr");
             return nullptr;
         }
-        opKeyDataAbilityHelper = CreateDataAHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, dataAbilityUri);
+        opKeyDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
-    return opKeyDataAbilityHelper;
+    return opKeyDataHelper;
 }
 
-int SimSetCardByType(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SimSetCardByType(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info/set_card");
-    NativeRdb::ValuesBucket value;
-    NativeRdb::DataAbilityPredicates predicates;
-    value.PutInt(SimData::SLOT_INDEX, 1);
-    value.PutInt(SimData::CARD_TYPE, 1);
-    return helper->Update(uri, value, predicates);
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info/set_card");
+    DataShare::DataShareValuesBucket value;
+    DataShare::DataSharePredicates predicates;
+    value.Put(SimData::SLOT_INDEX, 1);
+    value.Put(SimData::CARD_TYPE, 1);
+    return helper->Update(uri, predicates, value);
 }
 
-int OpKeyInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int OpKeyInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
     std::string opkey = "1435";
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    NativeRdb::ValuesBucket value;
-    value.PutInt(OpKeyData::ID, 1);
-    value.PutString(OpKeyData::MCCMNC, "46000");
-    value.PutString(OpKeyData::GID1, "gid1");
-    value.PutString(OpKeyData::OPERATOR_NAME, "Mobile");
-    value.PutString(OpKeyData::OPERATOR_KEY, opkey);
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    DataShare::DataShareValuesBucket value;
+    value.Put(OpKeyData::ID, 1);
+    value.Put(OpKeyData::MCCMNC, "46000");
+    value.Put(OpKeyData::GID1, "gid1");
+    value.Put(OpKeyData::OPERATOR_NAME, "Mobile");
+    value.Put(OpKeyData::OPERATOR_KEY, opkey);
     return helper->Insert(uri, value);
 }
 
-int OpKeyUpdate(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int OpKeyUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    NativeRdb::ValuesBucket values;
-    values.PutString(OpKeyData::GID1, "gidd1");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    DataShare::DataShareValuesBucket values;
+    values.Put(OpKeyData::GID1, "gidd1");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(OpKeyData::OPERATOR_KEY, "1435");
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int OpKeySelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int OpKeySelect(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
     DATA_STORAGE_LOGI("OpKeySelect --- ");
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
@@ -169,42 +169,42 @@ int OpKeySelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
     return -1;
 }
 
-int OpKeyDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int OpKeyDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.opkeyability/opkey/opkey_info");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.opkeyability/opkey/opkey_info");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(OpKeyData::ID, "1");
     return helper->Delete(uri, predicates);
 }
 
-int SimInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SimInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
-    NativeRdb::ValuesBucket value;
-    value.PutInt(SimData::SLOT_INDEX, 1);
-    value.PutString(SimData::PHONE_NUMBER, "134xxxxxxxx");
-    value.PutString(SimData::ICC_ID, "icc_id");
-    value.PutString(SimData::CARD_ID, "card_id");
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
+    DataShare::DataShareValuesBucket value;
+    value.Put(SimData::SLOT_INDEX, 1);
+    value.Put(SimData::PHONE_NUMBER, "134xxxxxxxx");
+    value.Put(SimData::ICC_ID, "icc_id");
+    value.Put(SimData::CARD_ID, "card_id");
     return helper->Insert(uri, value);
 }
 
-int SimUpdate(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SimUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
     std::string slot = std::to_string(1);
-    NativeRdb::ValuesBucket values;
-    values.PutString(SimData::SHOW_NAME, "China Mobile");
-    NativeRdb::DataAbilityPredicates predicates;
+    DataShare::DataShareValuesBucket values;
+    values.Put(SimData::SHOW_NAME, "China Mobile");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SimData::SLOT_INDEX, slot);
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int SimSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SimSelect(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
@@ -213,114 +213,115 @@ int SimSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
     return -1;
 }
 
-int SimDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SimDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.simability/sim/sim_info");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.simability/sim/sim_info");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SimData::SLOT_INDEX, "1");
     return helper->Delete(uri, predicates);
 }
 
-int SmsBatchInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SmsBatchInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    std::vector<NativeRdb::ValuesBucket> values;
-    NativeRdb::ValuesBucket value;
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    std::vector<DataShare::DataShareValuesBucket> values;
+    DataShare::DataShareValuesBucket value;
     int batchNum = 100;
     for (int i = 0; i < batchNum; i++) {
-        value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
-        value.PutString(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
-        value.PutInt(SmsMmsInfo::GROUP_ID, 1);
+        value.Put(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
+        value.Put(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
+        value.Put(SmsMmsInfo::GROUP_ID, 1);
         values.push_back(value);
         value.Clear();
     }
     return helper->BatchInsert(uri, values);
 }
 
-int SmsInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SmsInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    NativeRdb::ValuesBucket value;
-    value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
-    value.PutString(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
-    value.PutInt(SmsMmsInfo::GROUP_ID, 1);
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    DataShare::DataShareValuesBucket value;
+    value.Put(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
+    value.Put(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
+    value.Put(SmsMmsInfo::GROUP_ID, 1);
     return helper->Insert(uri, value);
 }
 
-int SmsUpdate(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SmsUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    NativeRdb::ValuesBucket values;
-    values.PutString(SmsMmsInfo::MSG_CONTENT, "The second test text message content");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    DataShare::DataShareValuesBucket values;
+    values.Put(SmsMmsInfo::MSG_CONTENT, "The second test text message content");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int SmsSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SmsSelect(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
+        std::cout << "count is " << count;
         return count;
     }
     return -1;
 }
 
-int SmsDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int SmsDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
     return helper->Delete(uri, predicates);
 }
 
-int PdpProfileReset(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int PdpProfileReset(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile/reset");
-    NativeRdb::ValuesBucket values;
-    NativeRdb::DataAbilityPredicates predicates;
-    return helper->Update(uri, values, predicates);
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/reset");
+    DataShare::DataShareValuesBucket values;
+    DataShare::DataSharePredicates predicates;
+    return helper->Update(uri, predicates, values);
 }
 
-int PdpProfileInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int PdpProfileInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    NativeRdb::ValuesBucket value;
-    value.PutString(PdpProfileData::PROFILE_NAME, "frist_profile_name");
-    value.PutString(PdpProfileData::MCC, "460");
-    value.PutString(PdpProfileData::MNC, "91");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    DataShare::DataShareValuesBucket value;
+    value.Put(PdpProfileData::PROFILE_NAME, "frist_profile_name");
+    value.Put(PdpProfileData::MCC, "460");
+    value.Put(PdpProfileData::MNC, "91");
     return helper->Insert(uri, value);
 }
 
-int PdpProfileUpdate(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int PdpProfileUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    NativeRdb::ValuesBucket values;
-    values.PutString(PdpProfileData::PROFILE_NAME, "update_profile_name");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    DataShare::DataShareValuesBucket values;
+    values.Put(PdpProfileData::PROFILE_NAME, "update_profile_name");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(PdpProfileData::PROFILE_ID, "1");
-    return helper->Update(uri, values, predicates);
+    return helper->Update(uri, predicates, values);
 }
 
-int PdpProfileDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int PdpProfileDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    NativeRdb::DataAbilityPredicates predicates;
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    DataShare::DataSharePredicates predicates;
     predicates.EqualTo(PdpProfileData::PROFILE_ID, "1");
     return helper->Delete(uri, predicates);
 }
 
-int PdpProfileSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+int PdpProfileSelect(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
-    Uri uri("dataability:///com.ohos.pdpprofileability/net/pdp_profile");
-    std::vector<std::string> colume;
-    NativeRdb::DataAbilityPredicates predicates;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper->Query(uri, colume, predicates);
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
@@ -354,7 +355,7 @@ void Init()
     ApplyPermission();
 }
 
-int VerifyCmd(char inputCMD, std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper)
+int VerifyCmd(char inputCMD, std::shared_ptr<DataShare::DataShareHelper> &helper)
 {
     auto itFunSim = g_simFuncMap.find(inputCMD);
     if (itFunSim != g_simFuncMap.end()) {
@@ -449,7 +450,7 @@ void Looper()
 {
     char inputCMD = '0';
     bool loopFlag = true;
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> helper = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> helper = nullptr;
     Init();
     while (loopFlag) {
         PrintfHint();

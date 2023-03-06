@@ -18,7 +18,7 @@
 
 ## Introduction<a name="section117mcpsimp"></a>
 
-The data storage module stores persistent data of key modules of the Telephony subsystem, such as the SIM cards and SMS modules, and provides the **DataAbility** API for data access.
+The data storage module stores persistent data of key modules of the Telephony subsystem, such as the SIM cards and SMS modules, and provides the **DataShare** API for data access.
 
 **Figure 1** Architecture of the data storage module<a name="fig13267152558"></a>
 
@@ -57,7 +57,7 @@ The data storage module stores persistent data of key modules of the Telephony s
 
 - Hardware constraints: none
 
-- Use case: When a user needs to edit the persistent data stored in Telephony subsystem modules, such as the SIM card and SMS/MMS modules, your application can call the **Insert**, **Delete**, **Update**, and **Query** APIs provided by **DataAbilityHelper** as demanded.
+- Use case: When a user needs to edit the persistent data stored in Telephony subsystem modules, such as the SIM card and SMS/MMS modules, your application can call the **Insert**, **Delete**, **Update**, and **Query** APIs provided by **DataShareHelper** as demanded.
 
   You need to declare the corresponding permission for access to the specified URI.
 
@@ -65,16 +65,16 @@ The data storage module stores persistent data of key modules of the Telephony s
 
 ### Available APIs<a name="section136mcpsimp"></a>
 
-**Table 1** APIs provided by DataAbilityHelper
+**Table 1** APIs provided by DataShareHelper
 
 <a name="table165976561598"></a>
 
 | API Definition                                                    | **Description**|
 | ------------------------------------------------------------ | ------------ |
-| int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) | Inserts data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
-| int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) | Deletes data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
-| int Update( const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates) | Updates data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
-| std::shared_ptr\<NativeRdb::AbsSharedResultSet\> Query( const Uri &uri, const std::vector\<std::string\> &columns, const NativeRdb::DataAbilityPredicates &predicates) | Queries data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| int Insert(Uri &uri, const DataShare::DataShareValuesBucket &value) | Inserts data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| int Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates) | Deletes data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| int Update(Uri &uri, const DataSharePredicates &predicates, const DataShareValuesBucket &value) | Updates data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+| std::shared_ptr\<DataShare::DataShareResultSet\> Query(Uri &uri, const DataSharePredicates &predicates, std::vector\<std::string\> &columns) | Queries data.     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
 
 **Table 2** Required permissions
 
@@ -109,7 +109,6 @@ The data storage module stores persistent data of key modules of the Telephony s
 | Parameter      | Description                                 |
 | ---------- | ------------------------------------- |
 | uri        | Resource path.                             |
-| value      | Data set. This field corresponds to the table structure field on which the current operation is performed.|
 | predicates | Conditions for data deletion.                             |
 
 ### Parameters of the Update API<a name="section1097113151210"></a>
@@ -122,6 +121,7 @@ The data storage module stores persistent data of key modules of the Telephony s
 | ---------- | -------- |
 | uri        | Resource path.|
 | predicates | Conditions for data updating.|
+| value      | Data set. This field corresponds to the table structure field on which the current operation is performed.|
 
 ### Parameters of the Query API<a name="section1096113151208"></a>
 
@@ -132,8 +132,8 @@ The data storage module stores persistent data of key modules of the Telephony s
 | Parameter      | Description          |
 | ---------- | -------------- |
 | uri        | Resource path.      |
-| columns    | Fields in the query result.|
 | predicates | Conditions for data query.      |
+| columns    | Fields in the query result.|
 
 ### Sample Code<a name="section1558565082915"></a>
 
@@ -141,12 +141,13 @@ The following provides the procedure and sample code for you to query, insert, d
 
 1. Call **SystemAbilityManagerClient** to obtain a **SystemAbilityManager** object.
 2. Call **saManager** to obtain an **IRemoteObject** object based on the specified service ID.
-3. Call **IRemoteObject** to create a **DataAbilityHelper** object.
-4. Call **DataAbilityHelper::Query** to query data, and call the other related APIs to process data.
+3. Call **IRemoteObject** to create a **DataShareHelper** object.
+4. Call **DataShareHelper::Query** to query data, and call the other related APIs to process data.
 
-   Sample code for creating a **DataAbilityHelper** instance:
+   Sample code for creating a **DataShareHelper** instance:
    ```
-   std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(int32_t systemAbilityId)
+   std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateDataShareHelper(
+       int32_t systemAbilityId, std::string &uri)
    {
        // Obtain a SystemAbilityManager instance through SystemAbilityManagerClient.
        auto saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -160,50 +161,50 @@ The following provides the procedure and sample code for you to query, insert, d
            DATA_STORAGE_LOGE("DataSimRdbHelper GetSystemAbility Service Failed.");
            return nullptr;
        }
-       // Create a DataAbilityHelper instance.
-       return AppExecFwk::DataAbilityHelper::Creator(remoteObj);
+       // Create a DataShareHelper instance.
+       return DataShare::DataShareHelper::Creator(remoteObj, uri);
    }
    ```
    Sample code for querying SMS/MMS messages:
    ```
-   std::shared_ptr<NativeRdb::AbsSharedResultSet> SmsSelect(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+   std::shared_ptr<DataShare::DataShareResultSet> DataStorageGtest::SmsSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper)
    {
        // Resource path
-       Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+       Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
        // Fields in the query result
-       std::vector<std::string> colume;
+       std::vector<std::string> columns;
        // Phone number of the message sender
-       colume.push_back("sender_number");
+       columns.push_back("sender_number");
        // Message title
-       colume.push_back("msg_title");
+       columns.push_back("msg_title");
        // Message content
-       colume.push_back("msg_content");
+       columns.push_back("msg_content");
        // Query predicates
-       NativeRdb::DataAbilityPredicates predicates;
-       // Call the DataAbilityHelper::Query API to query data.
-       return helper->Query(uri, colume, predicates);
+       DataShare::DataSharePredicates predicates;
+       // Call the DataShareHelper::Query API to query data.
+       return helper->Query(uri, predicates, columns);
    }
    ```
    Sample code for inserting SMS/MMS messages:
    ```
-   int SmsInsert(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+   int SmsInsert(std::shared_ptr<DataShare::DataShareHelper> &helper)
    {
-       Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-       NativeRdb::ValuesBucket value;
+       Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+       DataShare::DataShareValuesBucket value;
        // Phone number of the message recipient
-       value.PutString(SmsMmsInfo::RECEIVER_NUMBER, "138XXXXXXXX");
+       value.Put(SmsMmsInfo::RECEIVER_NUMBER, "138XXXXXXXX");
        // Message content
-       value.PutString(SmsMmsInfo::MSG_CONTENT, "ceshi");
-       value.PutInt(SmsMmsInfo::GROUP_ID, 1);
+       value.Put(SmsMmsInfo::MSG_CONTENT, "ceshi");
+       value.Put(SmsMmsInfo::GROUP_ID, 1);
        return helper->Insert(uri, value);
    }
    ```
    Sample code for deleting SMS/MMS messages:
    ```
-    int SmsDelete(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+    int SmsDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
     {
-        Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-        NativeRdb::DataAbilityPredicates predicates;
+        Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+        DataShare::DataSharePredicates predicates;
         // Delete the message whose MSG_ID is 1.
         predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
         return helper->Delete(uri, predicates);
@@ -211,16 +212,16 @@ The following provides the procedure and sample code for you to query, insert, d
    ```
    Sample code for updating SMS/MMS messages:
    ```
-   int SmsUpdate(std::shared_ptr<AppExecFwk::DataAbilityHelper> helper)
+   int SmsUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
    {
-       Uri uri("dataability:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
-       NativeRdb::ValuesBucket values;
+       Uri uri("datashare:///com.ohos.smsmmsability/sms_mms/sms_mms_info");
+       DataShare::DataShareValuesBucket values;
        // Message content
-       values.PutString(SmsMmsInfo::MSG_CONTENT, "hi ohos");
-       NativeRdb::DataAbilityPredicates predicates;
+       values.Put(SmsMmsInfo::MSG_CONTENT, "hi ohos");
+       DataShare::DataSharePredicates predicates;
        // Message ID
        predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
-       return helper->Update(uri, values, predicates);
+       return helper->Update(uri, predicates, values);
    }
    ```
 
