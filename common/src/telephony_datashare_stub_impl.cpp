@@ -144,7 +144,7 @@ int TelephonyDataShareStubImpl::Delete(const Uri &uri, const DataSharePredicates
 }
 
 std::shared_ptr<DataShareResultSet> TelephonyDataShareStubImpl::Query(const Uri &uri,
-    const DataSharePredicates &predicates, std::vector<std::string> &columns)
+    const DataSharePredicates &predicates, std::vector<std::string> &columns, DatashareBusinessError &businessError)
 {
     DATA_STORAGE_LOGI("Query begin.");
     std::shared_ptr<DataShareResultSet> resultSet = nullptr;
