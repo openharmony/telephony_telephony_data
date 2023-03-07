@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 
 #include "iosfwd"
 #include "memory"
+#include "datashare_values_bucket.h"
 #include "rdb_base_helper.h"
 #include "string"
 #include "vector"
@@ -46,10 +47,10 @@ public:
      * Insert sms_mms_info table data
      *
      * @param id id
-     * @param initialValues Table field data
+     * @param value Table field data
      * @return 0 is succeed else failed
      */
-    int32_t InsertSmsMmsInfo(int64_t &id, const NativeRdb::ValuesBucket &initialValues);
+    int32_t InsertSmsMmsInfo(int64_t &id, const NativeRdb::ValuesBucket &value);
 
     /**
      * Batch Insert sms_mms_info table data
@@ -58,7 +59,7 @@ public:
      * @param values Table field data
      * @return 0 is succeed else failed
      */
-    int32_t BatchInsertSmsMmsInfo(int64_t &id, const std::vector<NativeRdb::ValuesBucket> &values);
+    int32_t BatchInsertSmsMmsInfo(int64_t &id, const std::vector<DataShare::DataShareValuesBucket> &values);
 
     /**
      * Commit the transaction action

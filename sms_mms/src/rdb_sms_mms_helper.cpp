@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include "rdb_errno.h"
 #include "rdb_sms_mms_callback.h"
 #include "rdb_store_config.h"
+#include "rdb_utils.h"
 #include "sms_mms_data.h"
 #include "time_util.h"
 
@@ -165,20 +166,22 @@ int32_t RdbSmsMmsHelper::DeleteDataByThirty()
     return result;
 }
 
-int RdbSmsMmsHelper::InsertSmsMmsInfo(int64_t &id, const NativeRdb::ValuesBucket &values)
+int RdbSmsMmsHelper::InsertSmsMmsInfo(int64_t &id, const NativeRdb::ValuesBucket &value)
 {
-    return Insert(id, values, TABLE_SMS_MMS_INFO);
+    return Insert(id, value, TABLE_SMS_MMS_INFO);
 }
 
-int32_t RdbSmsMmsHelper::BatchInsertSmsMmsInfo(int64_t &id, const std::vector<NativeRdb::ValuesBucket> &values)
+int32_t RdbSmsMmsHelper::BatchInsertSmsMmsInfo(int64_t &id,
+    const std::vector<DataShare::DataShareValuesBucket> &values)
 {
     int32_t result = BeginTransaction();
     if (result != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbSmsMmsHelper::BatchInsertSmsMmsInfo BeginTransaction is error!");
+        DATA_STORAGE_LOGE("RdbSmsMmsHelper::BatchInsertSmsMmsInfo BeginTransaction error!");
         return result;
     }
-    for (const NativeRdb::ValuesBucket &item : values) {
-        result = InsertSmsMmsInfo(id, item);
+    for (const auto &item : values) {
+        OHOS::NativeRdb::ValuesBucket value = RdbDataShareAdapter::RdbUtils::ToValuesBucket(item);
+        result = InsertSmsMmsInfo(id, value);
         if (result != NativeRdb::E_OK) {
             DATA_STORAGE_LOGE("RdbSmsMmsHelper::InsertSmsMmsInfo error result = %{public}d", result);
             RollBack();

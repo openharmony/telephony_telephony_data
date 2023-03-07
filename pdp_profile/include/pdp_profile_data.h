@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -93,7 +93,7 @@ enum class BearingSystemType {
 
 constexpr const char *TABLE_PDP_PROFILE = "pdp_profile";
 constexpr const char *TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
-constexpr const char *PDP_PROFILE_URI = "dataability:///com.ohos.pdpprofileability";
+constexpr const char *PDP_PROFILE_URI = "datashare:///com.ohos.pdpprofileability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_PDP_PROFILE_DATA_H

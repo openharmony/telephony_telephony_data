@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -103,7 +103,7 @@ constexpr const char *TABLE_SMS_MMS_INFO = "sms_mms_info";
 constexpr const char *TABLE_SMS_SUBSECTION = "sms_subsection";
 constexpr const char *TABLE_MMS_PROTOCOL = "mms_protocol";
 constexpr const char *TABLE_MMS_PART = "mms_part";
-constexpr const char *SMS_MMS_URI = "dataability:///com.ohos.smsmmsability";
+constexpr const char *SMS_MMS_URI = "datashare:///com.ohos.smsmmsability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_SMS_DATA_H

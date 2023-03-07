@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,7 @@ struct OpKey {
 
 constexpr const char *MCCMNC_INDEX = "mccmncIndex";
 constexpr const char *TABLE_OPKEY_INFO = "opkey_info";
-constexpr const char *OPKEY_URI = "dataability:///com.ohos.opkeyability";
+constexpr const char *OPKEY_URI = "datashare:///com.ohos.opkeyability";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_OPKEY_DATA_H

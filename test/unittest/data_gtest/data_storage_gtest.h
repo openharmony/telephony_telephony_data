@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,8 +21,8 @@
 
 #include "abs_shared_result_set.h"
 #include "accesstoken_kit.h"
-#include "data_ability_helper.h"
-#include "data_ability_predicates.h"
+#include "datashare_helper.h"
+#include "datashare_predicates.h"
 #include "gtest/gtest.h"
 #include "iservice_registry.h"
 #include "nativetoken_kit.h"
@@ -40,39 +40,39 @@ public:
     void TearDown();
 
     using RequestFuncType = int (DataStorageGtest::*)
-        (const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
+        (const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     std::map<char, RequestFuncType> requestFuncMap_;
 
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateDataAHelper(
-        int32_t systemAbilityId, std::shared_ptr<Uri> dataAbilityUri) const;
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateSimHelper();
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateSmsHelper();
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> CreatePdpProfileHelper();
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> CreateOpKeyHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(
+        int32_t systemAbilityId, std::string &uri) const;
+    std::shared_ptr<DataShare::DataShareHelper> CreateSimHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreateSmsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreatePdpProfileHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyHelper();
 
-    int SimInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SimUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SimSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SimDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SmsInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SmsBatchInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SmsUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SmsSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int SmsDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int PdpProfileInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int PdpProfileUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int PdpProfileSelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int PdpProfileDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int OpKeyInsert(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int OpKeyUpdate(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int OpKeySelect(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
-    int OpKeyDelete(const std::shared_ptr<AppExecFwk::DataAbilityHelper> &helper) const;
+    int SimInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SimUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SimSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SimDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SmsInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SmsBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SmsUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SmsSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SmsDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PdpProfileUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PdpProfileSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PdpProfileDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int OpKeyInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int OpKeyUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int OpKeySelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int OpKeyDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
 
 private:
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> simDataAbilityHelper = nullptr;
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> smsDataAbilityHelper = nullptr;
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> pdpProfileDataAbilityHelper = nullptr;
-    std::shared_ptr<AppExecFwk::DataAbilityHelper> opKeyDataAbilityHelper = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> simDataHelper = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> smsDataHelper = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> pdpProfileDataHelper = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> opKeyDataHelper = nullptr;
 };
 } // namespace Telephony
 } // namespace OHOS
