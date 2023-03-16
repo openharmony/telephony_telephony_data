@@ -75,6 +75,10 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail!\n");
         return ret;
     }
+    if (content == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
+        return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
     free(content);
