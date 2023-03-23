@@ -16,7 +16,7 @@
 #ifndef DATA_STORAGE_SIM_ABILITY_H
 #define DATA_STORAGE_SIM_ABILITY_H
 
-#include "__functional_base"
+#include <functional>
 #include "__mutex_base"
 #include "ability.h"
 #include "ability_lifecycle.h"
