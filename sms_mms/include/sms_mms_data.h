@@ -99,10 +99,28 @@ public:
     static constexpr const char *CONTENT = "content";
 };
 
+class Session {
+public:
+    static constexpr const char *ID = "id";
+    static constexpr const char *TIME = "time";
+    static constexpr const char *TELEPHONE = "telephone";
+    static constexpr const char *CONTENT = "content";
+    static constexpr const char *CONTACTS_NUM = "contacts_num";
+    static constexpr const char *SMS_TYPE = "sys_type";
+    static constexpr const char *UNREAD_COUNT = "unread_count";
+    static constexpr const char *SENDING_STATUS = "sending_status";
+    static constexpr const char *HAS_DRAFT = "has_draft";
+    static constexpr const char *HAS_LOCK = "has_lock";
+    static constexpr const char *MESSAGE_COUNT = "message_count";
+    static constexpr const char *HAS_MMS = "has_mms";
+    static constexpr const char *HAS_ATTACHMENT = "has_attachment";
+};
+
 constexpr const char *TABLE_SMS_MMS_INFO = "sms_mms_info";
 constexpr const char *TABLE_SMS_SUBSECTION = "sms_subsection";
 constexpr const char *TABLE_MMS_PROTOCOL = "mms_protocol";
 constexpr const char *TABLE_MMS_PART = "mms_part";
+constexpr const char *TABLE_SESSION = "session";
 constexpr const char *SMS_MMS_URI = "datashare:///com.ohos.smsmmsability";
 } // namespace Telephony
 } // namespace OHOS

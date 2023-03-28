@@ -45,11 +45,14 @@ int RdbSmsMmsHelper::Init()
     CreateSmsSubsectionTableStr(smsSubsectionStr);
     std::string mmsPartStr;
     CreateMmsPartTableStr(mmsPartStr);
+    std::string sessionStr;
+    CreateSessionTableStr(sessionStr);
     std::vector<std::string> createTableVec;
     createTableVec.push_back(messageInfoStr);
     createTableVec.push_back(mmsProtocolStr);
     createTableVec.push_back(smsSubsectionStr);
     createTableVec.push_back(mmsPartStr);
+    createTableVec.push_back(sessionStr);
     RdbSmsMmsCallback callback(createTableVec);
     CreateRdbStore(config, VERSION, callback, errCode);
     return errCode;
@@ -147,6 +150,24 @@ void RdbSmsMmsHelper::CreateMmsPartTableStr(std::string &createTableStr)
     createTableStr.append("foreign key(").append(SmsMmsInfo::MSG_ID).append(") references ");
     createTableStr.append(TABLE_SMS_MMS_INFO).append("(").append(SmsMmsInfo::MSG_ID);
     createTableStr.append(") on delete cascade on update cascade )");
+}
+
+void RdbSmsMmsHelper::CreateSessionTableStr(std::string &createTableStr)
+{
+    createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_SESSION);
+    createTableStr.append("(").append(Session::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
+    createTableStr.append(Session::TIME).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append(Session::TELEPHONE).append(" TEXT , ");
+    createTableStr.append(Session::CONTENT).append(" TEXT , ");
+    createTableStr.append(Session::CONTACTS_NUM).append(" INTEGER DEFAULT 0 , ");
+    createTableStr.append(Session::SMS_TYPE).append(" INTEGER DEFAULT 0 , ");
+    createTableStr.append(Session::UNREAD_COUNT).append(" INTEGER DEFAULT 0 , ");
+    createTableStr.append(Session::SENDING_STATUS).append(" INTEGER DEFAULT 0 '', ");
+    createTableStr.append(Session::HAS_DRAFT).append(" INTEGER DEFAULT 0 , ");
+    createTableStr.append(Session::HAS_LOCK).append(" INTEGER DEFAULT 0 , ");
+    createTableStr.append(Session::MESSAGE_COUNT).append(" INTEGER DEFAULT 0 , ");
+    createTableStr.append(Session::HAS_MMS).append(" INTEGER DEFAULT 0 , ");
+    createTableStr.append(Session::HAS_ATTACHMENT).append(" INTEGER DEFAULT 0 , ");
 }
 
 void RdbSmsMmsHelper::UpdateDbPath(const std::string &path)

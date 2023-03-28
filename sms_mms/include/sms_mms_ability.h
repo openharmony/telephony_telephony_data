@@ -43,7 +43,7 @@ class ValuesBucket;
 }
 namespace Telephony {
 enum class MessageUriType {
-    UNKNOW, SMS_MMS, THIRTY, MAX_GROUP, UNREAD_TOTAL, MMS_PROTOCOL, SMS_SUBSECTION, MMS_PART
+    UNKNOW, SMS_MMS, THIRTY, MAX_GROUP, UNREAD_TOTAL, MMS_PROTOCOL, SMS_SUBSECTION, MMS_PART, SESSION
 };
 class SmsMmsAbility : public DataShare::DataShareExtAbility {
 public:

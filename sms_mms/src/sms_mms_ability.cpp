@@ -148,6 +148,10 @@ int SmsMmsAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket
             helper_.Insert(id, values, TABLE_MMS_PART);
             break;
         }
+        case MessageUriType::SESSION: {
+            helper_.Insert(id, values, TABLE_SESSION);
+            break;
+        }
         default:
             DATA_STORAGE_LOGI("SmsMmsAbility::Insert##uri = %{public}s", uri.ToString().c_str());
             break;
@@ -182,6 +186,10 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
         }
         case MessageUriType::MMS_PART: {
             absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
+            break;
+        }
+        case MessageUriType::SESSION: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
             break;
         }
         case MessageUriType::MAX_GROUP: {
@@ -242,6 +250,10 @@ int SmsMmsAbility::Update(
             absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
             break;
         }
+        case MessageUriType::SESSION: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
+            break;
+        }
         default:
             DATA_STORAGE_LOGI("SmsMmsAbility::Update##uri = %{public}s", uri.ToString().c_str());
             break;
@@ -292,6 +304,10 @@ int SmsMmsAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &
         }
         case MessageUriType::MMS_PART: {
             absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
+            break;
+        }
+        case MessageUriType::SESSION: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
             break;
         }
         default:
