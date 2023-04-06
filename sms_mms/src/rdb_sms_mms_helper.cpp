@@ -162,7 +162,7 @@ void RdbSmsMmsHelper::CreateSessionTableStr(std::string &createTableStr)
     createTableStr.append(Session::CONTACTS_NUM).append(" INTEGER DEFAULT 0 , ");
     createTableStr.append(Session::SMS_TYPE).append(" INTEGER DEFAULT 0 , ");
     createTableStr.append(Session::UNREAD_COUNT).append(" INTEGER DEFAULT 0 , ");
-    createTableStr.append(Session::SENDING_STATUS).append(" INTEGER DEFAULT 0 '', ");
+    createTableStr.append(Session::SENDING_STATUS).append(" INTEGER DEFAULT 0 , ");
     createTableStr.append(Session::HAS_DRAFT).append(" INTEGER DEFAULT 0 , ");
     createTableStr.append(Session::HAS_LOCK).append(" INTEGER DEFAULT 0 , ");
     createTableStr.append(Session::MESSAGE_COUNT).append(" INTEGER DEFAULT 0 , ");
