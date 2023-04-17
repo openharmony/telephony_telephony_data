@@ -34,17 +34,17 @@ public:
 };
 
 struct OpKey {
-    int opkeyId;
-    std::string mccmnc;
-    std::string gid1;
-    std::string gid2;
-    std::string imsi;
-    std::string spn;
-    std::string iccid;
-    std::string operatorName;
-    std::string operatorKey;
-    std::string operatorKeyExt;
-    int ruleId;
+    int opkeyId = 0;
+    std::string mccmnc = "";
+    std::string gid1 = "";
+    std::string gid2 = "";
+    std::string imsi = "";
+    std::string spn = "";
+    std::string iccid = "";
+    std::string operatorName = "";
+    std::string operatorKey = "";
+    std::string operatorKeyExt = "";
+    int ruleId = 0;
 };
 
 constexpr const char *MCCMNC_INDEX = "mccmncIndex";

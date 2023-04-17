@@ -41,22 +41,22 @@ public:
 };
 
 struct PdpProfile {
-    int profileId;
-    std::string profileName;
-    std::string mcc;
-    std::string mnc;
-    std::string apn;
-    int authType;
-    std::string authUser;
-    std::string authPwd;
-    std::string apnTypes; // see ApnType
-    int isRoamingApn;
-    std::string homeUrl;
-    std::string proxyIpAddress;
-    std::string mmsIpAddress;
-    std::string pdpProtocol; // see PdpProtocol
-    std::string roamPdpProtocol;
-    int bearingSystemType; // see BearingSystemType
+    int profileId = 0;
+    std::string profileName = "";
+    std::string mcc = "";
+    std::string mnc = "";
+    std::string apn = "";
+    int authType = 0;
+    std::string authUser = "";
+    std::string authPwd = "";
+    std::string apnTypes = ""; // see ApnType
+    int isRoamingApn = 0;
+    std::string homeUrl = "";
+    std::string proxyIpAddress = "";
+    std::string mmsIpAddress = "";
+    std::string pdpProtocol = ""; // see PdpProtocol
+    std::string roamPdpProtocol = "";
+    int bearingSystemType = 0; // see BearingSystemType
 };
 
 
