@@ -4,7 +4,7 @@
     "description": "telephony data storage service",
     "publishAs": "code-segment",
     "homePage": "https://gitee.com/openharmony",
-    "repository": "https://gitee.com/openharmony/telephony_data_storage",
+    "repository": "https://gitee.com/openharmony/telephony_telephony_data",
     "license": "Apache License 2.0",
     "language": "",
     "private": false,
