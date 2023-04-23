@@ -79,6 +79,7 @@ static constexpr OHOS::HiviewDFX::HiLogLabel DATA_STORAGE_LABEL = {LOG_CORE, LOG
 #define DATA_STORAGE_LOGW(fmt, ...) PRINT_DATASTORAGE_LOG(Warn, fmt, ##__VA_ARGS__)
 #define DATA_STORAGE_LOGI(fmt, ...) PRINT_DATASTORAGE_LOG(Info, fmt, ##__VA_ARGS__)
 #define DATA_STORAGE_LOGF(fmt, ...) PRINT_DATASTORAGE_LOG(Fatal, fmt, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGD(fmt, ...) PRINT_DATASTORAGE_LOG(Debug, fmt, ##__VA_ARGS__)
 
 #else
 #endif // CONFIG_HILOG
