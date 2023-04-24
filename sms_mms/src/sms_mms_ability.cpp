@@ -385,7 +385,7 @@ int SmsMmsAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::Data
 
 MessageUriType SmsMmsAbility::ParseUriType(Uri &uri)
 {
-    DATA_STORAGE_LOGI("SmsMmsAbility::ParseUriType start");
+    DATA_STORAGE_LOGD("SmsMmsAbility::ParseUriType start");
     MessageUriType messageUriType = MessageUriType::UNKNOW;
     std::string uriPath = uri.ToString();
     if (!uriPath.empty()) {
@@ -393,7 +393,7 @@ MessageUriType SmsMmsAbility::ParseUriType(Uri &uri)
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
         if (!path.empty()) {
-            DATA_STORAGE_LOGI("SmsMmsAbility::ParseUriType##path = %{public}s", path.c_str());
+            DATA_STORAGE_LOGD("SmsMmsAbility::ParseUriType##path = %{public}s", path.c_str());
             std::map<std::string, MessageUriType>::iterator it = smsMmsUriMap.find(path);
             if (it != smsMmsUriMap.end()) {
                 messageUriType = it->second;

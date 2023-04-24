@@ -69,7 +69,7 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOwner(const 
 {
     OHOS::Uri uriTemp = uri;
     std::string path = uriTemp.GetPath();
-    DATA_STORAGE_LOGI("GetOwner uri: %{public}s", path.c_str());
+    DATA_STORAGE_LOGD("GetOwner uri: %{public}s", path.c_str());
     if (path.find("com.ohos.telephonydataability") != std::string::npos) {
         return GetTelephonyDataAbility();
     }
@@ -146,7 +146,7 @@ int TelephonyDataShareStubImpl::Delete(const Uri &uri, const DataSharePredicates
 std::shared_ptr<DataShareResultSet> TelephonyDataShareStubImpl::Query(const Uri &uri,
     const DataSharePredicates &predicates, std::vector<std::string> &columns, DatashareBusinessError &businessError)
 {
-    DATA_STORAGE_LOGI("Query begin.");
+    DATA_STORAGE_LOGD("Query begin.");
     std::shared_ptr<DataShareResultSet> resultSet = nullptr;
     auto client = sptr<TelephonyDataShareStubImpl>(this);
     auto extension = client->GetOwner(uri);
@@ -155,7 +155,7 @@ std::shared_ptr<DataShareResultSet> TelephonyDataShareStubImpl::Query(const Uri 
         return nullptr;
     }
     resultSet = extension->Query(uri, predicates, columns, businessError);
-    DATA_STORAGE_LOGI("Query end successfully.");
+    DATA_STORAGE_LOGD("Query end successfully.");
     return resultSet;
 }
 
