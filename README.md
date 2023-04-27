@@ -228,7 +228,7 @@ The following provides the procedure and sample code for you to query, insert, d
 
 ## Repositories Involved<a name="section206mcpsimp"></a>
 
-[Telephony Subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/%E7%94%B5%E8%AF%9D%E6%9C%8D%E5%8A%A1%E5%AD%90%E7%B3%BB%E7%BB%9F.md)
+[Telephony Subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/telephony.md)
 
 **telephony_data_storage**
 
