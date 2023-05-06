@@ -11,9 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base\telephony/telephony_data/data_storage_ability_runtime.gni")
 import("//build/test.gni")
-SOURCE_DIR = "//base/telephony/telephony_data"
+SOURCE_DIR = "../../../"
 
 ohos_unittest("tel_telephony_data_gtest") {
   part_name = "telephony_data"
@@ -25,24 +24,22 @@ ohos_unittest("tel_telephony_data_gtest") {
 
   include_dirs = [
     "$SOURCE_DIR/common/include",
-    "$SOURCE_DIR/sim/include",
-    "$SOURCE_DIR/pdp_profile/include",
-    "$SOURCE_DIR/sms_mms/include",
+    "$SOURCE_DIR/interfaces/innerkits/include",
     "$SOURCE_DIR/opkey/include",
+    "$SOURCE_DIR/pdp_profile/include",
+    "$SOURCE_DIR/sim/include",
+    "$SOURCE_DIR/sms_mms/include",
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"TelephonyDataGtest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
 
-  deps = [
-    "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
-    "${ability_runtime_path}/frameworks/native/ability/native:abilitykit_native",
-  ]
-
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
+    "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",

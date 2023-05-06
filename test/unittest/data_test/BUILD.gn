@@ -11,30 +11,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base\telephony/telephony_data/data_storage_ability_runtime.gni")
 import("//build/ohos.gni")
-SOURCE_DIR = "//base/telephony/telephony_data"
+SOURCE_DIR = "../../../"
 
 ohos_executable("tel_telephony_data_test") {
   sources = [ "$SOURCE_DIR/test/unittest/data_test/data_storage_test.cpp" ]
 
   include_dirs = [
     "$SOURCE_DIR/common/include",
-    "$SOURCE_DIR/sim/include",
-    "$SOURCE_DIR/pdp_profile/include",
-    "$SOURCE_DIR/sms_mms/include",
+    "$SOURCE_DIR/interfaces/innerkits/include",
     "$SOURCE_DIR/opkey/include",
-  ]
-
-  deps = [
-    "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
-    "${ability_runtime_path}/frameworks/native/ability/native:abilitykit_native",
-    "//base/global/system_resources/systemres:systemres_hap",
+    "$SOURCE_DIR/pdp_profile/include",
+    "$SOURCE_DIR/sim/include",
+    "$SOURCE_DIR/sms_mms/include",
   ]
 
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
+    "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "data_share:datashare_common",
@@ -50,6 +46,7 @@ ohos_executable("tel_telephony_data_test") {
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "systemres:systemres_hap",
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"DataStorageUTest\"",

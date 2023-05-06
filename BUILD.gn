@@ -11,9 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/telephony/telephony_data/data_storage_ability_runtime.gni")
 import("//build/ohos.gni")
-SOURCE_DIR = "//base/telephony/telephony_data"
 
 ohos_hap("Telephony_Data_Storage") {
   hap_profile = "entry/src/main/module.json"
@@ -45,45 +43,53 @@ ohos_resources("Telephony_DataAbility_resources") {
   hap_profile = "entry/src/main/module.json"
 }
 
+config("telephony_innerkits_config") {
+  include_dirs = [ "interfaces/innerkits/include" ]
+}
+
+config("telephony_data_config") {
+  include_dirs = [
+    "common/include",
+    "opkey/include",
+    "pdp_profile/include",
+    "sim/include",
+    "sms_mms/include",
+  ]
+}
+
 ohos_shared_library("tel_telephony_data") {
   sources = [
-    "$SOURCE_DIR/common/src/data_storage_log_wrapper.cpp",
-    "$SOURCE_DIR/common/src/parser_util.cpp",
-    "$SOURCE_DIR/common/src/preferences_util.cpp",
-    "$SOURCE_DIR/common/src/rdb_base_callback.cpp",
-    "$SOURCE_DIR/common/src/rdb_base_helper.cpp",
-    "$SOURCE_DIR/common/src/telephony_datashare_stub_impl.cpp",
-    "$SOURCE_DIR/opkey/src/opkey_ability.cpp",
-    "$SOURCE_DIR/opkey/src/rdb_opkey_callback.cpp",
-    "$SOURCE_DIR/opkey/src/rdb_opkey_helper.cpp",
-    "$SOURCE_DIR/pdp_profile/src/pdp_profile_ability.cpp",
-    "$SOURCE_DIR/pdp_profile/src/rdb_pdp_profile_callback.cpp",
-    "$SOURCE_DIR/pdp_profile/src/rdb_pdp_profile_helper.cpp",
-    "$SOURCE_DIR/sim/src/rdb_sim_callback.cpp",
-    "$SOURCE_DIR/sim/src/rdb_sim_helper.cpp",
-    "$SOURCE_DIR/sim/src/sim_ability.cpp",
-    "$SOURCE_DIR/sms_mms/src/rdb_sms_mms_callback.cpp",
-    "$SOURCE_DIR/sms_mms/src/rdb_sms_mms_helper.cpp",
-    "$SOURCE_DIR/sms_mms/src/sms_mms_ability.cpp",
+    "common/src/data_storage_log_wrapper.cpp",
+    "common/src/parser_util.cpp",
+    "common/src/preferences_util.cpp",
+    "common/src/rdb_base_callback.cpp",
+    "common/src/rdb_base_helper.cpp",
+    "common/src/telephony_datashare_stub_impl.cpp",
+    "opkey/src/opkey_ability.cpp",
+    "opkey/src/rdb_opkey_callback.cpp",
+    "opkey/src/rdb_opkey_helper.cpp",
+    "pdp_profile/src/pdp_profile_ability.cpp",
+    "pdp_profile/src/rdb_pdp_profile_callback.cpp",
+    "pdp_profile/src/rdb_pdp_profile_helper.cpp",
+    "sim/src/rdb_sim_callback.cpp",
+    "sim/src/rdb_sim_helper.cpp",
+    "sim/src/sim_ability.cpp",
+    "sms_mms/src/rdb_sms_mms_callback.cpp",
+    "sms_mms/src/rdb_sms_mms_helper.cpp",
+    "sms_mms/src/sms_mms_ability.cpp",
   ]
 
-  include_dirs = [
-    "$SOURCE_DIR/sim/include",
-    "$SOURCE_DIR/sms_mms/include",
-    "$SOURCE_DIR/pdp_profile/include",
-    "$SOURCE_DIR/opkey/include",
-    "$SOURCE_DIR/common/include",
-  ]
+  configs = [ ":telephony_data_config" ]
 
-  deps = [
-    "${ability_runtime_inner_api_path}/ability_manager:ability_manager",
-    "${ability_runtime_path}/frameworks/native/ability/native:abilitykit_native",
-    "//third_party/jsoncpp:jsoncpp",
-  ]
+  public_configs = [ ":telephony_innerkits_config" ]
+
+  deps = [ "//third_party/jsoncpp:jsoncpp" ]
 
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
+    "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "ability_runtime:app_context",
     "ability_runtime:dataobs_manager",
     "c_utils:utils",
