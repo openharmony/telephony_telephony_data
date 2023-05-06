@@ -111,6 +111,10 @@ void PdpProfileAbility::OnStart(const AppExecFwk::Want &want)
 
 int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     if (!IsInitOk()) {
         return DATA_STORAGE_ERROR;
     }
@@ -131,6 +135,10 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
     const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return nullptr;
+    }
     std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult = nullptr;
     if (!IsInitOk()) {
         return nullptr;
@@ -159,6 +167,10 @@ int PdpProfileAbility::Update(
     const Uri &uri, const DataShare::DataSharePredicates &predicates,
     const DataShare::DataShareValuesBucket &value)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;
@@ -199,6 +211,10 @@ int PdpProfileAbility::Update(
 
 int PdpProfileAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;

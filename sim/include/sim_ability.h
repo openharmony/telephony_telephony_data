@@ -30,6 +30,7 @@
 #include "rdb_sim_helper.h"
 #include "rdb_predicates.h"
 #include "string"
+#include "telephony_permission.h"
 #include "vector"
 #include "want.h"
 
