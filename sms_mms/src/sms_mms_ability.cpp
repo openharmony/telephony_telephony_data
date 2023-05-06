@@ -123,7 +123,7 @@ void SmsMmsAbility::OnStart(const AppExecFwk::Want &want)
 
 int SmsMmsAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGE)) {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -167,7 +167,7 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
     const Uri &uri, const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGE)) {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return nullptr;
     }
@@ -233,7 +233,7 @@ int SmsMmsAbility::Update(
     const Uri &uri, const DataShare::DataSharePredicates &predicates,
     const DataShare::DataShareValuesBucket &value)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGE)) {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -285,7 +285,7 @@ int SmsMmsAbility::Update(
 
 int SmsMmsAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGE)) {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -383,7 +383,7 @@ int SmsMmsAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 int SmsMmsAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::DataShareValuesBucket> &values)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGE)) {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
