@@ -112,6 +112,10 @@ void SimAbility::OnStart(const AppExecFwk::Want &want)
 
 int SimAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     if (!IsInitOk()) {
         return DATA_STORAGE_ERROR;
     }
@@ -132,6 +136,10 @@ std::shared_ptr<DataShare::DataShareResultSet> SimAbility::Query(
     const Uri &uri, const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return nullptr;
+    }
     std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult = nullptr;
     if (!IsInitOk()) {
         return nullptr;
@@ -160,6 +168,10 @@ int SimAbility::Update(
     const Uri &uri, const DataShare::DataSharePredicates &predicates,
     const DataShare::DataShareValuesBucket &value)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;
@@ -199,6 +211,10 @@ int SimAbility::Update(
 
 int SimAbility::SetCard(const DataShare::DataShareValuesBucket &sharedValue)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     OHOS::NativeRdb::ValuesBucket value = RdbDataShareAdapter::RdbUtils::ToValuesBucket(sharedValue);
     int result = DATA_STORAGE_ERROR;
     if (!value.HasColumn(SimData::SLOT_INDEX)) {
@@ -231,6 +247,10 @@ int SimAbility::SetCard(const DataShare::DataShareValuesBucket &sharedValue)
 
 int SimAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;
