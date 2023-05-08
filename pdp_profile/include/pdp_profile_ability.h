@@ -25,6 +25,7 @@
 #include "memory"
 #include "rdb_pdp_profile_helper.h"
 #include "string"
+#include "telephony_permission.h"
 #include "vector"
 
 namespace OHOS {
