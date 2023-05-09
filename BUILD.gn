@@ -65,6 +65,7 @@ ohos_shared_library("tel_data_storage") {
     "ability_base:zuri",
     "c_utils:utils",
     "config_policy:configpolicy_util",
+    "core_service:libtel_common",
     "hiviewdfx_hilog_native:libhilog",
     "preferences:native_preferences",
     "relational_store:native_dataability",

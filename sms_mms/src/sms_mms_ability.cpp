@@ -65,6 +65,10 @@ void SmsMmsAbility::OnStart(const AppExecFwk::Want &want)
 
 int SmsMmsAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     if (!IsInitOk()) {
         return DATA_STORAGE_ERROR;
     }
@@ -99,6 +103,10 @@ int SmsMmsAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 std::shared_ptr<NativeRdb::AbsSharedResultSet> SmsMmsAbility::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return nullptr;
+    }
     std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
     if (!IsInitOk()) {
         return resultSet;
@@ -149,6 +157,10 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> SmsMmsAbility::Query(
 int SmsMmsAbility::Update(
     const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;
@@ -192,6 +204,10 @@ int SmsMmsAbility::Update(
 
 int SmsMmsAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;
@@ -281,6 +297,10 @@ int SmsMmsAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 int SmsMmsAbility::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;

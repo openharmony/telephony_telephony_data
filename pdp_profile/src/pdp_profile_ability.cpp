@@ -68,6 +68,10 @@ void PdpProfileAbility::OnStart(const AppExecFwk::Want &want)
 
 int PdpProfileAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     if (!IsInitOk()) {
         return DATA_STORAGE_ERROR;
     }
@@ -86,6 +90,10 @@ int PdpProfileAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &val
 std::shared_ptr<NativeRdb::AbsSharedResultSet> PdpProfileAbility::Query(
     const Uri &uri, const std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return nullptr;
+    }
     std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
     if (!IsInitOk()) {
         return resultSet;
@@ -111,6 +119,10 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> PdpProfileAbility::Query(
 int PdpProfileAbility::Update(
     const Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;
@@ -150,6 +162,10 @@ int PdpProfileAbility::Update(
 
 int PdpProfileAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
     int result = DATA_STORAGE_ERROR;
     if (!IsInitOk()) {
         return result;
