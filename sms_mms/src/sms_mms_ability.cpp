@@ -296,40 +296,7 @@ int SmsMmsAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &
     std::lock_guard<std::mutex> guard(lock_);
     Uri tempUri = uri;
     MessageUriType messageUriType = ParseUriType(tempUri);
-    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
-    switch (messageUriType) {
-        case MessageUriType::SMS_MMS: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_MMS_INFO);
-            break;
-        }
-        case MessageUriType::THIRTY: {
-            result = helper_.DeleteDataByThirty();
-            if (result != NativeRdb::E_OK) {
-                DATA_STORAGE_LOGE("SmsMmsAbility::Delete  DeleteDataByThirty fail!");
-                result = static_cast<int>(LoadProFileErrorType::DELETE_THIRTY_DATA_FAIL);
-            }
-            break;
-        }
-        case MessageUriType::MMS_PROTOCOL: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PROTOCOL);
-            break;
-        }
-        case MessageUriType::SMS_SUBSECTION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_SUBSECTION);
-            break;
-        }
-        case MessageUriType::MMS_PART: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
-            break;
-        }
-        case MessageUriType::SESSION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
-            break;
-        }
-        default:
-            DATA_STORAGE_LOGI("SmsMmsAbility::Delete##uri = %{public}s", uri.ToString().c_str());
-            break;
-    }
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = CreateAbsRdbPredicates(messageUriType, result, tempUri);
     if (absRdbPredicates != nullptr) {
         NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
         int deletedRows = CHANGED_ROWS;
@@ -337,9 +304,47 @@ int SmsMmsAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &
         delete absRdbPredicates;
         absRdbPredicates = nullptr;
     } else if (result == DATA_STORAGE_ERROR) {
-        DATA_STORAGE_LOGE("SmsMmsAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
+        DATA_STORAGE_LOGE("SmsMmsAbility::Delete NativeRdb::AbsRdbPredicates is null!");
     }
     return result;
+}
+
+NativeRdb::AbsRdbPredicates *SmsMmsAbility::CreateAbsRdbPredicates(MessageUriType messageUriType, int &result, Uri uri)
+{
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
+    switch (messageUriType) {
+        case MessageUriType::SMS_MMS: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_MMS_INFO);
+            return absRdbPredicates;
+        }
+        case MessageUriType::THIRTY: {
+            result = helper_.DeleteDataByThirty();
+            if (result != NativeRdb::E_OK) {
+                DATA_STORAGE_LOGE("SmsMmsAbility::Delete  DeleteDataByThirty fail!");
+                result = static_cast<int>(LoadProFileErrorType::DELETE_THIRTY_DATA_FAIL);
+            }
+            return absRdbPredicates;
+        }
+        case MessageUriType::MMS_PROTOCOL: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PROTOCOL);
+            return absRdbPredicates;
+        }
+        case MessageUriType::SMS_SUBSECTION: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_SUBSECTION);
+            return absRdbPredicates;
+        }
+        case MessageUriType::MMS_PART: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
+            return absRdbPredicates;
+        }
+        case MessageUriType::SESSION: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
+            return absRdbPredicates;
+        }
+        default:
+            DATA_STORAGE_LOGI("SmsMmsAbility::Delete##uri = %{public}s", uri.ToString().c_str());
+            return absRdbPredicates;
+    }
 }
 
 bool SmsMmsAbility::IsInitOk()

@@ -95,6 +95,8 @@ private:
      */
     void InitUriMap();
 
+    NativeRdb::AbsRdbPredicates *CreateAbsRdbPredicates(MessageUriType messageUriType, int &result, Uri uri);
+
 private:
     RdbSmsMmsHelper helper_;
     std::mutex lock_;
