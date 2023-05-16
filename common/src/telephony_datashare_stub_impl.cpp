@@ -93,6 +93,10 @@ int TelephonyDataShareStubImpl::Insert(const Uri &uri, const DataShareValuesBuck
     DATA_STORAGE_LOGI("Insert begin.");
     int ret = 0;
     auto client = sptr<TelephonyDataShareStubImpl>(this);
+    if (client == nullptr) {
+        DATA_STORAGE_LOGE("Insert failed, client is null.");
+        return ret;
+    }
     auto extension = client->GetOwner(uri);
     if (extension == nullptr) {
         DATA_STORAGE_LOGE("Insert failed, extension is null.");
@@ -112,6 +116,10 @@ int TelephonyDataShareStubImpl::Update(const Uri &uri, const DataSharePredicates
     DATA_STORAGE_LOGI("Update begin.");
     int ret = 0;
     auto client = sptr<TelephonyDataShareStubImpl>(this);
+    if (client == nullptr) {
+        DATA_STORAGE_LOGE("Update failed, client is null.");
+        return ret;
+    }
     auto extension = client->GetOwner(uri);
     if (extension == nullptr) {
         DATA_STORAGE_LOGE("Update failed, extension is null.");
@@ -130,6 +138,10 @@ int TelephonyDataShareStubImpl::Delete(const Uri &uri, const DataSharePredicates
     DATA_STORAGE_LOGI("Delete begin.");
     int ret = 0;
     auto client = sptr<TelephonyDataShareStubImpl>(this);
+    if (client == nullptr) {
+        DATA_STORAGE_LOGE("Delete failed, client is null.");
+        return ret;
+    }
     auto extension = client->GetOwner(uri);
     if (extension == nullptr) {
         DATA_STORAGE_LOGE("Delete failed, extension is null.");
@@ -149,6 +161,10 @@ std::shared_ptr<DataShareResultSet> TelephonyDataShareStubImpl::Query(const Uri 
     DATA_STORAGE_LOGD("Query begin.");
     std::shared_ptr<DataShareResultSet> resultSet = nullptr;
     auto client = sptr<TelephonyDataShareStubImpl>(this);
+    if (client == nullptr) {
+        DATA_STORAGE_LOGE("Query failed, client is null.");
+        return nullptr;
+    }
     auto extension = client->GetOwner(uri);
     if (extension == nullptr) {
         DATA_STORAGE_LOGE("Query failed, extension is null.");
@@ -164,6 +180,10 @@ int TelephonyDataShareStubImpl::BatchInsert(const Uri &uri, const std::vector<Da
     DATA_STORAGE_LOGI("BatchInsert begin.");
     int ret = 0;
     auto client = sptr<TelephonyDataShareStubImpl>(this);
+    if (client == nullptr) {
+        DATA_STORAGE_LOGE("BatchInsert failed, client is null.");
+        return ret;
+    }
     auto extension = client->GetOwner(uri);
     if (extension == nullptr) {
         DATA_STORAGE_LOGE("BatchInsert failed, extension is null.");
