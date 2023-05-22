@@ -20,6 +20,7 @@
 #include "datashare_helper.h"
 #include "datashare_predicates.h"
 #include "opkey_data.h"
+#include "parameter.h"
 #include "pdp_profile_data.h"
 #include "sim_data.h"
 #include "sms_mms_data.h"
@@ -28,6 +29,19 @@ namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
 const int PERMS_NUM = 4;
+const int32_t VOICECALL_CAP_VAL_LEN = 6;
+const std::string KEY_VOICECALL_CAP = "const.telephony.voice.capable";
+
+bool HasVoiceCapability()
+{
+    char retValue[VOICECALL_CAP_VAL_LEN + 1] = { "true" };
+    int retLen = GetParameter(KEY_VOICECALL_CAP.c_str(), "true", retValue, VOICECALL_CAP_VAL_LEN);
+    DATA_STORAGE_LOGI("HasVoiceCapability retValue %{public}s, retLen %{public}d", retValue, retLen);
+    if (strcmp(retValue, "false") == 0) {
+        return false;
+    }
+    return true;
+}
 
 void DataStorageGtest::SetUpTestCase(void)
 {
@@ -342,6 +356,9 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<DataShare::DataShar
  */
 HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> smsHelper = CreateSmsHelper();
     ASSERT_TRUE(smsHelper != nullptr);
     std::shared_ptr<DataShare::DataShareHelper> simHelper = CreateSimHelper();
@@ -355,6 +372,9 @@ HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
  */
 HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyInsert(helper);
@@ -368,6 +388,9 @@ HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyUpdate(helper);
@@ -381,6 +404,9 @@ HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
  */
 HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeySelect(helper);
@@ -394,6 +420,9 @@ HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyDelete(helper);
@@ -407,6 +436,9 @@ HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimInsert(helper);
@@ -420,6 +452,9 @@ HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimUpdate(helper);
@@ -433,6 +468,9 @@ HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimSelect(helper);
@@ -447,6 +485,9 @@ HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimDelete(helper);
@@ -461,6 +502,9 @@ HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsBatchInsert(helper);
@@ -475,6 +519,9 @@ HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsInsert(helper);
@@ -488,6 +535,9 @@ HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsUpdate(helper);
@@ -501,6 +551,9 @@ HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsSelect(helper);
@@ -515,6 +568,9 @@ HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsDelete(helper);
@@ -528,6 +584,9 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileInsert(helper);
@@ -541,6 +600,9 @@ HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileUpdate(helper);
@@ -554,6 +616,9 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
  */
 HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileSelect(helper);
@@ -567,6 +632,9 @@ HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
  */
 HWTEST_F(DataStorageGtest, PdpProfileDelete_001, Function | MediumTest | Level1)
 {
+    if (!HasVoiceCapability()) {
+        return;
+    }
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileDelete(helper);
