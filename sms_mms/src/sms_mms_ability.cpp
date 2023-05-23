@@ -229,6 +229,8 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
         resultSet = helper_.Query(rdbPredicates, columns);
         if (resultSet == nullptr) {
             DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+            delete absRdbPredicates;
+            absRdbPredicates = nullptr;
             return nullptr;
         }
         auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
