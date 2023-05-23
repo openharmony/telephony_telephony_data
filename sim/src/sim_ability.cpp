@@ -151,6 +151,10 @@ std::shared_ptr<DataShare::DataShareResultSet> SimAbility::Query(
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
             std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper_.Query(rdbPredicates, columns);
+            if (resultSet == nullptr) {
+                DATA_STORAGE_LOGE("SimAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+                return nullptr;
+            }
             auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
             sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
             delete absRdbPredicates;

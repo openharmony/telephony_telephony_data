@@ -202,12 +202,20 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
         }
         case MessageUriType::MAX_GROUP: {
             resultSet = helper_.QueryMaxGroupId();
+            if (resultSet == nullptr) {
+                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+                return nullptr;
+            }
             auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
             sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
             break;
         }
         case MessageUriType::UNREAD_TOTAL: {
             resultSet = helper_.StatisticsUnRead();
+            if (resultSet == nullptr) {
+                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+                return nullptr;
+            }
             auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
             sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
             break;
@@ -219,6 +227,10 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
     if (absRdbPredicates != nullptr) {
         NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
         resultSet = helper_.Query(rdbPredicates, columns);
+        if (resultSet == nullptr) {
+            DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+            return nullptr;
+        }
         auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
         sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
         delete absRdbPredicates;
