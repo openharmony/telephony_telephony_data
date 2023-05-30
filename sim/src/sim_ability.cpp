@@ -184,7 +184,8 @@ int SimAbility::Update(
             NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SIM_INFO);
             if (absRdbPredicates != nullptr) {
                 int changedRows = CHANGED_ROWS;
-                NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
+                NativeRdb::RdbPredicates rdbPredicates =
+                    ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
                 OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
                 result = helper_.Update(changedRows, values, rdbPredicates);
                 delete absRdbPredicates;
