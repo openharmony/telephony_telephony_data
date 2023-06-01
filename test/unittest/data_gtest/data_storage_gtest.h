@@ -19,11 +19,11 @@
 #include <iostream>
 #include <securec.h>
 
+#include "gtest/gtest.h"
 #include "abs_shared_result_set.h"
 #include "accesstoken_kit.h"
 #include "datashare_helper.h"
 #include "datashare_predicates.h"
-#include "gtest/gtest.h"
 #include "iservice_registry.h"
 #include "nativetoken_kit.h"
 #include "system_ability_definition.h"
