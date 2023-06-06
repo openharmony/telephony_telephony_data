@@ -26,7 +26,6 @@
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "new"
-#include "predicates_utils.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
 #include "sim_data.h"

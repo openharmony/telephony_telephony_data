@@ -20,16 +20,49 @@ namespace OHOS {
 namespace Telephony {
 class OpKeyData {
 public:
+    /**
+     * @brief Id
+     */
     static constexpr const char *ID = "id";
+    /**
+     * @brief Mobile country code and mobile network code
+     */
     static constexpr const char *MCCMNC = "mccmnc";
+    /**
+     * @brief Group identifier level 1
+     */
     static constexpr const char *GID1 = "gid1";
+    /**
+     * @brief Group identifier level 2
+     */
     static constexpr const char *GID2 = "gid2";
+    /**
+     * @brief International mobile subscriber identity
+     */
     static constexpr const char *IMSI = "imsi";
+    /**
+     * @brief Service provider name
+     */
     static constexpr const char *SPN = "spn";
+    /**
+     * @brief Integrated circuit card identity
+     */
     static constexpr const char *ICCID = "iccid";
+    /**
+     * @brief Operator name
+     */
     static constexpr const char *OPERATOR_NAME = "operator_name";
+    /**
+     * @brief Operator key
+     */
     static constexpr const char *OPERATOR_KEY = "operator_key";
+    /**
+     * @brief Operator nv identity
+     */
     static constexpr const char *OPERATOR_KEY_EXT = "operator_key_ext";
+    /**
+     * @brief Represents matching rule fields
+     */
     static constexpr const char *RULE_ID = "rule_id";
 };
 
