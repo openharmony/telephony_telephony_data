@@ -37,7 +37,7 @@ public:
      */
     static constexpr const char *SENDER_NUMBER = "sender_number";
     /**
-     * @brief Sender or not  0 - Recipient  1 - Sender
+     * @brief Sender or not 0 - Recipient 1 - Sender
      */
     static constexpr const char *IS_SENDER = "is_sender";
     /**
@@ -53,7 +53,7 @@ public:
      */
     static constexpr const char *MSG_TYPE = "msg_type";
     /**
-     * @brief SMS type  0-Common，1-Notice
+     * @brief SMS type 0-Common，1-Notice
      */
     static constexpr const char *SMS_TYPE = "sms_type";
     /**
@@ -85,7 +85,7 @@ public:
      */
     static constexpr const char *IS_COLLECT = "is_collect";
     /**
-     * @brief Session type  0 - Common  1 - broadcast  2 - Group Sending
+     * @brief Session type 0 - Common 1 - broadcast 2 - Group Sending
      */
     static constexpr const char *SESSION_TYPE = "session_type";
     /**
@@ -109,7 +109,7 @@ public:
      */
     static constexpr const char *DEVICE_ID = "device_id";
     /**
-     * @brief Branch  0 - NO  1 - Yes
+     * @brief Branch 0 - NO 1 - Yes
      */
     static constexpr const char *IS_SUBSECTION = "is_subsection";
     /**
@@ -141,7 +141,7 @@ public:
      */
     static constexpr const char *SENDER_NUMBER = "sender_number";
     /**
-     * @brief Sender or not  0 - Recipient  1 - Sender
+     * @brief Sender or not 0 - Recipient 1 - Sender
      */
     static constexpr const char *IS_SENDER = "is_sender";
     /**
