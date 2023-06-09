@@ -19,9 +19,6 @@
     "component": {
         "name": "telephony_data",
         "subsystem": "telephony",
-        "syscap": [
-            "SystemCapability.Telephony.DataStorage"
-        ],
         "features": [],
         "adapted_system_type": [
             "standard"
