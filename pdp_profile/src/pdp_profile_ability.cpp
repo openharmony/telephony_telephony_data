@@ -149,9 +149,9 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-            std::shared_ptr<NativeRdb::AbsSharedResultSet> result = helper_.Query(rdbPredicates, columns);
+            auto result = helper_.Query(rdbPredicates, columns);
             if (result == nullptr) {
-                DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+                DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::ResultSet is null!");
                 delete absRdbPredicates;
                 absRdbPredicates = nullptr;
                 return nullptr;

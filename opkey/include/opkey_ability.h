@@ -37,7 +37,7 @@
 namespace OHOS {
 namespace NativeRdb {
 class AbsRdbPredicates;
-class AbsSharedResultSet;
+class ResultSet;
 class DataAbilityPredicates;
 class ValuesBucket;
 }

@@ -175,7 +175,7 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
         return nullptr;
     }
     std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult = nullptr;
-    std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = nullptr;
+    std::shared_ptr<NativeRdb::ResultSet> resultSet = nullptr;
     Uri tempUri = uri;
     MessageUriType messageUriType = ParseUriType(tempUri);
     NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
@@ -203,7 +203,7 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
         case MessageUriType::MAX_GROUP: {
             resultSet = helper_.QueryMaxGroupId();
             if (resultSet == nullptr) {
-                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::ResultSet is null!");
                 return nullptr;
             }
             auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
@@ -213,7 +213,7 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
         case MessageUriType::UNREAD_TOTAL: {
             resultSet = helper_.StatisticsUnRead();
             if (resultSet == nullptr) {
-                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::ResultSet is null!");
                 return nullptr;
             }
             auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
@@ -228,7 +228,7 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
         NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
         resultSet = helper_.Query(rdbPredicates, columns);
         if (resultSet == nullptr) {
-            DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+            DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::ResultSet is null!");
             delete absRdbPredicates;
             absRdbPredicates = nullptr;
             return nullptr;

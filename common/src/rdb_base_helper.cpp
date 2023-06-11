@@ -101,26 +101,24 @@ int RdbBaseHelper::ExecuteSql(const std::string &sql, const std::vector<NativeRd
     return ret;
 }
 
-std::unique_ptr<NativeRdb::AbsSharedResultSet> RdbBaseHelper::QuerySql(
+std::shared_ptr<NativeRdb::ResultSet> RdbBaseHelper::QuerySql(
     const std::string &sql, const std::vector<std::string> &selectionArgs)
 {
     int ret = IsExistStore();
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> resultSet;
     if (ret == NativeRdb::E_OK) {
-        resultSet = store_->QuerySql(sql);
+        return store_->QuerySql(sql);
     }
-    return resultSet;
+    return nullptr;
 }
 
-std::unique_ptr<NativeRdb::AbsSharedResultSet> RdbBaseHelper::Query(
+std::shared_ptr<NativeRdb::ResultSet> RdbBaseHelper::Query(
     const NativeRdb::AbsRdbPredicates &predicates, const std::vector<std::string> columns)
 {
     int ret = IsExistStore();
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> resultSet;
     if (ret == NativeRdb::E_OK) {
-        resultSet = store_->Query(predicates, columns);
+        return store_->Query(predicates, columns);
     }
-    return resultSet;
+    return nullptr;
 }
 
 int RdbBaseHelper::IsExistStore()
