@@ -25,7 +25,6 @@
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "opkey_data.h"
-#include "predicates_utils.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
 #include "telephony_datashare_stub_impl.h"

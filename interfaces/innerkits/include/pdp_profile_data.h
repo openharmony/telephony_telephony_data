@@ -20,23 +20,77 @@ namespace OHOS {
 namespace Telephony {
 class PdpProfileData {
 public:
+    /**
+     * @brief Operator id
+     */
     static constexpr const char *PROFILE_ID = "profile_id";
+    /**
+     * @brief Operator name
+     */
     static constexpr const char *PROFILE_NAME = "profile_name";
+    /**
+     * @brief Mobile country code
+     */
     static constexpr const char *MCC = "mcc";
+    /**
+     * @brief Mobile network code
+     */
     static constexpr const char *MNC = "mnc";
+    /**
+     * @brief Mobile country code and mobile network code
+     */
     static constexpr const char *MCCMNC = "mccmnc";
+    /**
+     * @brief APN name
+     */
     static constexpr const char *APN = "apn";
+    /**
+     * @brief Authentication type
+     */
     static constexpr const char *AUTH_TYPE = "auth_type";
+    /**
+     * @brief Authentication user
+     */
     static constexpr const char *AUTH_USER = "auth_user";
+    /**
+     * @brief Authentication password
+     */
     static constexpr const char *AUTH_PWD = "auth_pwd";
+    /**
+     * @brief APN type
+     */
     static constexpr const char *APN_TYPES = "apn_types";
+    /**
+     * @brief Roaming or not
+     */
     static constexpr const char *IS_ROAMING_APN = "is_roaming_apn";
+    /**
+     * @brief Operator enable or not
+     */
     static constexpr const char *PROFILE_ENABLE = "profile_enable";
+    /**
+     * @brief Mms center url
+     */
     static constexpr const char *HOME_URL = "home_url";
+    /**
+     * @brief Mms proxy ip address and port
+     */
     static constexpr const char *PROXY_IP_ADDRESS = "proxy_ip_address";
+    /**
+     * @brief Mms ip address and port
+     */
     static constexpr const char *MMS_IP_ADDRESS = "mms_ip_address";
+    /**
+     * @brief Protocol to connect to the APN
+     */
     static constexpr const char *APN_PROTOCOL = "apn_protocol";
+    /**
+     * @brief Protocol to connect to the APN when roaming
+     */
     static constexpr const char *APN_ROAM_PROTOCOL = "apn_roam_protocol";
+    /**
+     * @brief Radio access family bitmask
+     */
     static constexpr const char *BEARING_SYSTEM_TYPE = "bearing_system_type";
 };
 

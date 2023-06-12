@@ -100,7 +100,6 @@ ohos_shared_library("tel_telephony_data") {
     "data_share:datashare_provider",
     "hiviewdfx_hilog_native:libhilog",
     "preferences:native_preferences",
-    "relational_store:native_dataability",
     "relational_store:native_rdb",
     "relational_store:rdb_data_share_adapter",
   ]
@@ -110,4 +109,5 @@ ohos_shared_library("tel_telephony_data") {
   ]
   part_name = "telephony_data"
   subsystem_name = "telephony"
+  innerapi_tags = [ "platformsdk_indirect" ]
 }

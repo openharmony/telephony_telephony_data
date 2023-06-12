@@ -19,9 +19,6 @@
     "component": {
         "name": "telephony_data",
         "subsystem": "telephony",
-        "syscap": [
-            "SystemCapability.Telephony.DataStorage"
-        ],
         "features": [],
         "adapted_system_type": [
             "standard"
@@ -32,18 +29,14 @@
             "components": [
                 "ability_base",
                 "ability_runtime",
-                "access_token",
                 "c_utils",
                 "config_policy",
+                "core_service",
                 "common_event_service",
                 "data_share",
-                "eventhandler",
                 "hiviewdfx_hilog_native",
-                "ipc",
                 "preferences",
-                "relational_store",
-                "safwk",
-                "samgr"
+                "relational_store"
             ],
             "third_party": [
                 "jsoncpp"
@@ -64,12 +57,7 @@
                 {
                     "header": {
                         "header_base" : "//base/telephony/telephony_data/interfaces/innerkits/include",
-                        "header_files": [
-                            "opkey_data.h",
-                            "pdp_profile_data.h",
-                            "sim_data.h",
-                            "sms_mms_data.h"
-                        ]
+                        "header_files": []
                     },
                     "name":"//base/telephony/telephony_data:tel_telephony_data"
                 }
