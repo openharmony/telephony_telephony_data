@@ -40,10 +40,17 @@ int RdbPdpProfileCallback::OnDowngrade(NativeRdb::RdbStore &rdbStore, int curren
     return NativeRdb::E_OK;
 }
 
+int RdbPdpProfileCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
+{
+    DATA_STORAGE_LOGI("RdbPdpProfileCallback::OnCreate");
+    RdbBaseCallBack::OnCreate(rdbStore);
+    InitData(rdbStore, TABLE_PDP_PROFILE);
+    return NativeRdb::E_OK;
+}
+
 int RdbPdpProfileCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 {
-    DATA_STORAGE_LOGI("RdbPdpProfileCallback::OnOpen\n");
-    InitData(rdbStore, TABLE_PDP_PROFILE);
+    DATA_STORAGE_LOGI("RdbPdpProfileCallback::OnOpen");
     return NativeRdb::E_OK;
 }
 

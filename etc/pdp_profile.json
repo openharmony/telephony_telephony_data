@@ -1,0 +1,269 @@
+{
+    "version": 1,
+    "operator_infos": [{
+            "operator_name": "CTWAP",
+            "mcc": "460",
+            "mnc": "11",
+            "apn": "CTWAP",
+            "auth_user": "ctwap@mycdma.cn",
+            "auth_pwd": "vnet.mobi",
+            "auth_type": "2",
+            "ip_addr": "10.0.0.200",
+            "port": "80",
+            "mms_ip_addr": "10.0.0.200:80",
+            "home_url": "http://mmsc.vnet.mobi",
+            "apn_types": "*",
+            "databearer": "Packet data bearer"
+        },
+        {
+            "operator_name": "CTNET",
+            "mcc": "460",
+            "mnc": "11",
+            "apn": "CTNET",
+            "auth_user": "ctnet@mycdma.cn",
+            "auth_pwd": "vnet.mobi",
+            "auth_type": "2",
+            "apn_types": "default,supl",
+            "databearer": "Packet data bearer"
+        },
+        {
+            "operator_name": "CTWAP",
+            "mcc": "460",
+            "mnc": "12",
+            "apn": "CTWAP",
+            "auth_user": "ctwap@mycdma.cn",
+            "auth_pwd": "vnet.mobi",
+            "auth_type": "2",
+            "ip_addr": "10.0.0.200",
+            "port": "80",
+            "mms_ip_addr": "10.0.0.200:80",
+            "home_url": "http://mmsc.vnet.mobi",
+            "apn_types": "*",
+            "databearer": "Packet data bearer"
+        },
+        {
+            "operator_name": "CTNET",
+            "mcc": "460",
+            "mnc": "12",
+            "apn": "CTNET",
+            "auth_user": "ctnet@mycdma.cn",
+            "auth_pwd": "vnet.mobi",
+            "auth_type": "2",
+            "apn_types": "default,supl",
+            "databearer": "Packet data bearer"
+        },
+        {
+            "operator_name": "CMNET",
+            "mcc": "460",
+            "mnc": "00",
+            "apn": "cmnet",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMWAP",
+            "mcc": "460",
+            "mnc": "00",
+            "apn": "cmwap",
+            "ip_addr": "10.0.0.172",
+            "port": "80",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMMMS",
+            "mcc": "460",
+            "mnc": "00",
+            "apn": "cmwap",
+            "home_url": "http://mmsc.monternet.com",
+            "mms_ip_addr": "10.0.0.172:80",
+            "apn_types": "mms"
+        },
+        {
+            "operator_name": "CMDM",
+            "mcc": "460",
+            "mnc": "00",
+            "apn": "cmdm",
+            "apn_types": "cmdm"
+        },
+        {
+            "operator_name": "沃宽带用户连接互联网",
+            "mcc": "460",
+            "mnc": "01",
+            "apn": "3gnet",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "沃宽带用户手机上网",
+            "mcc": "460",
+            "mnc": "01",
+            "apn": "3gwap",
+            "ip_addr": "10.0.0.172",
+            "port": "80",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "沃宽带用户手机上网",
+            "mcc": "460",
+            "mnc": "01",
+            "apn": "3gwap",
+            "ip_addr": "10.0.0.172",
+            "port": "80",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "联通彩信",
+            "mcc": "460",
+            "mnc": "01",
+            "apn": "3gwap",
+            "home_url": "http://mmsc.myuni.com.cn",
+            "mms_ip_addr": "10.0.0.172:80",
+            "apn_types": "mms"
+        },
+        {
+            "operator_name": "CMNET",
+            "mcc": "460",
+            "mnc": "02",
+            "apn": "cmnet",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMWAP",
+            "mcc": "460",
+            "mnc": "02",
+            "apn": "cmwap",
+            "ip_addr": "10.0.0.172",
+            "port": "80",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMMMS",
+            "mcc": "460",
+            "mnc": "02",
+            "apn": "cmwap",
+            "home_url": "http://mmsc.monternet.com",
+            "mms_ip_addr": "10.0.0.172:80",
+            "apn_types": "mms"
+        },
+        {
+            "operator_name": "CMDM",
+            "mcc": "460",
+            "mnc": "02",
+            "apn": "cmdm",
+            "apn_types": "cmdm"
+        },
+        {
+            "operator_name": "CTWAP",
+            "mcc": "460",
+            "mnc": "03",
+            "apn": "CTWAP",
+            "auth_user": "ctwap@mycdma.cn",
+            "auth_pwd": "vnet.mobi",
+            "auth_type": "2",
+            "ip_addr": "10.0.0.200",
+            "port": "80",
+            "mms_ip_addr": "10.0.0.200:80",
+            "home_url": "http://mmsc.vnet.mobi",
+            "apn_types": "*",
+            "databearer": "Packet data bearer"
+        },
+        {
+            "operator_name": "CTNET",
+            "mcc": "460",
+            "mnc": "03",
+            "apn": "CTNET",
+            "auth_user": "ctnet@mycdma.cn",
+            "auth_pwd": "vnet.mobi",
+            "auth_type": "2",
+            "apn_types": "default,supl",
+            "databearer": "Packet data bearer"
+        },
+        {
+            "operator_name": "CMNET",
+            "mcc": "460",
+            "mnc": "07",
+            "apn": "cmnet",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMWAP",
+            "mcc": "460",
+            "mnc": "07",
+            "apn": "cmwap",
+            "ip_addr": "10.0.0.172",
+            "port": "80",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMMMS",
+            "mcc": "460",
+            "mnc": "07",
+            "apn": "cmwap",
+            "home_url": "http://mmsc.monternet.com",
+            "mms_ip_addr": "10.0.0.172:80",
+            "apn_types": "mms"
+        },
+        {
+            "operator_name": "CMDM",
+            "mcc": "460",
+            "mnc": "07",
+            "apn": "cmdm",
+            "apn_types": "cmdm"
+        },
+        {
+            "operator_name": "CMNET",
+            "mcc": "460",
+            "mnc": "08",
+            "apn": "cmnet",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMWAP",
+            "mcc": "460",
+            "mnc": "08",
+            "apn": "cmwap",
+            "ip_addr": "10.0.0.172",
+            "port": "80",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "CMMMS",
+            "mcc": "460",
+            "mnc": "08",
+            "apn": "cmwap",
+            "home_url": "http://mmsc.monternet.com",
+            "mms_ip_addr": "10.0.0.172:80",
+            "apn_types": "mms"
+        },
+        {
+            "operator_name": "CMDM",
+            "mcc": "460",
+            "mnc": "08",
+            "apn": "cmdm",
+            "apn_types": "cmdm"
+        },
+        {
+            "operator_name": "沃宽带用户连接互联网",
+            "mcc": "460",
+            "mnc": "09",
+            "apn": "3gnet",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "沃宽带用户手机上网",
+            "mcc": "460",
+            "mnc": "09",
+            "apn": "3gwap",
+            "ip_addr": "10.0.0.172",
+            "port": "80",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "联通彩信",
+            "mcc": "460",
+            "mnc": "09",
+            "apn": "3gwap",
+            "home_url": "http://mmsc.myuni.com.cn",
+            "mms_ip_addr": "10.0.0.172:80",
+            "apn_types": "mms"
+        }
+    ]
+}
