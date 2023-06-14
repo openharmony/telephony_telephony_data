@@ -101,15 +101,6 @@
             "apn_types": "default,supl"
         },
         {
-            "operator_name": "沃宽带用户手机上网",
-            "mcc": "460",
-            "mnc": "01",
-            "apn": "3gwap",
-            "ip_addr": "10.0.0.172",
-            "port": "80",
-            "apn_types": "default,supl"
-        },
-        {
             "operator_name": "联通彩信",
             "mcc": "460",
             "mnc": "01",
