@@ -39,7 +39,7 @@
 
 namespace OHOS {
 namespace Telephony {
-const char *PATH = "/system/etc/telephony/pdp_profile.json";
+const char *PATH = "/etc/telephony/pdp_profile.json";
 const char *ITEM_OPERATOR_INFOS = "operator_infos";
 const char *ITEM_OPERATOR_NAME = "operator_name";
 const char *ITEM_AUTH_USER = "auth_user";
@@ -70,7 +70,12 @@ const int MAX_BYTE_LEN = 10 * 1024 * 1024;
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 {
     char *content = nullptr;
-    int ret = LoaderJsonFile(content, PATH);
+    char buf[MAX_PATH_LEN];
+    char *path = GetOneCfgFile(PATH, buf, MAX_PATH_LEN);
+    int ret = DATA_STORAGE_SUCCESS;
+    if (path && *path != '\0') {
+        ret = LoaderJsonFile(content, path);
+    }
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail!\n");
         return ret;

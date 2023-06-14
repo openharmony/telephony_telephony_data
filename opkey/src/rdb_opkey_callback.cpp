@@ -44,10 +44,17 @@ int RdbOpKeyCallback::OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVers
     return NativeRdb::E_OK;
 }
 
+int RdbOpKeyCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
+{
+    DATA_STORAGE_LOGI("RdbOpKeyCallback::OnCreate");
+    RdbBaseCallBack::OnCreate(rdbStore);
+    InitData(rdbStore, TABLE_OPKEY_INFO);
+    return NativeRdb::E_OK;
+}
+
 int RdbOpKeyCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 {
-    DATA_STORAGE_LOGI("RdbOpKeyCallback::OnOpen\n");
-    InitData(rdbStore, TABLE_OPKEY_INFO);
+    DATA_STORAGE_LOGI("RdbOpKeyCallback::OnOpen");
     return NativeRdb::E_OK;
 }
 

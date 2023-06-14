@@ -32,6 +32,7 @@ public:
 
     int OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion) override;
     int OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVersion, int targetVersion) override;
+    int OnCreate(NativeRdb::RdbStore &rdbStore) override;
     int OnOpen(NativeRdb::RdbStore &rdbStore) override;
 
 private:
