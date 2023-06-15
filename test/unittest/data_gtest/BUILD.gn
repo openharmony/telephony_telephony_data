@@ -52,6 +52,7 @@ ohos_unittest("tel_telephony_data_gtest") {
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
     "ipc:ipc_core",
+    "ipc:ipc_single",
     "relational_store:native_appdatafwk",
     "relational_store:native_dataability",
     "relational_store:native_rdb",

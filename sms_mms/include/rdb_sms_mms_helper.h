@@ -27,7 +27,7 @@
 
 namespace OHOS {
 namespace NativeRdb {
-class AbsSharedResultSet;
+class ResultSet;
 class ValuesBucket;
 } // namespace NativeRdb
 namespace Telephony {
@@ -71,16 +71,16 @@ public:
     /**
      * Statistics sms_mms_info table unread quantity
      *
-     * @return unique_ptr<NativeRdb::AbsSharedResultSet>
+     * @return unique_ptr<NativeRdb::ResultSet>
      */
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> StatisticsUnRead();
+    std::shared_ptr<NativeRdb::ResultSet> StatisticsUnRead();
 
     /**
      * Query sms_mms_info table max group_id
      *
-     * @return  unique_ptr<NativeRdb::AbsSharedResultSet>
+     * @return  unique_ptr<NativeRdb::ResultSet>
      */
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> QueryMaxGroupId();
+    std::shared_ptr<NativeRdb::ResultSet> QueryMaxGroupId();
 
     /**
      * Update dataBase path

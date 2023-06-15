@@ -24,7 +24,7 @@
 
 namespace OHOS {
 namespace NativeRdb {
-class AbsSharedResultSet;
+class ResultSet;
 class ValuesBucket;
 } // namespace NativeRdb
 namespace Telephony {
@@ -222,7 +222,7 @@ int RdbSmsMmsHelper::CommitTransactionAction()
     return result;
 }
 
-std::unique_ptr<NativeRdb::AbsSharedResultSet> RdbSmsMmsHelper::QueryMaxGroupId()
+std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMaxGroupId()
 {
     std::string sql;
     std::string maxGroupId("maxGroupId");
@@ -231,7 +231,7 @@ std::unique_ptr<NativeRdb::AbsSharedResultSet> RdbSmsMmsHelper::QueryMaxGroupId(
     return QuerySql(sql);
 }
 
-std::unique_ptr<NativeRdb::AbsSharedResultSet> RdbSmsMmsHelper::StatisticsUnRead()
+std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::StatisticsUnRead()
 {
     std::string sql;
     sql.append("select count(*) as totalListCount, ");

@@ -25,7 +25,6 @@
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "opkey_data.h"
-#include "predicates_utils.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
 #include "telephony_datashare_stub_impl.h"
@@ -148,7 +147,13 @@ std::shared_ptr<DataShare::DataShareResultSet> OpKeyAbility::Query(const Uri &ur
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_OPKEY_INFO);
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-            std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper_.Query(rdbPredicates, columns);
+            auto resultSet = helper_.Query(rdbPredicates, columns);
+            if (resultSet == nullptr) {
+                DATA_STORAGE_LOGE("OpKeyAbility::Query  NativeRdb::ResultSet is null!");
+                delete absRdbPredicates;
+                absRdbPredicates = nullptr;
+                return nullptr;
+            }
             auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
             sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
             delete absRdbPredicates;

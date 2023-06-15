@@ -20,21 +20,69 @@ namespace OHOS {
 namespace Telephony {
 class SimData {
 public:
+    /**
+     * @brief SIM Id of the SIM card
+     */
     static constexpr const char *SIM_ID = "sim_id";
+    /**
+     * @brief ICCID of the SIM card
+     */
     static constexpr const char *ICC_ID = "icc_id";
+    /**
+     * @brief ICCID of the SIM or eid of eSIM
+     */
     static constexpr const char *CARD_ID = "card_id";
+    /**
+     * @brief Card slot index number
+     */
     static constexpr const char *SLOT_INDEX = "slot_index";
+    /**
+     * @brief Show name of the SIM card
+     */
     static constexpr const char *SHOW_NAME = "show_name";
+    /**
+     * @brief Phone number of the SIM card
+     */
     static constexpr const char *PHONE_NUMBER = "phone_number";
+    /**
+     * @brief Country code of the SIM card
+     */
     static constexpr const char *COUNTRY_CODE = "country_code";
+    /**
+     * @brief Language of the SIM card
+     */
     static constexpr const char *LANGUAGE = "language";
+    /**
+     * @brief International mobile subscriber ID
+     */
     static constexpr const char *IMSI = "imsi";
+    /**
+     * @brief The type of the SIM card
+     */
     static constexpr const char *CARD_TYPE = "card_type";
+    /**
+     * @brief Wwitch of ims
+     */
     static constexpr const char *IMS_SWITCH = "ims_switch";
+    /**
+     * @brief Active or not
+     */
     static constexpr const char *IS_ACTIVE = "is_active";
+    /**
+     * @brief Main card or not
+     */
     static constexpr const char *IS_MAIN_CARD = "is_main_card";
+    /**
+     * @brief Voice card or not
+     */
     static constexpr const char *IS_VOICE_CARD = "is_voice_card";
+    /**
+     * @brief Message card or not
+     */
     static constexpr const char *IS_MESSAGE_CARD = "is_message_card";
+    /**
+     * @brief Cellular data card or not
+     */
     static constexpr const char *IS_CELLULAR_DATA_CARD = "is_cellular_data_card";
 };
 

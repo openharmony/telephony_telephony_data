@@ -27,7 +27,6 @@
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "pdp_profile_data.h"
-#include "predicates_utils.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
 #include "telephony_datashare_stub_impl.h"
@@ -149,13 +148,19 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-            std::shared_ptr<NativeRdb::AbsSharedResultSet> result = helper_.Query(rdbPredicates, columns);
+            auto result = helper_.Query(rdbPredicates, columns);
+            if (result == nullptr) {
+                DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::ResultSet is null!");
+                delete absRdbPredicates;
+                absRdbPredicates = nullptr;
+                return nullptr;
+            }
             auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
             sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
             delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
-            DATA_STORAGE_LOGE("PdpProfileAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
+            DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::AbsRdbPredicates is null!");
         }
     } else {
         DATA_STORAGE_LOGE("PdpProfileAbility::Query##uri = %{public}s", uri.ToString().c_str());
