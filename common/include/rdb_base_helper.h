@@ -27,7 +27,7 @@
 namespace OHOS {
 namespace NativeRdb {
 class AbsRdbPredicates;
-class AbsSharedResultSet;
+class ResultSet;
 class RdbOpenCallback;
 class RdbStore;
 class RdbStoreConfig;
@@ -48,9 +48,9 @@ public:
     int Delete(int &changedRows, const std::string &table, const std::string &whereClause = "",
         const std::vector<std::string> &whereArgs = std::vector<std::string>());
     int Delete(int &deletedRows, const NativeRdb::AbsRdbPredicates &predicates);
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> QuerySql(
+    std::shared_ptr<NativeRdb::ResultSet> QuerySql(
         const std::string &sql, const std::vector<std::string> &selectionArgs = std::vector<std::string>());
-    std::unique_ptr<NativeRdb::AbsSharedResultSet> Query(
+    std::shared_ptr<NativeRdb::ResultSet> Query(
         const NativeRdb::AbsRdbPredicates &predicates, const std::vector<std::string> columns);
     int ExecuteSql(const std::string &sql);
     int ExecuteSql(const std::string &sql, const std::vector<NativeRdb::ValueObject> &bindArgs);

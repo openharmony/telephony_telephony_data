@@ -147,9 +147,9 @@ std::shared_ptr<DataShare::DataShareResultSet> OpKeyAbility::Query(const Uri &ur
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_OPKEY_INFO);
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-            std::shared_ptr<NativeRdb::AbsSharedResultSet> resultSet = helper_.Query(rdbPredicates, columns);
+            auto resultSet = helper_.Query(rdbPredicates, columns);
             if (resultSet == nullptr) {
-                DATA_STORAGE_LOGE("OpKeyAbility::Query  NativeRdb::AbsSharedResultSet is null!");
+                DATA_STORAGE_LOGE("OpKeyAbility::Query  NativeRdb::ResultSet is null!");
                 delete absRdbPredicates;
                 absRdbPredicates = nullptr;
                 return nullptr;

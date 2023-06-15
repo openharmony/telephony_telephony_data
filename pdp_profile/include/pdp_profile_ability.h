@@ -38,7 +38,7 @@ namespace OHOS {
 class Uri;
 namespace NativeRdb {
 class AbsRdbPredicates;
-class AbsSharedResultSet;
+class ResultSet;
 class DataAbilityPredicates;
 class ValuesBucket;
 }
