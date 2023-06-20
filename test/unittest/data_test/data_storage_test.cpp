@@ -125,7 +125,7 @@ int SimSetCardByType(std::shared_ptr<DataShare::DataShareHelper> helper)
     Uri uri("datashare:///com.ohos.simability/sim/sim_info/set_card");
     DataShare::DataShareValuesBucket value;
     DataShare::DataSharePredicates predicates;
-    value.Put(SimData::SLOT_INDEX, 1);
+    value.Put(SimData::SIM_ID, 1);
     value.Put(SimData::CARD_TYPE, 1);
     return helper->Update(uri, predicates, value);
 }
@@ -181,7 +181,7 @@ int SimInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
     Uri uri("datashare:///com.ohos.simability/sim/sim_info");
     DataShare::DataShareValuesBucket value;
-    value.Put(SimData::SLOT_INDEX, 1);
+    value.Put(SimData::SIM_ID, 1);
     value.Put(SimData::PHONE_NUMBER, "134xxxxxxxx");
     value.Put(SimData::ICC_ID, "icc_id");
     value.Put(SimData::CARD_ID, "card_id");
@@ -195,7 +195,7 @@ int SimUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
     DataShare::DataShareValuesBucket values;
     values.Put(SimData::SHOW_NAME, "China Mobile");
     DataShare::DataSharePredicates predicates;
-    predicates.EqualTo(SimData::SLOT_INDEX, slot);
+    predicates.EqualTo(SimData::SIM_ID, slot);
     return helper->Update(uri, predicates, values);
 }
 
@@ -217,7 +217,7 @@ int SimDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
     Uri uri("datashare:///com.ohos.simability/sim/sim_info");
     DataShare::DataSharePredicates predicates;
-    predicates.EqualTo(SimData::SLOT_INDEX, "1");
+    predicates.EqualTo(SimData::SIM_ID, "1");
     return helper->Delete(uri, predicates);
 }
 
