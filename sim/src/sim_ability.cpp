@@ -222,8 +222,8 @@ int SimAbility::SetCard(const DataShare::DataShareValuesBucket &sharedValue)
     }
     OHOS::NativeRdb::ValuesBucket value = RdbDataShareAdapter::RdbUtils::ToValuesBucket(sharedValue);
     int result = DATA_STORAGE_ERROR;
-    if (!value.HasColumn(SimData::SLOT_INDEX)) {
-        DATA_STORAGE_LOGE("SimAbility::Update##the slot_index in valuesBucket does not exist!");
+    if (!value.HasColumn(SimData::SIM_ID)) {
+        DATA_STORAGE_LOGE("SimAbility::Update##the sim_id in valuesBucket does not exist!");
         return result;
     }
     if (!value.HasColumn(SimData::CARD_TYPE)) {
@@ -231,13 +231,13 @@ int SimAbility::SetCard(const DataShare::DataShareValuesBucket &sharedValue)
         return result;
     }
     NativeRdb::ValueObject valueObject;
-    bool isExistSlotId = value.GetObject(SimData::SLOT_INDEX, valueObject);
-    if (!isExistSlotId) {
-        DATA_STORAGE_LOGE("SimAbility::Update##failed to get slot_index value in valuesBucket!");
+    bool isExistSimId = value.GetObject(SimData::SIM_ID, valueObject);
+    if (!isExistSimId) {
+        DATA_STORAGE_LOGE("SimAbility::Update##failed to get sim_id value in valuesBucket!");
         return result;
     }
-    int slotId = 0;
-    valueObject.GetInt(slotId);
+    int simId = 0;
+    valueObject.GetInt(simId);
 
     bool isExistCardType = value.GetObject(SimData::CARD_TYPE, valueObject);
     if (!isExistCardType) {
@@ -246,7 +246,7 @@ int SimAbility::SetCard(const DataShare::DataShareValuesBucket &sharedValue)
     }
     int cardType = 0;
     valueObject.GetInt(cardType);
-    result = helper_.SetDefaultCardByType(slotId, cardType);
+    result = helper_.SetDefaultCardByType(simId, cardType);
     return result;
 }
 

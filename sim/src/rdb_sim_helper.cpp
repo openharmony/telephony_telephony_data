@@ -71,7 +71,7 @@ void RdbSimHelper::CreateSimInfoTableStr(std::string &createTableStr)
     createTableStr.append(SimData::CARD_ID).append("))");
 }
 
-int32_t RdbSimHelper::SetDefaultCardByType(int32_t slotId, int32_t type)
+int32_t RdbSimHelper::SetDefaultCardByType(int32_t simId, int32_t type)
 {
     int result = BeginTransaction();
     if (result != NativeRdb::E_OK) {
@@ -109,7 +109,7 @@ int32_t RdbSimHelper::SetDefaultCardByType(int32_t slotId, int32_t type)
             return DATA_STORAGE_ERROR;
     }
     std::string whereClause;
-    whereClause.append(SimData::SLOT_INDEX).append("=").append(std::to_string(slotId));
+    whereClause.append(SimData::SIM_ID).append("=").append(std::to_string(simId));
     result = Update(changedRows, TABLE_SIM_INFO, values, whereClause);
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("RdbSimHelper::SetDefaultCardByType Update is error!");
