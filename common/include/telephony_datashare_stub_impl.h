@@ -54,11 +54,11 @@ private:
     std::shared_ptr<DataShareExtAbility> GetSmsMmsAbility();
 
 private:
-    std::shared_ptr<DataShareExtAbility> telephonyDataAbility_;
-    std::shared_ptr<DataShareExtAbility> opKeyAbility_;
-    std::shared_ptr<DataShareExtAbility> pdpProfileAbility_;
-    std::shared_ptr<DataShareExtAbility> simAbility_;
-    std::shared_ptr<DataShareExtAbility> smsMmsAbility_;
+    std::shared_ptr<DataShareExtAbility> telephonyDataAbility_ = nullptr;
+    std::shared_ptr<DataShareExtAbility> opKeyAbility_ = nullptr;
+    std::shared_ptr<DataShareExtAbility> pdpProfileAbility_ = nullptr;
+    std::shared_ptr<DataShareExtAbility> simAbility_ = nullptr;
+    std::shared_ptr<DataShareExtAbility> smsMmsAbility_ = nullptr;
 };
 } // namespace DataShare
 } // namespace OHOS
