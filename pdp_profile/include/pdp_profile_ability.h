@@ -89,15 +89,10 @@ private:
     */
     bool IsInitOk();
 
-    /**
-     * Init UriMap
-     */
-    void InitUriMap();
-
 private:
     RdbPdpProfileHelper helper_;
     std::mutex lock_;
-    std::map<std::string, PdpProfileUriType> pdpProfileUriMap;
+    std::map<std::string, PdpProfileUriType> pdpProfileUriMap_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
 };

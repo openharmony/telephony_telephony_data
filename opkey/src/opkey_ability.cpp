@@ -39,10 +39,14 @@ const int32_t CHANGED_ROWS = 0;
 
 OpKeyAbility::OpKeyAbility() : DataShareExtAbility()
 {
+    opKeyUriMap_ = {
+        { "/opkey/opkey_info", OpKeyUriType::OPKEY_INFO },
+    };
 }
 
 OpKeyAbility::~OpKeyAbility()
 {
+    opKeyUriMap_.clear();
 }
 
 OpKeyAbility* OpKeyAbility::Create()
@@ -72,7 +76,6 @@ void OpKeyAbility::DoInit()
         initDatabaseDir_ = true;
         path.append("/");
         helper_.UpdateDbPath(path);
-        InitUriMap();
         int rdbInitCode = helper_.Init();
         if (rdbInitCode == NativeRdb::E_OK) {
             initRdbStore_ = true;
@@ -248,13 +251,6 @@ bool OpKeyAbility::IsInitOk()
     return true;
 }
 
-void OpKeyAbility::InitUriMap()
-{
-    opKeyUriMap_ = {
-        {"/opkey/opkey_info", OpKeyUriType::OPKEY_INFO}
-    };
-}
-
 std::string OpKeyAbility::GetType(const Uri &uri)
 {
     DATA_STORAGE_LOGI("OpKeyAbility::GetType##uri = %{public}s", uri.ToString().c_str());
@@ -279,7 +275,7 @@ OpKeyUriType OpKeyAbility::ParseUriType(Uri &uri)
         helper_.ReplaceAllStr(uriPath, ":///", "://");
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
-        if (!path.empty()) {
+        if (!path.empty() && !opKeyUriMap_.empty()) {
             DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##path = %{public}s", path.c_str());
             std::map<std::string, OpKeyUriType>::iterator it = opKeyUriMap_.find(path);
             if (it != opKeyUriMap_.end()) {

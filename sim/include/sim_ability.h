@@ -98,15 +98,10 @@ private:
     */
     bool IsInitOk();
 
-    /**
-     * Init SimUriMap
-     */
-    void InitUriMap();
-
 private:
     RdbSimHelper helper_;
     std::mutex lock_;
-    std::map<std::string, SimUriType> simUriMap;
+    std::map<std::string, SimUriType> simUriMap_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
 };
