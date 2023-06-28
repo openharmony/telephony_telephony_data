@@ -41,10 +41,20 @@ const int32_t CHANGED_ROWS = 0;
 
 SmsMmsAbility::SmsMmsAbility() : DataShareExtAbility()
 {
+    smsMmsUriMap_ = {
+        { "/sms_mms/sms_mms_info", MessageUriType::SMS_MMS },
+        { "/sms_mms/sms_mms_info/thirty", MessageUriType::THIRTY },
+        { "/sms_mms/sms_mms_info/max_group", MessageUriType::MAX_GROUP },
+        { "/sms_mms/sms_mms_info/unread_total", MessageUriType::UNREAD_TOTAL },
+        { "/sms_mms/mms_protocol", MessageUriType::MMS_PROTOCOL },
+        { "/sms_mms/sms_subsection", MessageUriType::SMS_SUBSECTION },
+        { "/sms_mms/mms_part", MessageUriType::MMS_PART },
+    };
 }
 
 SmsMmsAbility::~SmsMmsAbility()
 {
+    smsMmsUriMap_.clear();
 }
 
 SmsMmsAbility* SmsMmsAbility::Create()
@@ -85,7 +95,6 @@ void SmsMmsAbility::DoInit()
     if (!path.empty()) {
         initDatabaseDir = true;
         path.append("/");
-        InitUriMap();
         helper_.UpdateDbPath(path);
         if (helper_.Init() == NativeRdb::E_OK) {
             initRdbStore = true;
@@ -370,20 +379,6 @@ bool SmsMmsAbility::IsInitOk()
     return initDatabaseDir && initRdbStore;
 }
 
-void SmsMmsAbility::InitUriMap()
-{
-    smsMmsUriMap = {
-        {"/sms_mms/sms_mms_info", MessageUriType::SMS_MMS},
-        {"/sms_mms/sms_mms_info/thirty", MessageUriType::THIRTY},
-        {"/sms_mms/sms_mms_info/max_group", MessageUriType::MAX_GROUP},
-        {"/sms_mms/sms_mms_info/unread_total", MessageUriType::UNREAD_TOTAL},
-        {"/sms_mms/mms_protocol", MessageUriType::MMS_PROTOCOL},
-        {"/sms_mms/sms_subsection", MessageUriType::SMS_SUBSECTION},
-        {"/sms_mms/mms_part", MessageUriType::MMS_PART},
-        {"/sms_mms/session", MessageUriType::SESSION}
-    };
-}
-
 std::string SmsMmsAbility::GetType(const Uri &uri)
 {
     DATA_STORAGE_LOGI("SmsMmsAbility::GetType##uri = %{public}s", uri.ToString().c_str());
@@ -430,10 +425,10 @@ MessageUriType SmsMmsAbility::ParseUriType(Uri &uri)
         helper_.ReplaceAllStr(uriPath, ":///", "://");
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
-        if (!path.empty()) {
+        if (!path.empty() && !smsMmsUriMap_.empty()) {
             DATA_STORAGE_LOGD("SmsMmsAbility::ParseUriType##path = %{public}s", path.c_str());
-            std::map<std::string, MessageUriType>::iterator it = smsMmsUriMap.find(path);
-            if (it != smsMmsUriMap.end()) {
+            std::map<std::string, MessageUriType>::iterator it = smsMmsUriMap_.find(path);
+            if (it != smsMmsUriMap_.end()) {
                 messageUriType = it->second;
                 DATA_STORAGE_LOGI("SmsMmsAbility::ParseUriType##messageUriType = %{public}d", messageUriType);
             }

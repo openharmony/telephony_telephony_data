@@ -90,17 +90,12 @@ private:
     */
     bool IsInitOk();
 
-    /**
-     * Init UriMap
-     */
-    void InitUriMap();
-
     NativeRdb::AbsRdbPredicates *CreateAbsRdbPredicates(MessageUriType messageUriType, int &result, Uri uri);
 
 private:
     RdbSmsMmsHelper helper_;
     std::mutex lock_;
-    std::map<std::string, MessageUriType> smsMmsUriMap;
+    std::map<std::string, MessageUriType> smsMmsUriMap_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
 };

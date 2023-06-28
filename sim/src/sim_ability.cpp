@@ -42,10 +42,15 @@ const int32_t CHANGED_ROWS = 0;
 
 SimAbility::SimAbility() : DataShareExtAbility()
 {
+    simUriMap_ = {
+        { "/sim/sim_info", SimUriType::SIM_INFO },
+        { "/sim/sim_info/set_card", SimUriType::SET_CARD },
+    };
 }
 
 SimAbility::~SimAbility()
 {
+    simUriMap_.clear();
 }
 
 SimAbility* SimAbility::Create()
@@ -75,7 +80,6 @@ void SimAbility::DoInit()
         initDatabaseDir = true;
         path.append("/");
         helper_.UpdateDbPath(path);
-        InitUriMap();
         if (helper_.Init() == NativeRdb::E_OK) {
             initRdbStore = true;
         } else {
@@ -290,14 +294,6 @@ bool SimAbility::IsInitOk()
     return initDatabaseDir && initRdbStore;
 }
 
-void SimAbility::InitUriMap()
-{
-    simUriMap = {
-        {"/sim/sim_info", SimUriType::SIM_INFO},
-        {"/sim/sim_info/set_card", SimUriType::SET_CARD}
-    };
-}
-
 std::string SimAbility::GetType(const Uri &uri)
 {
     DATA_STORAGE_LOGI("SimAbility::GetType##uri = %{public}s", uri.ToString().c_str());
@@ -322,10 +318,10 @@ SimUriType SimAbility::ParseUriType(Uri &uri)
         helper_.ReplaceAllStr(uriPath, ":///", "://");
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
-        if (!path.empty()) {
+        if (!path.empty() && !simUriMap_.empty()) {
             DATA_STORAGE_LOGI("SimAbility::ParseUriType##path = %{public}s", path.c_str());
-            std::map<std::string, SimUriType>::iterator it = simUriMap.find(path);
-            if (it != simUriMap.end()) {
+            std::map<std::string, SimUriType>::iterator it = simUriMap_.find(path);
+            if (it != simUriMap_.end()) {
                 simUriType = it->second;
                 DATA_STORAGE_LOGI("SimAbility::ParseUriType##simUriType = %{public}d", simUriType);
             }

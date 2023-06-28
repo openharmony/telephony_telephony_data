@@ -40,10 +40,15 @@ namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
 PdpProfileAbility::PdpProfileAbility() : DataShareExtAbility()
 {
+    pdpProfileUriMap_ = {
+        { "/net/pdp_profile", PdpProfileUriType::PDP_PROFILE },
+        { "/net/pdp_profile/reset", PdpProfileUriType::RESET },
+    };
 }
 
 PdpProfileAbility::~PdpProfileAbility()
 {
+    pdpProfileUriMap_.clear();
 }
 
 PdpProfileAbility* PdpProfileAbility::Create()
@@ -73,7 +78,6 @@ void PdpProfileAbility::DoInit()
         initDatabaseDir = true;
         path.append("/");
         helper_.UpdateDbPath(path);
-        InitUriMap();
         int rdbInitCode = helper_.Init();
         if (rdbInitCode == NativeRdb::E_OK) {
             initRdbStore = true;
@@ -257,14 +261,6 @@ bool PdpProfileAbility::IsInitOk()
     return true;
 }
 
-void PdpProfileAbility::InitUriMap()
-{
-    pdpProfileUriMap = {
-        {"/net/pdp_profile", PdpProfileUriType::PDP_PROFILE},
-        {"/net/pdp_profile/reset", PdpProfileUriType::RESET}
-    };
-}
-
 std::string PdpProfileAbility::GetType(const Uri &uri)
 {
     DATA_STORAGE_LOGI("PdpProfileAbility::GetType##uri = %{public}s", uri.ToString().c_str());
@@ -289,10 +285,10 @@ PdpProfileUriType PdpProfileAbility::ParseUriType(Uri &uri)
         helper_.ReplaceAllStr(uriPath, ":///", "://");
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
-        if (!path.empty()) {
+        if (!path.empty() && !pdpProfileUriMap_.empty()) {
             DATA_STORAGE_LOGI("PdpProfileAbility::ParseUriType##path = %{public}s", path.c_str());
-            std::map<std::string, PdpProfileUriType>::iterator it = pdpProfileUriMap.find(path);
-            if (it != pdpProfileUriMap.end()) {
+            std::map<std::string, PdpProfileUriType>::iterator it = pdpProfileUriMap_.find(path);
+            if (it != pdpProfileUriMap_.end()) {
                 pdpProfileUriType = it->second;
                 DATA_STORAGE_LOGI("PdpProfileAbility::ParseUriType##pdpProfileUriType = %{public}d",
                     pdpProfileUriType);

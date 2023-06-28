@@ -88,11 +88,6 @@ private:
     */
     bool IsInitOk();
 
-    /**
-     * Init UriMap
-     */
-    void InitUriMap();
-
 private:
     RdbOpKeyHelper helper_;
     std::mutex lock_;
