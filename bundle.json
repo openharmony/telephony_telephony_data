@@ -34,7 +34,7 @@
                 "core_service",
                 "common_event_service",
                 "data_share",
-                "hiviewdfx_hilog_native",
+                "hilog",
                 "preferences",
                 "relational_store"
             ],
