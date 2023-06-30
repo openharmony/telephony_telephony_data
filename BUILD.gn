@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("signature/pm.gni")
 
 ohos_hap("Telephony_Data_Storage") {
   hap_profile = "entry/src/main/module.json"
@@ -25,6 +26,12 @@ ohos_hap("Telephony_Data_Storage") {
   module_install_dir = "app/com.ohos.telephonydataability"
   part_name = "telephony_data"
   subsystem_name = "telephony"
+  if (defined(sign_hap_py_path)) {
+    certificate_profile = "${certificate_profile_path}"
+    key_alias = "telephony_data"
+    private_key_path = "telephony_data"
+    compatible_version = "9"
+  }
 }
 
 ohos_app_scope("Telephony_DataAbility_app_profile") {
