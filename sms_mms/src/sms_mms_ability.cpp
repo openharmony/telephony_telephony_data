@@ -49,6 +49,7 @@ SmsMmsAbility::SmsMmsAbility() : DataShareExtAbility()
         { "/sms_mms/mms_protocol", MessageUriType::MMS_PROTOCOL },
         { "/sms_mms/sms_subsection", MessageUriType::SMS_SUBSECTION },
         { "/sms_mms/mms_part", MessageUriType::MMS_PART },
+        { "/sms_mms/session", MessageUriType::SESSION },
     };
 }
 
