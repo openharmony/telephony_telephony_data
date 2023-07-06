@@ -96,12 +96,13 @@ sptr<IRemoteObject> SimAbility::OnConnect(const AAFwk::Want &want)
 {
     DATA_STORAGE_LOGI("SimAbility %{public}s begin.", __func__);
     Extension::OnConnect(want);
-    sptr<DataShare::TelephonyDataShareStubImpl> remoteObject = new (std::nothrow)DataShare::TelephonyDataShareStubImpl(
-        std::static_pointer_cast<SimAbility>(shared_from_this()));
+    sptr<DataShare::TelephonyDataShareStubImpl> remoteObject =
+        new (std::nothrow) DataShare::TelephonyDataShareStubImpl();
     if (remoteObject == nullptr) {
         DATA_STORAGE_LOGE("%{public}s No memory allocated for DataShareStubImpl", __func__);
         return nullptr;
     }
+    remoteObject->SetSimAbility(std::static_pointer_cast<SimAbility>(shared_from_this()));
     DATA_STORAGE_LOGI("SimAbility %{public}s end.", __func__);
     return remoteObject->AsObject();
 }

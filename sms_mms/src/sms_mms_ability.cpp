@@ -113,12 +113,13 @@ sptr<IRemoteObject> SmsMmsAbility::OnConnect(const AAFwk::Want &want)
 {
     DATA_STORAGE_LOGI("SmsMmsAbility::OnConnect");
     Extension::OnConnect(want);
-    sptr<DataShare::TelephonyDataShareStubImpl> remoteObject = new (std::nothrow)DataShare::TelephonyDataShareStubImpl(
-        std::static_pointer_cast<SmsMmsAbility>(shared_from_this()));
+    sptr<DataShare::TelephonyDataShareStubImpl> remoteObject =
+        new (std::nothrow) DataShare::TelephonyDataShareStubImpl();
     if (remoteObject == nullptr) {
         DATA_STORAGE_LOGE("%{public}s No memory allocated for DataShareStubImpl", __func__);
         return nullptr;
     }
+    remoteObject->SetSmsMmsAbility(std::static_pointer_cast<SmsMmsAbility>(shared_from_this()));
     DATA_STORAGE_LOGI("SmsMmsAbility %{public}s end.", __func__);
     return remoteObject->AsObject();
 }
