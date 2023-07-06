@@ -23,8 +23,7 @@ namespace OHOS {
 namespace DataShare {
 class TelephonyDataShareStubImpl : public DataShareStub {
 public:
-    explicit TelephonyDataShareStubImpl(const std::shared_ptr<DataShareExtAbility>& extension)
-        : smsMmsAbility_(extension) {};
+    TelephonyDataShareStubImpl() {}
     virtual ~TelephonyDataShareStubImpl() {};
 
     int Insert(const Uri &uri, const DataShareValuesBucket &value) override;
@@ -44,6 +43,11 @@ public:
     bool NotifyChange(const Uri &uri) override;
     Uri NormalizeUri(const Uri &uri) override;
     Uri DenormalizeUri(const Uri &uri) override;
+
+    void SetOpKeyAbility(std::shared_ptr<DataShareExtAbility> extension);
+    void SetPdpProfileAbility(std::shared_ptr<DataShareExtAbility> extension);
+    void SetSimAbility(std::shared_ptr<DataShareExtAbility> extension);
+    void SetSmsMmsAbility(std::shared_ptr<DataShareExtAbility> extension);
 
 private:
     std::shared_ptr<DataShareExtAbility> GetOwner(const Uri &uri);
