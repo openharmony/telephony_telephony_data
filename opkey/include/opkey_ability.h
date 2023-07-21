@@ -91,7 +91,6 @@ private:
 private:
     RdbOpKeyHelper helper_;
     std::mutex lock_;
-    std::map<std::string, OpKeyUriType> opKeyUriMap_;
     bool initDatabaseDir_ = false;
     bool initRdbStore_ = false;
 };

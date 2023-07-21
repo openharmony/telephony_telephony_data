@@ -92,7 +92,6 @@ private:
 private:
     RdbPdpProfileHelper helper_;
     std::mutex lock_;
-    std::map<std::string, PdpProfileUriType> pdpProfileUriMap_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
 };

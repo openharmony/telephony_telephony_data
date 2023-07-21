@@ -39,19 +39,14 @@ using AppExecFwk::AbilityLoader;
 using AppExecFwk::Ability;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
+static const std::map<std::string, SimUriType> simUriMap_ = {
+    { "/sim/sim_info", SimUriType::SIM_INFO },
+    { "/sim/sim_info/set_card", SimUriType::SET_CARD },
+};
 
-SimAbility::SimAbility() : DataShareExtAbility()
-{
-    simUriMap_ = {
-        { "/sim/sim_info", SimUriType::SIM_INFO },
-        { "/sim/sim_info/set_card", SimUriType::SET_CARD },
-    };
-}
+SimAbility::SimAbility() : DataShareExtAbility() {}
 
-SimAbility::~SimAbility()
-{
-    simUriMap_.clear();
-}
+SimAbility::~SimAbility() {}
 
 SimAbility* SimAbility::Create()
 {
@@ -322,7 +317,7 @@ SimUriType SimAbility::ParseUriType(Uri &uri)
         std::string path = tempUri.GetPath();
         if (!path.empty() && !simUriMap_.empty()) {
             DATA_STORAGE_LOGI("SimAbility::ParseUriType##path = %{public}s", path.c_str());
-            std::map<std::string, SimUriType>::iterator it = simUriMap_.find(path);
+            auto it = simUriMap_.find(path);
             if (it != simUriMap_.end()) {
                 simUriType = it->second;
                 DATA_STORAGE_LOGI("SimAbility::ParseUriType##simUriType = %{public}d", simUriType);
