@@ -38,25 +38,20 @@ using AppExecFwk::Ability;
 using AppExecFwk::AbilityLoader;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
+static const std::map<std::string, MessageUriType> smsMmsUriMap_ = {
+    { "/sms_mms/sms_mms_info", MessageUriType::SMS_MMS },
+    { "/sms_mms/sms_mms_info/thirty", MessageUriType::THIRTY },
+    { "/sms_mms/sms_mms_info/max_group", MessageUriType::MAX_GROUP },
+    { "/sms_mms/sms_mms_info/unread_total", MessageUriType::UNREAD_TOTAL },
+    { "/sms_mms/mms_protocol", MessageUriType::MMS_PROTOCOL },
+    { "/sms_mms/sms_subsection", MessageUriType::SMS_SUBSECTION },
+    { "/sms_mms/mms_part", MessageUriType::MMS_PART },
+    { "/sms_mms/session", MessageUriType::SESSION },
+};
 
-SmsMmsAbility::SmsMmsAbility() : DataShareExtAbility()
-{
-    smsMmsUriMap_ = {
-        { "/sms_mms/sms_mms_info", MessageUriType::SMS_MMS },
-        { "/sms_mms/sms_mms_info/thirty", MessageUriType::THIRTY },
-        { "/sms_mms/sms_mms_info/max_group", MessageUriType::MAX_GROUP },
-        { "/sms_mms/sms_mms_info/unread_total", MessageUriType::UNREAD_TOTAL },
-        { "/sms_mms/mms_protocol", MessageUriType::MMS_PROTOCOL },
-        { "/sms_mms/sms_subsection", MessageUriType::SMS_SUBSECTION },
-        { "/sms_mms/mms_part", MessageUriType::MMS_PART },
-        { "/sms_mms/session", MessageUriType::SESSION },
-    };
-}
+SmsMmsAbility::SmsMmsAbility() : DataShareExtAbility() {}
 
-SmsMmsAbility::~SmsMmsAbility()
-{
-    smsMmsUriMap_.clear();
-}
+SmsMmsAbility::~SmsMmsAbility() {}
 
 SmsMmsAbility* SmsMmsAbility::Create()
 {
@@ -429,7 +424,7 @@ MessageUriType SmsMmsAbility::ParseUriType(Uri &uri)
         std::string path = tempUri.GetPath();
         if (!path.empty() && !smsMmsUriMap_.empty()) {
             DATA_STORAGE_LOGD("SmsMmsAbility::ParseUriType##path = %{public}s", path.c_str());
-            std::map<std::string, MessageUriType>::iterator it = smsMmsUriMap_.find(path);
+            auto it = smsMmsUriMap_.find(path);
             if (it != smsMmsUriMap_.end()) {
                 messageUriType = it->second;
                 DATA_STORAGE_LOGI("SmsMmsAbility::ParseUriType##messageUriType = %{public}d", messageUriType);

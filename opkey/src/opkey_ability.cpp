@@ -36,18 +36,13 @@ using AppExecFwk::AbilityLoader;
 using AppExecFwk::Ability;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
+static const std::map<std::string, OpKeyUriType> opKeyUriMap_ = {
+    { "/opkey/opkey_info", OpKeyUriType::OPKEY_INFO },
+};
 
-OpKeyAbility::OpKeyAbility() : DataShareExtAbility()
-{
-    opKeyUriMap_ = {
-        { "/opkey/opkey_info", OpKeyUriType::OPKEY_INFO },
-    };
-}
+OpKeyAbility::OpKeyAbility() : DataShareExtAbility() {}
 
-OpKeyAbility::~OpKeyAbility()
-{
-    opKeyUriMap_.clear();
-}
+OpKeyAbility::~OpKeyAbility() {}
 
 OpKeyAbility* OpKeyAbility::Create()
 {
@@ -278,7 +273,7 @@ OpKeyUriType OpKeyAbility::ParseUriType(Uri &uri)
         std::string path = tempUri.GetPath();
         if (!path.empty() && !opKeyUriMap_.empty()) {
             DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##path = %{public}s", path.c_str());
-            std::map<std::string, OpKeyUriType>::iterator it = opKeyUriMap_.find(path);
+            auto it = opKeyUriMap_.find(path);
             if (it != opKeyUriMap_.end()) {
                 opKeyUriType = it->second;
                 DATA_STORAGE_LOGI("OpKeyAbility::ParseUriType##opKeyUriType = %{public}d",

@@ -38,18 +38,14 @@ using AppExecFwk::Ability;
 using AppExecFwk::AbilityLoader;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
-PdpProfileAbility::PdpProfileAbility() : DataShareExtAbility()
-{
-    pdpProfileUriMap_ = {
-        { "/net/pdp_profile", PdpProfileUriType::PDP_PROFILE },
-        { "/net/pdp_profile/reset", PdpProfileUriType::RESET },
-    };
-}
+static const std::map<std::string, PdpProfileUriType> pdpProfileUriMap_ = {
+    { "/net/pdp_profile", PdpProfileUriType::PDP_PROFILE },
+    { "/net/pdp_profile/reset", PdpProfileUriType::RESET },
+};
 
-PdpProfileAbility::~PdpProfileAbility()
-{
-    pdpProfileUriMap_.clear();
-}
+PdpProfileAbility::PdpProfileAbility() : DataShareExtAbility() {}
+
+PdpProfileAbility::~PdpProfileAbility() {}
 
 PdpProfileAbility* PdpProfileAbility::Create()
 {
@@ -288,7 +284,7 @@ PdpProfileUriType PdpProfileAbility::ParseUriType(Uri &uri)
         std::string path = tempUri.GetPath();
         if (!path.empty() && !pdpProfileUriMap_.empty()) {
             DATA_STORAGE_LOGI("PdpProfileAbility::ParseUriType##path = %{public}s", path.c_str());
-            std::map<std::string, PdpProfileUriType>::iterator it = pdpProfileUriMap_.find(path);
+            auto it = pdpProfileUriMap_.find(path);
             if (it != pdpProfileUriMap_.end()) {
                 pdpProfileUriType = it->second;
                 DATA_STORAGE_LOGI("PdpProfileAbility::ParseUriType##pdpProfileUriType = %{public}d",

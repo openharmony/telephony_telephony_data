@@ -95,7 +95,6 @@ private:
 private:
     RdbSmsMmsHelper helper_;
     std::mutex lock_;
-    std::map<std::string, MessageUriType> smsMmsUriMap_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
 };
