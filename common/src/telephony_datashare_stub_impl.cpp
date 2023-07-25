@@ -111,6 +111,7 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOwner(const 
 int TelephonyDataShareStubImpl::Insert(const Uri &uri, const DataShareValuesBucket &value)
 {
     DATA_STORAGE_LOGI("Insert begin.");
+    std::lock_guard<std::mutex> lock(mutex_);
     int ret = 0;
     auto extension = GetOwner(uri);
     if (extension == nullptr) {
@@ -129,6 +130,7 @@ int TelephonyDataShareStubImpl::Update(const Uri &uri, const DataSharePredicates
     const DataShareValuesBucket &value)
 {
     DATA_STORAGE_LOGI("Update begin.");
+    std::lock_guard<std::mutex> lock(mutex_);
     int ret = 0;
     auto extension = GetOwner(uri);
     if (extension == nullptr) {
@@ -146,6 +148,7 @@ int TelephonyDataShareStubImpl::Update(const Uri &uri, const DataSharePredicates
 int TelephonyDataShareStubImpl::Delete(const Uri &uri, const DataSharePredicates &predicates)
 {
     DATA_STORAGE_LOGI("Delete begin.");
+    std::lock_guard<std::mutex> lock(mutex_);
     int ret = 0;
     auto extension = GetOwner(uri);
     if (extension == nullptr) {
@@ -164,6 +167,7 @@ std::shared_ptr<DataShareResultSet> TelephonyDataShareStubImpl::Query(const Uri 
     const DataSharePredicates &predicates, std::vector<std::string> &columns, DatashareBusinessError &businessError)
 {
     DATA_STORAGE_LOGD("Query begin.");
+    std::lock_guard<std::mutex> lock(mutex_);
     auto extension = GetOwner(uri);
     if (extension == nullptr) {
         DATA_STORAGE_LOGE("Query failed, extension is null.");
@@ -177,6 +181,7 @@ std::shared_ptr<DataShareResultSet> TelephonyDataShareStubImpl::Query(const Uri 
 int TelephonyDataShareStubImpl::BatchInsert(const Uri &uri, const std::vector<DataShareValuesBucket> &values)
 {
     DATA_STORAGE_LOGI("BatchInsert begin.");
+    std::lock_guard<std::mutex> lock(mutex_);
     int ret = 0;
     auto extension = GetOwner(uri);
     if (extension == nullptr) {
