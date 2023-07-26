@@ -63,7 +63,10 @@ private:
     std::shared_ptr<DataShareExtAbility> pdpProfileAbility_ = nullptr;
     std::shared_ptr<DataShareExtAbility> simAbility_ = nullptr;
     std::shared_ptr<DataShareExtAbility> smsMmsAbility_ = nullptr;
-    std::mutex mutex_;
+    std::mutex opKeyMutex_;
+    std::mutex pdpProfileMutex_;
+    std::mutex simMutex_;
+    std::mutex smsMmsMutex_;
 };
 } // namespace DataShare
 } // namespace OHOS
