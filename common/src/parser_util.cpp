@@ -19,11 +19,11 @@
 #include <unistd.h>
 
 #include "climits"
+#include "config_policy_utils.h"
 #include "cstdint"
 #include "cstdio"
 #include "cstdlib"
 #include "cstring"
-#include "config_policy_utils.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "json/config.h"
@@ -33,7 +33,6 @@
 #include "new"
 #include "opkey_data.h"
 #include "pdp_profile_data.h"
-#include "preferences_util.h"
 #include "values_bucket.h"
 #include "vector"
 

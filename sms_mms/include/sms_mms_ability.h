@@ -17,21 +17,21 @@
 #define DATA_STORAGE_SMS_MMS_ABILITY_H
 
 #include <functional>
+
 #include "__mutex_base"
 #include "ability.h"
 #include "ability_lifecycle.h"
 #include "abs_shared_result_set.h"
 #include "datashare_ext_ability.h"
 #include "datashare_ext_ability_context.h"
-#include "datashare_values_bucket.h"
 #include "datashare_predicates.h"
+#include "datashare_values_bucket.h"
 #include "iosfwd"
 #include "map"
 #include "memory"
-#include "rdb_sms_mms_helper.h"
 #include "rdb_predicates.h"
+#include "rdb_sms_mms_helper.h"
 #include "string"
-#include "telephony_permission.h"
 #include "vector"
 #include "want.h"
 

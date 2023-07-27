@@ -17,6 +17,7 @@
 #define DATA_STORAGE_SIM_ABILITY_H
 
 #include <functional>
+
 #include "__mutex_base"
 #include "ability.h"
 #include "ability_lifecycle.h"
@@ -27,10 +28,9 @@
 #include "iosfwd"
 #include "map"
 #include "memory"
-#include "rdb_sim_helper.h"
 #include "rdb_predicates.h"
+#include "rdb_sim_helper.h"
 #include "string"
-#include "telephony_permission.h"
 #include "vector"
 #include "want.h"
 

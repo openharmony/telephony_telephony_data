@@ -15,17 +15,16 @@
 
 #include "sim_ability.h"
 
-#include <cstdint>
-
 #include "ability_context.h"
 #include "ability_loader.h"
 #include "abs_rdb_predicates.h"
 #include "abs_shared_result_set.h"
-#include "datashare_ext_ability.h"
-#include "datashare_predicates.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
+#include "datashare_ext_ability.h"
+#include "datashare_predicates.h"
 #include "new"
+#include "permission_util.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
 #include "sim_data.h"
@@ -125,7 +124,7 @@ void SimAbility::OnStart(const AppExecFwk::Want &want)
 
 int SimAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+    if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -149,7 +148,7 @@ std::shared_ptr<DataShare::DataShareResultSet> SimAbility::Query(
     const Uri &uri, const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
+    if (!PermissionUtil::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return nullptr;
     }
@@ -187,7 +186,7 @@ int SimAbility::Update(
     const Uri &uri, const DataShare::DataSharePredicates &predicates,
     const DataShare::DataShareValuesBucket &value)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+    if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -231,7 +230,7 @@ int SimAbility::Update(
 
 int SimAbility::SetCard(const DataShare::DataShareValuesBucket &sharedValue)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+    if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -267,7 +266,7 @@ int SimAbility::SetCard(const DataShare::DataShareValuesBucket &sharedValue)
 
 int SimAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+    if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
