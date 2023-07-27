@@ -32,8 +32,6 @@
 #include "utility"
 
 namespace OHOS {
-using AbilityRuntime::Extension;
-using AbilityRuntime::Runtime;
 using AppExecFwk::Ability;
 using AppExecFwk::AbilityLoader;
 namespace Telephony {
@@ -59,18 +57,6 @@ SmsMmsAbility* SmsMmsAbility::Create()
     auto self =  new SmsMmsAbility();
     self->DoInit();
     return self;
-}
-
-static DataShare::DataShareExtAbility *TelephonyDataShareCreator(const std::unique_ptr<Runtime> &runtime)
-{
-    DATA_STORAGE_LOGI("sms TelephonyDataCreator::%{public}s begin.", __func__);
-    return SmsMmsAbility::Create();
-}
-
-__attribute__((constructor)) void RegisterDataShareCreator()
-{
-    DATA_STORAGE_LOGI("TelephonyDataCreator::%{public}s", __func__);
-    DataShare::DataShareExtAbility::SetCreator(TelephonyDataShareCreator);
 }
 
 void SmsMmsAbility::DoInit()

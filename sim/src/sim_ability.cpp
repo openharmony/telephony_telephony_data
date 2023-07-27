@@ -35,8 +35,10 @@
 #include "values_bucket.h"
 
 namespace OHOS {
-using AppExecFwk::AbilityLoader;
+using AbilityRuntime::Extension;
+using AbilityRuntime::Runtime;
 using AppExecFwk::Ability;
+using AppExecFwk::AbilityLoader;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
 static const std::map<std::string, SimUriType> simUriMap_ = {
@@ -54,6 +56,18 @@ SimAbility* SimAbility::Create()
     auto self =  new SimAbility();
     self->DoInit();
     return self;
+}
+
+static DataShare::DataShareExtAbility *TelephonyDataShareCreator(const std::unique_ptr<Runtime> &runtime)
+{
+    DATA_STORAGE_LOGI("sim TelephonyDataCreator::%{public}s begin.", __func__);
+    return SimAbility::Create();
+}
+
+__attribute__((constructor)) void RegisterDataShareCreator()
+{
+    DATA_STORAGE_LOGI("TelephonyDataCreator::%{public}s", __func__);
+    DataShare::DataShareExtAbility::SetCreator(TelephonyDataShareCreator);
 }
 
 void SimAbility::DoInit()

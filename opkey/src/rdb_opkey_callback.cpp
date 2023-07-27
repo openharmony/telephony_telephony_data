@@ -48,7 +48,11 @@ int RdbOpKeyCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
     DATA_STORAGE_LOGI("RdbOpKeyCallback::OnCreate");
     RdbBaseCallBack::OnCreate(rdbStore);
-    InitData(rdbStore, TABLE_OPKEY_INFO);
+    std::thread initDataTask([&]() {
+        pthread_setname_np(pthread_self(), "rdb_opkey_callback");
+        InitData(rdbStore, TABLE_OPKEY_INFO);
+    });
+    initDataTask.detach();
     return NativeRdb::E_OK;
 }
 
