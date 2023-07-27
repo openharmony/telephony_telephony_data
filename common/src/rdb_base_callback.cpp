@@ -23,7 +23,7 @@ namespace OHOS {
 namespace Telephony {
 int RdbBaseCallBack::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
-    DATA_STORAGE_LOGI("Data_Storage RdbSmsMmsCallback::OnCreate\n");
+    DATA_STORAGE_LOGI("Data_Storage RdbBaseCallBack::OnCreate\n");
     int32_t ret = NativeRdb::E_ERROR;
     size_t size = createTableVec_.size();
     if (size == 0) {

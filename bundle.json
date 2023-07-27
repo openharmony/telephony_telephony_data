@@ -31,12 +31,10 @@
                 "ability_runtime",
                 "c_utils",
                 "config_policy",
-                "core_service",
                 "common_event_service",
                 "data_share",
                 "hilog",
                 "ipc",
-                "preferences",
                 "relational_store"
             ],
             "third_party": [

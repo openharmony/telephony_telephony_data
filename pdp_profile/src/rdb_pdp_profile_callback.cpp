@@ -44,7 +44,11 @@ int RdbPdpProfileCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
     DATA_STORAGE_LOGI("RdbPdpProfileCallback::OnCreate");
     RdbBaseCallBack::OnCreate(rdbStore);
-    InitData(rdbStore, TABLE_PDP_PROFILE);
+    std::thread initDataTask([&]() {
+        pthread_setname_np(pthread_self(), "rdb_pdp_profile_callback");
+        InitData(rdbStore, TABLE_PDP_PROFILE);
+    });
+    initDataTask.detach();
     return NativeRdb::E_OK;
 }
 

@@ -19,11 +19,12 @@
 #include "ability_loader.h"
 #include "abs_rdb_predicates.h"
 #include "abs_shared_result_set.h"
-#include "datashare_ext_ability.h"
-#include "datashare_predicates.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
+#include "datashare_ext_ability.h"
+#include "datashare_predicates.h"
 #include "new"
+#include "permission_util.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
 #include "sms_mms_data.h"
@@ -32,8 +33,6 @@
 #include "utility"
 
 namespace OHOS {
-using AbilityRuntime::Extension;
-using AbilityRuntime::Runtime;
 using AppExecFwk::Ability;
 using AppExecFwk::AbilityLoader;
 namespace Telephony {
@@ -59,18 +58,6 @@ SmsMmsAbility* SmsMmsAbility::Create()
     auto self =  new SmsMmsAbility();
     self->DoInit();
     return self;
-}
-
-static DataShare::DataShareExtAbility *TelephonyDataShareCreator(const std::unique_ptr<Runtime> &runtime)
-{
-    DATA_STORAGE_LOGI("sms TelephonyDataCreator::%{public}s begin.", __func__);
-    return SmsMmsAbility::Create();
-}
-
-__attribute__((constructor)) void RegisterDataShareCreator()
-{
-    DATA_STORAGE_LOGI("TelephonyDataCreator::%{public}s", __func__);
-    DataShare::DataShareExtAbility::SetCreator(TelephonyDataShareCreator);
 }
 
 void SmsMmsAbility::DoInit()
@@ -128,7 +115,7 @@ void SmsMmsAbility::OnStart(const AppExecFwk::Want &want)
 
 int SmsMmsAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+    if (!PermissionUtil::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -172,7 +159,7 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
     const Uri &uri, const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+    if (!PermissionUtil::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return nullptr;
     }
@@ -252,7 +239,7 @@ int SmsMmsAbility::Update(
     const Uri &uri, const DataShare::DataSharePredicates &predicates,
     const DataShare::DataShareValuesBucket &value)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+    if (!PermissionUtil::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -304,7 +291,7 @@ int SmsMmsAbility::Update(
 
 int SmsMmsAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+    if (!PermissionUtil::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }
@@ -393,7 +380,7 @@ int SmsMmsAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 int SmsMmsAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::DataShareValuesBucket> &values)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::READ_MESSAGES)) {
+    if (!PermissionUtil::CheckPermission(Permission::READ_MESSAGES)) {
         DATA_STORAGE_LOGE("Permission denied!");
         return DATA_STORAGE_ERR_PERMISSION_ERR;
     }

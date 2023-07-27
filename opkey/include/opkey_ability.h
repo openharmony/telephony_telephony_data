@@ -17,6 +17,7 @@
 #define DATA_STORAGE_OPKEY_ABILITY_H
 
 #include <functional>
+
 #include "__mutex_base"
 #include "ability.h"
 #include "ability_lifecycle.h"
@@ -30,7 +31,6 @@
 #include "rdb_opkey_helper.h"
 #include "rdb_predicates.h"
 #include "string"
-#include "telephony_permission.h"
 #include "vector"
 #include "want.h"
 
