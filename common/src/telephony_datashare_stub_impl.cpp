@@ -30,21 +30,25 @@ using namespace OHOS::Telephony;
 
 void TelephonyDataShareStubImpl::SetOpKeyAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(opKeyMutex_);
     opKeyAbility_ = extension;
 }
 
 void TelephonyDataShareStubImpl::SetPdpProfileAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(pdpProfileMutex_);
     pdpProfileAbility_ = extension;
 }
 
 void TelephonyDataShareStubImpl::SetSimAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(simMutex_);
     simAbility_ = extension;
 }
 
 void TelephonyDataShareStubImpl::SetSmsMmsAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(smsMmsMutex_);
     smsMmsAbility_ = extension;
 }
 
