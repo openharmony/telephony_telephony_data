@@ -30,21 +30,25 @@ using namespace OHOS::Telephony;
 
 void TelephonyDataShareStubImpl::SetOpKeyAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(opKeyMutex_);
     opKeyAbility_ = extension;
 }
 
 void TelephonyDataShareStubImpl::SetPdpProfileAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(pdpProfileMutex_);
     pdpProfileAbility_ = extension;
 }
 
 void TelephonyDataShareStubImpl::SetSimAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(simMutex_);
     simAbility_ = extension;
 }
 
 void TelephonyDataShareStubImpl::SetSmsMmsAbility(std::shared_ptr<DataShareExtAbility> extension)
 {
+    std::lock_guard<std::mutex> lock(smsMmsMutex_);
     smsMmsAbility_ = extension;
 }
 
@@ -55,6 +59,7 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetTelephonyDat
 
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOpKeyAbility()
 {
+    std::lock_guard<std::mutex> lock(opKeyMutex_);
     if (opKeyAbility_ == nullptr) {
         opKeyAbility_.reset(OpKeyAbility::Create());
     }
@@ -63,6 +68,7 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOpKeyAbility
 
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetPdpProfileAbility()
 {
+    std::lock_guard<std::mutex> lock(pdpProfileMutex_);
     if (pdpProfileAbility_ == nullptr) {
         pdpProfileAbility_.reset(PdpProfileAbility::Create());
     }
@@ -71,6 +77,7 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetPdpProfileAb
 
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetSimAbility()
 {
+    std::lock_guard<std::mutex> lock(simMutex_);
     if (simAbility_ == nullptr) {
         simAbility_.reset(SimAbility::Create());
     }
@@ -79,6 +86,7 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetSimAbility()
 
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetSmsMmsAbility()
 {
+    std::lock_guard<std::mutex> lock(smsMmsMutex_);
     if (smsMmsAbility_ == nullptr) {
         smsMmsAbility_.reset(SmsMmsAbility::Create());
     }
