@@ -46,6 +46,7 @@ static const std::map<std::string, MessageUriType> smsMmsUriMap_ = {
     { "/sms_mms/sms_subsection", MessageUriType::SMS_SUBSECTION },
     { "/sms_mms/mms_part", MessageUriType::MMS_PART },
     { "/sms_mms/session", MessageUriType::SESSION },
+    { "/sms_mms/mms_pdu", MessageUriType::MMS_PDU },
 };
 
 SmsMmsAbility::SmsMmsAbility() : DataShareExtAbility() {}
@@ -148,6 +149,10 @@ int SmsMmsAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket
             helper_.Insert(id, values, TABLE_SESSION);
             break;
         }
+        case MessageUriType::MMS_PDU: {
+            helper_.Insert(id, values, TABLE_MMS_PDU);
+            break;
+        }
         default:
             DATA_STORAGE_LOGI("SmsMmsAbility::Insert##uri = %{public}s", uri.ToString().c_str());
             break;
@@ -166,59 +171,16 @@ std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::Query(
     if (!IsInitOk()) {
         return nullptr;
     }
-    std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult = nullptr;
-    std::shared_ptr<NativeRdb::ResultSet> resultSet = nullptr;
     Uri tempUri = uri;
     MessageUriType messageUriType = ParseUriType(tempUri);
-    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
-    switch (messageUriType) {
-        case MessageUriType::SMS_MMS: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_MMS_INFO);
-            break;
-        }
-        case MessageUriType::MMS_PROTOCOL: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PROTOCOL);
-            break;
-        }
-        case MessageUriType::SMS_SUBSECTION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_SUBSECTION);
-            break;
-        }
-        case MessageUriType::MMS_PART: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
-            break;
-        }
-        case MessageUriType::SESSION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
-            break;
-        }
-        case MessageUriType::MAX_GROUP: {
-            resultSet = helper_.QueryMaxGroupId();
-            if (resultSet == nullptr) {
-                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::ResultSet is null!");
-                return nullptr;
-            }
-            auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
-            sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
-            break;
-        }
-        case MessageUriType::UNREAD_TOTAL: {
-            resultSet = helper_.StatisticsUnRead();
-            if (resultSet == nullptr) {
-                DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::ResultSet is null!");
-                return nullptr;
-            }
-            auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
-            sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
-            break;
-        }
-        default:
-            DATA_STORAGE_LOGI("SmsMmsAbility::Query##uri = %{public}s", uri.ToString().c_str());
-            break;
+    if (messageUriType == MessageUriType::MAX_GROUP || messageUriType == MessageUriType::UNREAD_TOTAL) {
+        return GetResultSet(messageUriType, uri);
     }
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = GetPredicates(messageUriType, uri);
+    std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult = nullptr;
     if (absRdbPredicates != nullptr) {
         NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-        resultSet = helper_.Query(rdbPredicates, columns);
+        auto resultSet = helper_.Query(rdbPredicates, columns);
         if (resultSet == nullptr) {
             DATA_STORAGE_LOGE("SmsMmsAbility::Query  NativeRdb::ResultSet is null!");
             delete absRdbPredicates;
@@ -250,32 +212,7 @@ int SmsMmsAbility::Update(
     std::lock_guard<std::mutex> guard(lock_);
     Uri tempUri = uri;
     MessageUriType messageUriType = ParseUriType(tempUri);
-    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
-    switch (messageUriType) {
-        case MessageUriType::SMS_MMS: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_MMS_INFO);
-            break;
-        }
-        case MessageUriType::MMS_PROTOCOL: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PROTOCOL);
-            break;
-        }
-        case MessageUriType::SMS_SUBSECTION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_SUBSECTION);
-            break;
-        }
-        case MessageUriType::MMS_PART: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
-            break;
-        }
-        case MessageUriType::SESSION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
-            break;
-        }
-        default:
-            DATA_STORAGE_LOGI("SmsMmsAbility::Update##uri = %{public}s", uri.ToString().c_str());
-            break;
-    }
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = GetPredicates(messageUriType, uri);
     if (absRdbPredicates != nullptr) {
         int changedRows = CHANGED_ROWS;
         NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
@@ -287,6 +224,73 @@ int SmsMmsAbility::Update(
         DATA_STORAGE_LOGE("SmsMmsAbility::Update  NativeRdb::AbsRdbPredicates is null!");
     }
     return result;
+}
+
+NativeRdb::AbsRdbPredicates *SmsMmsAbility::GetPredicates(MessageUriType messageUriType, const Uri &uri)
+{
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
+    switch (messageUriType) {
+        case MessageUriType::SMS_MMS: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_MMS_INFO);
+            return absRdbPredicates;
+        }
+        case MessageUriType::MMS_PROTOCOL: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PROTOCOL);
+            return absRdbPredicates;
+        }
+        case MessageUriType::SMS_SUBSECTION: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_SUBSECTION);
+            return absRdbPredicates;
+        }
+        case MessageUriType::MMS_PART: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
+            return absRdbPredicates;
+        }
+        case MessageUriType::SESSION: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
+            return absRdbPredicates;
+        }
+        case MessageUriType::MMS_PDU: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PDU);
+            return absRdbPredicates;
+        }
+        default:
+            DATA_STORAGE_LOGI("GetPredicates##uri = %{public}s", uri.ToString().c_str());
+            return absRdbPredicates;
+    }
+}
+
+std::shared_ptr<DataShare::DataShareResultSet> SmsMmsAbility::GetResultSet(
+    MessageUriType messageUriType, const Uri &uri)
+{
+    std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult = nullptr;
+    std::shared_ptr<NativeRdb::ResultSet> resultSet = nullptr;
+    switch (messageUriType) {
+        case MessageUriType::MAX_GROUP: {
+            resultSet = helper_.QueryMaxGroupId();
+            if (resultSet == nullptr) {
+                DATA_STORAGE_LOGE("ResultSet is null!");
+                return nullptr;
+            }
+            auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
+            sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
+            break;
+        }
+        case MessageUriType::UNREAD_TOTAL: {
+            resultSet = helper_.StatisticsUnRead();
+            if (resultSet == nullptr) {
+                DATA_STORAGE_LOGE("ResultSet is null!");
+                return nullptr;
+            }
+            auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(resultSet);
+            sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
+            break;
+        }
+        default:
+            DATA_STORAGE_LOGI("uri = %{public}s", uri.ToString().c_str());
+            break;
+    }
+    return sharedPtrResult;
 }
 
 int SmsMmsAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
@@ -345,6 +349,10 @@ NativeRdb::AbsRdbPredicates *SmsMmsAbility::CreateAbsRdbPredicates(MessageUriTyp
         }
         case MessageUriType::SESSION: {
             absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
+            return absRdbPredicates;
+        }
+        case MessageUriType::MMS_PDU: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PDU);
             return absRdbPredicates;
         }
         default:

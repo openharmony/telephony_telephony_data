@@ -44,7 +44,16 @@ class ValuesBucket;
 }
 namespace Telephony {
 enum class MessageUriType {
-    UNKNOW, SMS_MMS, THIRTY, MAX_GROUP, UNREAD_TOTAL, MMS_PROTOCOL, SMS_SUBSECTION, MMS_PART, SESSION
+    UNKNOW,
+    SMS_MMS,
+    THIRTY,
+    MAX_GROUP,
+    UNREAD_TOTAL,
+    MMS_PROTOCOL,
+    SMS_SUBSECTION,
+    MMS_PART,
+    SESSION,
+    MMS_PDU,
 };
 class SmsMmsAbility : public DataShare::DataShareExtAbility {
 public:
@@ -91,6 +100,8 @@ private:
     bool IsInitOk();
 
     NativeRdb::AbsRdbPredicates *CreateAbsRdbPredicates(MessageUriType messageUriType, int &result, Uri uri);
+    NativeRdb::AbsRdbPredicates *GetPredicates(MessageUriType messageUriType, const Uri &uri);
+    std::shared_ptr<DataShare::DataShareResultSet> GetResultSet(MessageUriType messageUriType, const Uri &uri);
 
 private:
     RdbSmsMmsHelper helper_;
