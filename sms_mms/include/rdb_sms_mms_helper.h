@@ -132,6 +132,12 @@ private:
      */
     void CreateSessionTableStr(std::string &createTableStr);
 
+    /**
+     * Create MmsPdu table
+     * @param createTableStr indicates Create table statement
+     */
+    void CreateMmsPduTableStr(std::string &createTableStr);
+
 private:
     const std::string DB_NAME = "sms_mms.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;

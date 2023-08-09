@@ -47,12 +47,15 @@ int RdbSmsMmsHelper::Init()
     CreateMmsPartTableStr(mmsPartStr);
     std::string sessionStr;
     CreateSessionTableStr(sessionStr);
+    std::string mmsPduStr;
+    CreateMmsPduTableStr(mmsPduStr);
     std::vector<std::string> createTableVec;
     createTableVec.push_back(messageInfoStr);
     createTableVec.push_back(mmsProtocolStr);
     createTableVec.push_back(smsSubsectionStr);
     createTableVec.push_back(mmsPartStr);
     createTableVec.push_back(sessionStr);
+    createTableVec.push_back(mmsPduStr);
     RdbSmsMmsCallback callback(createTableVec);
     CreateRdbStore(config, VERSION, callback, errCode);
     return errCode;
@@ -168,6 +171,13 @@ void RdbSmsMmsHelper::CreateSessionTableStr(std::string &createTableStr)
     createTableStr.append(Session::MESSAGE_COUNT).append(" INTEGER DEFAULT 0 , ");
     createTableStr.append(Session::HAS_MMS).append(" INTEGER DEFAULT 0 , ");
     createTableStr.append(Session::HAS_ATTACHMENT).append(" INTEGER DEFAULT 0 )");
+}
+
+void RdbSmsMmsHelper::CreateMmsPduTableStr(std::string &createTableStr)
+{
+    createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_MMS_PDU);
+    createTableStr.append("(").append(MmsPdu::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
+    createTableStr.append(MmsPdu::PDU_CONTENT).append(" TEXT )");
 }
 
 void RdbSmsMmsHelper::UpdateDbPath(const std::string &path)

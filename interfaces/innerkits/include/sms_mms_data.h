@@ -311,11 +311,24 @@ public:
     static constexpr const char *HAS_ATTACHMENT = "has_attachment";
 };
 
+class MmsPdu {
+public:
+    /**
+     * @brief Mms Pdu Id
+     */
+    static constexpr const char *ID = "id";
+    /**
+     * @brief Mms Pdu Content
+     */
+    static constexpr const char *PDU_CONTENT = "pdu_content";
+};
+
 constexpr const char *TABLE_SMS_MMS_INFO = "sms_mms_info";
 constexpr const char *TABLE_SMS_SUBSECTION = "sms_subsection";
 constexpr const char *TABLE_MMS_PROTOCOL = "mms_protocol";
 constexpr const char *TABLE_MMS_PART = "mms_part";
 constexpr const char *TABLE_SESSION = "session";
+constexpr const char *TABLE_MMS_PDU = "mms_pdu";
 constexpr const char *SMS_MMS_URI = "datashare:///com.ohos.smsmmsability";
 } // namespace Telephony
 } // namespace OHOS
