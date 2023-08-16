@@ -44,6 +44,7 @@ int RdbPdpProfileCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
     DATA_STORAGE_LOGI("RdbPdpProfileCallback::OnCreate");
     RdbBaseCallBack::OnCreate(rdbStore);
+    InitData(rdbStore, TABLE_PDP_PROFILE);
     return NativeRdb::E_OK;
 }
 
