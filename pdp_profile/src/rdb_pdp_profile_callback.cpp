@@ -56,18 +56,28 @@ int RdbPdpProfileCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 
 void RdbPdpProfileCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
 {
+    DATA_STORAGE_LOGD("InitData start");
     ParserUtil util;
     std::vector<PdpProfile> vec;
     int resultCode = util.ParserPdpProfileJson(vec);
     if (resultCode != DATA_STORAGE_SUCCESS) {
+        DATA_STORAGE_LOGE("ParserPdpProfileJson fail");
         return;
     }
+    int32_t result = rdbStore.BeginTransaction();
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("BeginTransaction error!");
+        return;
+    }
+    DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
         util.ParserPdpProfileToValuesBucket(value, vec[i]);
         int64_t id;
         rdbStore.Insert(id, tableName, value);
     }
+    rdbStore.Commit();
+    DATA_STORAGE_LOGD("InitData end");
 }
 } // namespace Telephony
 } // namespace OHOS
