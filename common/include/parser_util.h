@@ -57,6 +57,7 @@ public:
 private:
     int LoaderJsonFile(char *&content, const char *path) const;
     int CloseFile(FILE *f) const;
+    int GetRuleId(OpKey &bean);
 };
 } // namespace Telephony
 } // namespace OHOS
