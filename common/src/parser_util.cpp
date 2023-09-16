@@ -111,22 +111,45 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
     for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
         Json::Value itemRoot = root[i];
         PdpProfile bean;
-        bean.profileName = itemRoot[ITEM_OPERATOR_NAME].asString();
-        bean.authUser = itemRoot[ITEM_AUTH_USER].asString();
-        bean.authPwd = itemRoot[ITEM_AUTH_PWD].asString();
-        std::string authTypeStr = itemRoot[ITEM_AUTH_TYPE].asString();
+        if (itemRoot[ITEM_OPERATOR_NAME].isString()) {
+            bean.profileName = itemRoot[ITEM_OPERATOR_NAME].asString();
+        }
+        if (itemRoot[ITEM_AUTH_USER].isString()) {
+            bean.authUser = itemRoot[ITEM_AUTH_USER].asString();
+        }
+        if (itemRoot[ITEM_AUTH_PWD].isString()) {
+            bean.authPwd = itemRoot[ITEM_AUTH_PWD].asString();
+        }
+        std::string authTypeStr;
+        if (itemRoot[ITEM_AUTH_TYPE].isString()) {
+            authTypeStr = itemRoot[ITEM_AUTH_TYPE].asString();
+        }
         if (authTypeStr.empty()) {
             bean.authType = 0;
         } else {
             bean.authType = atoi(authTypeStr.c_str());
         }
-        bean.mcc = itemRoot[ITEM_MCC].asString();
-        bean.mnc = itemRoot[ITEM_MNC].asString();
-        bean.apn = itemRoot[ITEM_APN].asString();
-        bean.apnTypes = itemRoot[ITEM_APN_TYPES].asString();
-        bean.mmsIpAddress = itemRoot[ITEM_MMS_IP_ADDRESS].asString();
-        bean.proxyIpAddress = itemRoot[ITEM_IP_ADDRESS].asString();
-        bean.homeUrl = itemRoot[ITEM_HOME_URL].asString();
+        if (itemRoot[ITEM_MCC].isString()) {
+            bean.mcc = itemRoot[ITEM_MCC].asString();
+        }
+        if (itemRoot[ITEM_MNC].isString()) {
+            bean.mnc = itemRoot[ITEM_MNC].asString();
+        }
+        if (itemRoot[ITEM_APN].isString()) {
+            bean.apn = itemRoot[ITEM_APN].asString();
+        }
+        if (itemRoot[ITEM_APN_TYPES].isString()) {
+            bean.apnTypes = itemRoot[ITEM_APN_TYPES].asString();
+        }
+        if (itemRoot[ITEM_MMS_IP_ADDRESS].isString()) {
+            bean.mmsIpAddress = itemRoot[ITEM_MMS_IP_ADDRESS].asString();
+        }
+        if (itemRoot[ITEM_IP_ADDRESS].isString()) {
+            bean.proxyIpAddress = itemRoot[ITEM_IP_ADDRESS].asString();
+        }
+        if (itemRoot[ITEM_HOME_URL].isString()) {
+            bean.homeUrl = itemRoot[ITEM_HOME_URL].asString();
+        }
         vec.push_back(bean);
     }
 }
@@ -215,37 +238,60 @@ void ParserUtil::ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root)
         Json::Value itemRoot = root[i];
         OpKey bean;
         Json::Value ruleRoot = itemRoot[ITEM_RULE];
-        bean.mccmnc = ruleRoot[ITEM_MCCMNC].asString();
-        bean.gid1 = ruleRoot[ITEM_GID_ONE].asString();
-        bean.gid2 = ruleRoot[ITEM_GID_TWO].asString();
-        bean.imsi = ruleRoot[ITEM_IMSI].asString();
-        bean.spn = ruleRoot[ITEM_SPN].asString();
-        bean.iccid = ruleRoot[ITEM_ICCID].asString();
-        bean.operatorName = itemRoot[ITEM_OPERATOR_NAME_OPKEY].asString();
-        bean.operatorKey = itemRoot[ITEM_OPERATOR_KEY].asString();
-        bean.operatorKeyExt = itemRoot[ITEM_OPERATOR_KEY_EXT].asString();
-        int ruleId = static_cast<int32_t>(RuleID::RULE_EMPTY);
-        if (!bean.mccmnc.empty()) {
-            ruleId += static_cast<int32_t>(RuleID::RULE_MCCMNC);
+        if (ruleRoot[ITEM_MCCMNC].isString()) {
+            bean.mccmnc = ruleRoot[ITEM_MCCMNC].asString();
         }
-        if (!bean.iccid.empty()) {
-            ruleId += static_cast<int32_t>(RuleID::RULE_ICCID);
+        if (ruleRoot[ITEM_GID_ONE].isString()) {
+            bean.gid1 = ruleRoot[ITEM_GID_ONE].asString();
         }
-        if (!bean.imsi.empty()) {
-            ruleId += static_cast<int32_t>(RuleID::RULE_IMSI);
+        if (ruleRoot[ITEM_GID_TWO].isString()) {
+            bean.gid2 = ruleRoot[ITEM_GID_TWO].asString();
         }
-        if (!bean.spn.empty()) {
-            ruleId += static_cast<int32_t>(RuleID::RULE_SPN);
+        if (ruleRoot[ITEM_IMSI].isString()) {
+            bean.imsi = ruleRoot[ITEM_IMSI].asString();
         }
-        if (!bean.gid1.empty()) {
-            ruleId += static_cast<int32_t>(RuleID::RULE_GID1);
+        if (ruleRoot[ITEM_SPN].isString()) {
+            bean.spn = ruleRoot[ITEM_SPN].asString();
         }
-        if (!bean.gid2.empty()) {
-            ruleId += static_cast<int32_t>(RuleID::RULE_GID2);
+        if (ruleRoot[ITEM_ICCID].isString()) {
+            bean.iccid = ruleRoot[ITEM_ICCID].asString();
         }
-        bean.ruleId = ruleId;
+        if (ruleRoot[ITEM_OPERATOR_NAME_OPKEY].isString()) {
+            bean.operatorName = itemRoot[ITEM_OPERATOR_NAME_OPKEY].asString();
+        }
+        if (ruleRoot[ITEM_OPERATOR_KEY].isString()) {
+            bean.operatorKey = itemRoot[ITEM_OPERATOR_KEY].asString();
+        }
+        if (ruleRoot[ITEM_OPERATOR_KEY_EXT].isString()) {
+            bean.operatorKeyExt = itemRoot[ITEM_OPERATOR_KEY_EXT].asString();
+        }
+        bean.ruleId = GetRuleId(bean);
         vec.push_back(bean);
     }
+}
+
+int ParserUtil::GetRuleId(OpKey &bean)
+{
+    int ruleId = static_cast<int32_t>(RuleID::RULE_EMPTY);
+    if (!bean.mccmnc.empty()) {
+        ruleId += static_cast<int32_t>(RuleID::RULE_MCCMNC);
+    }
+    if (!bean.iccid.empty()) {
+        ruleId += static_cast<int32_t>(RuleID::RULE_ICCID);
+    }
+    if (!bean.imsi.empty()) {
+        ruleId += static_cast<int32_t>(RuleID::RULE_IMSI);
+    }
+    if (!bean.spn.empty()) {
+        ruleId += static_cast<int32_t>(RuleID::RULE_SPN);
+    }
+    if (!bean.gid1.empty()) {
+        ruleId += static_cast<int32_t>(RuleID::RULE_GID1);
+    }
+    if (!bean.gid2.empty()) {
+        ruleId += static_cast<int32_t>(RuleID::RULE_GID2);
+    }
+    return ruleId;
 }
 
 void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const OpKey &bean)
