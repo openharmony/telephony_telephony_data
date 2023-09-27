@@ -92,6 +92,14 @@ public:
      * @brief Radio access family bitmask
      */
     static constexpr const char *BEARING_SYSTEM_TYPE = "bearing_system_type";
+    /**
+     * @brief MVNO match type
+     */
+    static constexpr const char *MVNO_TYPE = "mvno_type";
+    /**
+     * @brief MVNO match data
+     */
+    static constexpr const char *MVNO_MATCH_DATA = "mvno_match_data";
 };
 
 struct PdpProfile {
@@ -111,8 +119,17 @@ struct PdpProfile {
     std::string pdpProtocol = ""; // see PdpProtocol
     std::string roamPdpProtocol = "";
     int bearingSystemType = 0; // see BearingSystemType
+    std::string mvnoType = "";
+    std::string mvnoMatchData = "";
 };
 
+class MvnoType {
+public:
+    inline static const std::string SPN = "spn";
+    inline static const std::string IMSI = "imsi";
+    inline static const std::string GID1 = "gid1";
+    inline static const std::string ICCID = "iccid";
+};
 
 enum class ApnType {
     DEFAULT, IMS, MMS, ALL

@@ -27,7 +27,14 @@ namespace OHOS {
 namespace Telephony {
 int RdbPdpProfileCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
 {
-    DATA_STORAGE_LOGI("RdbPdpProfileCallback::OnUpgrade##oldVersion = %d, newVersion = %d\n", oldVersion, newVersion);
+    DATA_STORAGE_LOGI(
+        "RdbPdpProfileCallback::OnUpgrade##oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
+    if (oldVersion < newVersion && newVersion == VERSION_2) {
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
+                                std::string(PdpProfileData::MVNO_TYPE) + " TEXT;");
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
+                                std::string(PdpProfileData::MVNO_MATCH_DATA) + " TEXT;");
+    }
     return NativeRdb::E_OK;
 }
 
