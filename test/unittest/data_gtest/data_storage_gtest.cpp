@@ -19,6 +19,7 @@
 #include "data_storage_log_wrapper.h"
 #include "datashare_helper.h"
 #include "datashare_predicates.h"
+#include "global_ecc_data.h"
 #include "opkey_data.h"
 #include "parameter.h"
 #include "pdp_profile_data.h"
@@ -150,6 +151,19 @@ std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateOpKeyHelper(
         opKeyDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
     return opKeyDataHelper;
+}
+
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateGlobalEccHelper()
+{
+    if (globalEccDataHelper_ == nullptr) {
+        std::string uri(PDP_PROFILE_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreatePdpProfileHelper uri is nullptr");
+            return nullptr;
+        }
+        globalEccDataHelper_ = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
+    }
+    return globalEccDataHelper_;
 }
 
 int DataStorageGtest::OpKeyInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
@@ -345,6 +359,49 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<DataShare::DataShar
     Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
     DataShare::DataSharePredicates predicates;
     predicates.EqualTo(PdpProfileData::PROFILE_ID, "1");
+    return helper->Delete(uri, predicates);
+}
+
+int DataStorageGtest::GlobalEccInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globaleccability/globalparams/ecc_list");
+    DataShare::DataShareValuesBucket value;
+    value.Put(GlobalEccData::MCC, "460");
+    value.Put(GlobalEccData::MNC, "01");
+    value.Put(GlobalEccData::NUMERIC, "46001");
+    return helper->Insert(uri, value);
+}
+
+int DataStorageGtest::GlobalEccUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globaleccability/globalparams/ecc_list");
+    DataShare::DataShareValuesBucket values;
+    values.Put(GlobalEccData::NAME, "46001");
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(GlobalEccData::ID, "1");
+    return helper->Update(uri, predicates, values);
+}
+
+int DataStorageGtest::GlobalEccSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globaleccability/globalparams/ecc_list");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+    if (resultSet != nullptr) {
+        int count;
+        resultSet->GetRowCount(count);
+        std::cout << "count is " << count;
+        return count;
+    }
+    return -1;
+}
+
+int DataStorageGtest::GlobalEccDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globaleccability/globalparams/ecc_list");
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(GlobalEccData::ID, "1");
     return helper->Delete(uri, predicates);
 }
 
@@ -638,6 +695,70 @@ HWTEST_F(DataStorageGtest, PdpProfileDelete_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileDelete(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+}
+
+/**
+ * @tc.number   GlobalEccInsert_001
+ * @tc.name     insert ecc data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalEccInsert_001, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalEccHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalEccInsert(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+}
+
+/**
+ * @tc.number   GlobalEccInsert_002
+ * @tc.name     update ecc data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalEccInsert_002, Function | MediumTest | Level2)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalEccHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalEccUpdate(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+}
+
+/**
+ * @tc.number   GlobalEccInsert_003
+ * @tc.name     select ecc data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalEccInsert_003, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalEccHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalEccSelect(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+}
+
+/**
+ * @tc.number   GlobalEccInsert_004
+ * @tc.name     delete ecc data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalEccInsert_004, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalEccHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalEccDelete(helper);
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 #else // TEL_TEST_UNSUPPORT

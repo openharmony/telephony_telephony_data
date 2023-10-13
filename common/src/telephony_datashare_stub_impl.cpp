@@ -21,6 +21,7 @@
 #include "pdp_profile_ability.h"
 #include "sim_ability.h"
 #include "sms_mms_ability.h"
+#include "global_ecc_ability.h"
 #include "telephony_datashare_stub_impl.h"
 
 namespace OHOS {
@@ -50,6 +51,12 @@ void TelephonyDataShareStubImpl::SetSmsMmsAbility(std::shared_ptr<DataShareExtAb
 {
     std::lock_guard<std::mutex> lock(smsMmsMutex_);
     smsMmsAbility_ = extension;
+}
+
+void TelephonyDataShareStubImpl::SetGlobalEccAbility(std::shared_ptr<DataShareExtAbility> extension)
+{
+    std::lock_guard<std::mutex> lock(globalEccMutex_);
+    globalEccAbility_ = extension;
 }
 
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetTelephonyDataAbility()
@@ -93,6 +100,15 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetSmsMmsAbilit
     return smsMmsAbility_;
 }
 
+std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetGlobalEccAbility()
+{
+    std::lock_guard<std::mutex> lock(globalEccMutex_);
+    if (globalEccAbility_ == nullptr) {
+        globalEccAbility_.reset(GlobalEccAbility::Create());
+    }
+    return globalEccAbility_;
+}
+
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOwner(const Uri &uri)
 {
     OHOS::Uri uriTemp = uri;
@@ -112,6 +128,9 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOwner(const 
     }
     if (path.find("com.ohos.smsmmsability") != std::string::npos) {
         return GetSmsMmsAbility();
+    }
+    if (path.find("com.ohos.globaleccability") != std::string::npos) {
+        return GetGlobalEccAbility();
     }
     return nullptr;
 }
