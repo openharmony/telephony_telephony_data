@@ -256,13 +256,13 @@ void ParserUtil::ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root)
         if (ruleRoot[ITEM_ICCID].isString()) {
             bean.iccid = ruleRoot[ITEM_ICCID].asString();
         }
-        if (ruleRoot[ITEM_OPERATOR_NAME_OPKEY].isString()) {
+        if (itemRoot[ITEM_OPERATOR_NAME_OPKEY].isString()) {
             bean.operatorName = itemRoot[ITEM_OPERATOR_NAME_OPKEY].asString();
         }
-        if (ruleRoot[ITEM_OPERATOR_KEY].isString()) {
+        if (itemRoot[ITEM_OPERATOR_KEY].isString()) {
             bean.operatorKey = itemRoot[ITEM_OPERATOR_KEY].asString();
         }
-        if (ruleRoot[ITEM_OPERATOR_KEY_EXT].isString()) {
+        if (itemRoot[ITEM_OPERATOR_KEY_EXT].isString()) {
             bean.operatorKeyExt = itemRoot[ITEM_OPERATOR_KEY_EXT].asString();
         }
         bean.ruleId = GetRuleId(bean);
