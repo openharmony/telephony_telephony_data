@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef DATA_STORAGE_RDB_GLOBAL_ECC_CALLBACK_H
-#define DATA_STORAGE_RDB_GLOBAL_ECC_CALLBACK_H
+#ifndef DATA_STORAGE_RDB_GLOBAL_PARAMS_CALLBACK_H
+#define DATA_STORAGE_RDB_GLOBAL_PARAMS_CALLBACK_H
 
 #include "iosfwd"
 #include "rdb_base_callback.h"
@@ -22,10 +22,10 @@
 
 namespace OHOS {
 namespace Telephony {
-class RdbGlobalEccCallback : public RdbBaseCallBack {
+class RdbGlobalParamsCallback : public RdbBaseCallBack {
 public:
-    explicit RdbGlobalEccCallback(const std::vector<std::string> &createTableVec);
-    ~RdbGlobalEccCallback() = default;
+    explicit RdbGlobalParamsCallback(const std::vector<std::string> &createTableVec);
+    ~RdbGlobalParamsCallback() = default;
 
     int OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion) override;
     int OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVersion, int targetVersion) override;
@@ -36,4 +36,4 @@ private:
 };
 } // namespace Telephony
 } // namespace OHOS
-#endif // DATA_STORAGE_RDB_GLOBAL_ECC_CALLBACK_H
+#endif // DATA_STORAGE_RDB_GLOBAL_PARAMS_CALLBACK_H

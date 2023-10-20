@@ -49,7 +49,7 @@ public:
     std::shared_ptr<DataShare::DataShareHelper> CreateSmsHelper();
     std::shared_ptr<DataShare::DataShareHelper> CreatePdpProfileHelper();
     std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyHelper();
-    std::shared_ptr<DataShare::DataShareHelper> CreateGlobalEccHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreateGlobalParamsHelper();
 
     int SimInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int SimUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
@@ -78,7 +78,7 @@ private:
     std::shared_ptr<DataShare::DataShareHelper> smsDataHelper = nullptr;
     std::shared_ptr<DataShare::DataShareHelper> pdpProfileDataHelper = nullptr;
     std::shared_ptr<DataShare::DataShareHelper> opKeyDataHelper = nullptr;
-    std::shared_ptr<DataShare::DataShareHelper> globalEccDataHelper_ = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> globalParamsDataHelper_ = nullptr;
 };
 } // namespace Telephony
 } // namespace OHOS

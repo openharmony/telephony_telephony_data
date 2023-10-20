@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-#ifndef DATA_STORAGE_GLOBAL_ECC_DATA_H
-#define DATA_STORAGE_GLOBAL_ECC_DATA_H
+#ifndef DATA_STORAGE_GLOBAL_PARAMS_DATA_H
+#define DATA_STORAGE_GLOBAL_PARAMS_DATA_H
 
 namespace OHOS {
 namespace Telephony {
-class GlobalEccData {
+class EccData {
 public:
     /**
      * @brief Id
@@ -54,7 +54,7 @@ public:
     static constexpr const char *ECC_FAKE = "ecc_fake";
 };
 
-struct GlobalEcc {
+struct EccNum {
     int id = 0;
     std::string name = "";
     std::string mcc = "";
@@ -65,8 +65,8 @@ struct GlobalEcc {
     std::string ecc_fake = "";
 };
 
-static constexpr const char *TABLE_GLOBAL_ECC = "ecc_list";
-static constexpr const char *GLOBAL_ECC_URI = "datashare:///com.ohos.globaleccability";
+static constexpr const char *TABLE_ECC_DATA = "ecc_data";
+static constexpr const char *GLOBAL_PARAMS_URI = "datashare:///com.ohos.globalparamsability";
 } // namespace Telephony
 } // namespace OHOS
-#endif // DATA_STORAGE_GLOBAL_ECC_DATA_H
+#endif // DATA_STORAGE_GLOBAL_PARAMS_DATA_H

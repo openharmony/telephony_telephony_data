@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "global_ecc_ability.h"
+#include "global_params_ability.h"
 
 #include "ability_context.h"
 #include "ability_loader.h"
@@ -24,7 +24,7 @@
 #include "datashare_ext_ability.h"
 #include "datashare_predicates.h"
 #include "new"
-#include "global_ecc_data.h"
+#include "global_params_data.h"
 #include "permission_util.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
@@ -35,26 +35,26 @@
 namespace OHOS {
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
-static const std::map<std::string, GlobalEccType> g_globalEccTypeMap = {
-    {"/globalparams/ecc_list", GlobalEccType::ECC_LIST}
+static const std::map<std::string, GlobalParamsUriType> g_globalParamsTypeMap = {
+    {"/globalparams/ecc_data", GlobalParamsUriType::ECC_LIST}
 };
 
-GlobalEccAbility::GlobalEccAbility() : DataShareExtAbility() {}
+GlobalParamsAbility::GlobalParamsAbility() : DataShareExtAbility() {}
 
-GlobalEccAbility::~GlobalEccAbility() {}
+GlobalParamsAbility::~GlobalParamsAbility() {}
 
-GlobalEccAbility* GlobalEccAbility::Create()
+GlobalParamsAbility* GlobalParamsAbility::Create()
 {
-    DATA_STORAGE_LOGI("GlobalEccAbility::Create begin.");
-    auto self = new GlobalEccAbility();
+    DATA_STORAGE_LOGI("GlobalParamsAbility::Create begin.");
+    auto self = new GlobalParamsAbility();
     self->DoInit();
     return self;
 }
 
-void GlobalEccAbility::DoInit()
+void GlobalParamsAbility::DoInit()
 {
-    if (initDatabaseDir && initRdbStore) {
-        DATA_STORAGE_LOGE("DoInit has done.");
+    if (initDatabaseDir_ && initRdbStore_) {
+        DATA_STORAGE_LOGI("DoInit has done.");
         return;
     }
     auto abilityContext = AbilityRuntime::Context::GetApplicationContext();
@@ -66,24 +66,24 @@ void GlobalEccAbility::DoInit()
     abilityContext->SwitchArea(0);
     std::string path = abilityContext->GetDatabaseDir();
     if (!path.empty()) {
-        initDatabaseDir = true;
+        initDatabaseDir_ = true;
         path.append("/");
         helper_.UpdateDbPath(path);
         if (helper_.Init() == NativeRdb::E_OK) {
-            initRdbStore = true;
+            initRdbStore_ = true;
         } else {
             DATA_STORAGE_LOGE("DoInit rdb init fail!");
-            initRdbStore = false;
+            initRdbStore_ = false;
         }
     } else {
         DATA_STORAGE_LOGE("path is empty");
-        initDatabaseDir = false;
+        initDatabaseDir_ = false;
     }
 }
 
-sptr<IRemoteObject> GlobalEccAbility::OnConnect(const AAFwk::Want &want)
+sptr<IRemoteObject> GlobalParamsAbility::OnConnect(const AAFwk::Want &want)
 {
-    DATA_STORAGE_LOGI("GlobalEccAbility %{public}s begin.", __func__);
+    DATA_STORAGE_LOGI("GlobalParamsAbility %{public}s begin.", __func__);
     Extension::OnConnect(want);
     sptr<DataShare::TelephonyDataShareStubImpl> remoteObject =
         new (std::nothrow) DataShare::TelephonyDataShareStubImpl();
@@ -91,19 +91,19 @@ sptr<IRemoteObject> GlobalEccAbility::OnConnect(const AAFwk::Want &want)
         DATA_STORAGE_LOGE("%{public}s No memory allocated for DataShareStubImpl", __func__);
         return nullptr;
     }
-    remoteObject->SetGlobalEccAbility(std::static_pointer_cast<GlobalEccAbility>(shared_from_this()));
-    DATA_STORAGE_LOGI("GlobalEccAbility %{public}s end.", __func__);
+    remoteObject->SetGlobalParamsAbility(std::static_pointer_cast<GlobalParamsAbility>(shared_from_this()));
+    DATA_STORAGE_LOGI("GlobalParamsAbility %{public}s end.", __func__);
     return remoteObject->AsObject();
 }
 
-void GlobalEccAbility::OnStart(const AppExecFwk::Want &want)
+void GlobalParamsAbility::OnStart(const AppExecFwk::Want &want)
 {
-    DATA_STORAGE_LOGI("GlobalEccAbility::OnStart");
+    DATA_STORAGE_LOGI("GlobalParamsAbility::OnStart");
     Extension::OnStart(want);
     DoInit();
 }
 
-int32_t GlobalEccAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
+int32_t GlobalParamsAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
     if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         DATA_STORAGE_LOGE("Permission denied!");
@@ -113,19 +113,19 @@ int32_t GlobalEccAbility::Insert(const Uri &uri, const DataShare::DataShareValue
         return DATA_STORAGE_ERROR;
     }
     std::lock_guard<std::mutex> lock(lock_);
-    Uri uriTemp = uri;
-    GlobalEccType globalEccUriType = ParseUriType(uriTemp);
+    Uri tempUri = uri;
+    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
     int64_t id = DATA_STORAGE_ERROR;
-    if (globalEccUriType == GlobalEccType::ECC_LIST) {
+    if (globalParamsUriType == GlobalParamsUriType::ECC_LIST) {
         OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
-        helper_.Insert(id, values, TABLE_GLOBAL_ECC);
+        helper_.Insert(id, values, TABLE_ECC_DATA);
     } else {
-        DATA_STORAGE_LOGE("GlobalEccAbility::Insert##uri = %{public}s", uri.ToString().c_str());
+        DATA_STORAGE_LOGE("GlobalParamsAbility::Insert##uri = %{public}s", uri.ToString().c_str());
     }
     return id;
 }
 
-std::shared_ptr<DataShare::DataShareResultSet> GlobalEccAbility::Query(const Uri &uri,
+std::shared_ptr<DataShare::DataShareResultSet> GlobalParamsAbility::Query(const Uri &uri,
     const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
@@ -137,15 +137,15 @@ std::shared_ptr<DataShare::DataShareResultSet> GlobalEccAbility::Query(const Uri
     if (!IsInitOk()) {
         return nullptr;
     }
-    Uri uriTemp = uri;
-    GlobalEccType globalEccUriType = ParseUriType(uriTemp);
-    if (globalEccUriType == GlobalEccType::ECC_LIST) {
-        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_GLOBAL_ECC);
+    Uri tempUri = uri;
+    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
+    if (globalParamsUriType == GlobalParamsUriType::ECC_LIST) {
+        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_ECC_DATA);
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
             auto result = helper_.Query(rdbPredicates, columns);
             if (result == nullptr) {
-                DATA_STORAGE_LOGE("GlobalEccAbility::Query  NativeRdb::ResultSet is null!");
+                DATA_STORAGE_LOGE("GlobalParamsAbility::Query  NativeRdb::ResultSet is null!");
                 delete absRdbPredicates;
                 absRdbPredicates = nullptr;
                 return nullptr;
@@ -155,15 +155,15 @@ std::shared_ptr<DataShare::DataShareResultSet> GlobalEccAbility::Query(const Uri
             delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
-            DATA_STORAGE_LOGE("GlobalEccAbility::Query  NativeRdb::AbsRdbPredicates is null!");
+            DATA_STORAGE_LOGE("GlobalParamsAbility::Query  NativeRdb::AbsRdbPredicates is null!");
         }
     } else {
-        DATA_STORAGE_LOGE("GlobalEccAbility::Query##uri = %{public}s", uri.ToString().c_str());
+        DATA_STORAGE_LOGE("GlobalParamsAbility::Query##uri = %{public}s", uri.ToString().c_str());
     }
     return sharedPtrResult;
 }
 
-int GlobalEccAbility::Update(
+int GlobalParamsAbility::Update(
     const Uri &uri, const DataShare::DataSharePredicates &predicates,
     const DataShare::DataShareValuesBucket &value)
 {
@@ -176,16 +176,16 @@ int GlobalEccAbility::Update(
         return result;
     }
     std::lock_guard<std::mutex> guard(lock_);
-    Uri uriTemp = uri;
-    GlobalEccType globalEccUriType = ParseUriType(uriTemp);
+    Uri tempUri = uri;
+    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
     NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
-    switch (globalEccUriType) {
-        case GlobalEccType::ECC_LIST: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_GLOBAL_ECC);
+    switch (globalParamsUriType) {
+        case GlobalParamsUriType::ECC_LIST: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_ECC_DATA);
             break;
         }
         default:
-            DATA_STORAGE_LOGE("GlobalEccAbility::Update##uri = %{public}s", uri.ToString().c_str());
+            DATA_STORAGE_LOGE("GlobalParamsAbility::Update##uri = %{public}s", uri.ToString().c_str());
             break;
     }
     if (absRdbPredicates != nullptr) {
@@ -196,12 +196,12 @@ int GlobalEccAbility::Update(
         delete absRdbPredicates;
         absRdbPredicates = nullptr;
     } else if (result == DATA_STORAGE_ERROR) {
-        DATA_STORAGE_LOGE("GlobalEccAbility::Update  NativeRdb::AbsRdbPredicates is null!");
+        DATA_STORAGE_LOGE("GlobalParamsAbility::Update  NativeRdb::AbsRdbPredicates is null!");
     }
     return result;
 }
 
-int GlobalEccAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
+int GlobalParamsAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
 {
     if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         DATA_STORAGE_LOGE("Permission denied!");
@@ -212,10 +212,10 @@ int GlobalEccAbility::Delete(const Uri &uri, const DataShare::DataSharePredicate
         return result;
     }
     std::lock_guard<std::mutex> guard(lock_);
-    Uri uriTemp = uri;
-    GlobalEccType globalEccUriType = ParseUriType(uriTemp);
-    if (globalEccUriType == GlobalEccType::ECC_LIST) {
-        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_GLOBAL_ECC);
+    Uri tempUri = uri;
+    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
+    if (globalParamsUriType == GlobalParamsUriType::ECC_LIST) {
+        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_ECC_DATA);
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
             int deletedRows = CHANGED_ROWS;
@@ -223,64 +223,64 @@ int GlobalEccAbility::Delete(const Uri &uri, const DataShare::DataSharePredicate
             delete absRdbPredicates;
             absRdbPredicates = nullptr;
         } else {
-            DATA_STORAGE_LOGE("GlobalEccAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
+            DATA_STORAGE_LOGE("GlobalParamsAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
         }
     } else {
-        DATA_STORAGE_LOGI("GlobalEccAbility::Delete##uri = %{public}s", uri.ToString().c_str());
+        DATA_STORAGE_LOGI("GlobalParamsAbility::Delete##uri = %{public}s", uri.ToString().c_str());
     }
     return result;
 }
 
-bool GlobalEccAbility::IsInitOk()
+bool GlobalParamsAbility::IsInitOk()
 {
-    if (!initDatabaseDir) {
-        DATA_STORAGE_LOGE("GlobalEccAbility::IsInitOk initDatabaseDir failed!");
+    if (!initDatabaseDir_) {
+        DATA_STORAGE_LOGE("GlobalParamsAbility::IsInitOk initDatabaseDir_ failed!");
         return false;
     }
-    if (!initRdbStore) {
-        DATA_STORAGE_LOGE("GlobalEccAbility::IsInitOk initRdbStore failed!");
+    if (!initRdbStore_) {
+        DATA_STORAGE_LOGE("GlobalParamsAbility::IsInitOk initRdbStore_ failed!");
         return false;
     }
     return true;
 }
 
-std::string GlobalEccAbility::GetType(const Uri &uri)
+std::string GlobalParamsAbility::GetType(const Uri &uri)
 {
-    DATA_STORAGE_LOGI("GlobalEccAbility::GetType##uri = %{public}s", uri.ToString().c_str());
+    DATA_STORAGE_LOGI("GlobalParamsAbility::GetType##uri = %{public}s", uri.ToString().c_str());
     std::string retval(uri.ToString());
     return retval;
 }
 
-int GlobalEccAbility::OpenFile(const Uri &uri, const std::string &mode)
+int GlobalParamsAbility::OpenFile(const Uri &uri, const std::string &mode)
 {
-    DATA_STORAGE_LOGI("GlobalEccAbility::OpenFile##uri = %{public}s", uri.ToString().c_str());
-    Uri uriTemp = uri;
-    GlobalEccType globalEccUriType = ParseUriType(uriTemp);
-    return static_cast<int>(globalEccUriType);
+    DATA_STORAGE_LOGI("GlobalParamsAbility::OpenFile##uri = %{public}s", uri.ToString().c_str());
+    Uri tempUri = uri;
+    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
+    return static_cast<int>(globalParamsUriType);
 }
 
-GlobalEccType GlobalEccAbility::ParseUriType(Uri &uri)
+GlobalParamsUriType GlobalParamsAbility::ParseUriType(Uri &uri)
 {
-    DATA_STORAGE_LOGI("GlobalEccAbility::ParseUriType start");
-    GlobalEccType globalEccUriType = GlobalEccType::UNKNOW;
+    DATA_STORAGE_LOGI("GlobalParamsAbility::ParseUriType start");
+    GlobalParamsUriType globalParamsUriType = GlobalParamsUriType::UNKNOW;
     std::string uriPath = uri.ToString();
     if (!uriPath.empty()) {
         helper_.ReplaceAllStr(uriPath, ":///", "://");
-        Uri uriTemp(uriPath);
-        std::string path = uriTemp.GetPath();
-        if (!path.empty() && !g_globalEccTypeMap.empty()) {
-            auto it = g_globalEccTypeMap.find(path);
-            if (it != g_globalEccTypeMap.end()) {
-                globalEccUriType = it->second;
-                DATA_STORAGE_LOGI("GlobalEccAbility::ParseUriType##globalEccUriType = %{public}d",
-                    globalEccUriType);
+        Uri tempUri(uriPath);
+        std::string path = tempUri.GetPath();
+        if (!path.empty() && !g_globalParamsTypeMap.empty()) {
+            auto it = g_globalParamsTypeMap.find(path);
+            if (it != g_globalParamsTypeMap.end()) {
+                globalParamsUriType = it->second;
+                DATA_STORAGE_LOGI("GlobalParamsAbility::ParseUriType##globalParamsUriType = %{public}d",
+                    globalParamsUriType);
             }
         }
     }
-    return globalEccUriType;
+    return globalParamsUriType;
 }
 
-OHOS::NativeRdb::RdbPredicates GlobalEccAbility::ConvertPredicates(
+OHOS::NativeRdb::RdbPredicates GlobalParamsAbility::ConvertPredicates(
     const std::string &tableName, const DataShare::DataSharePredicates &predicates)
 {
     OHOS::NativeRdb::RdbPredicates res = RdbDataShareAdapter::RdbUtils::ToPredicates(predicates, tableName);

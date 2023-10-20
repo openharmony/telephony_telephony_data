@@ -26,7 +26,7 @@
 #include "cstring"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
-#include "global_ecc_data.h"
+#include "global_params_data.h"
 #include "json/config.h"
 #include "json/reader.h"
 #include "json/value.h"
@@ -65,12 +65,12 @@ const char *ITEM_ICCID = "iccid";
 const char *ITEM_OPERATOR_NAME_OPKEY = "operator_name";
 const char *ITEM_OPERATOR_KEY = "operator_key";
 const char *ITEM_OPERATOR_KEY_EXT = "operator_key_ext";
-const char *GLOBAL_ECC_PATH = "etc/telephony/ecc_list.json";
+const char *ECC_DATA_PATH = "etc/telephony/ecc_data.json";
 const char *ITEM_NAME = "name";
 const char *ITEM_NUMERIC = "numeric";
-const char *ECC_WITH_CARD = "ecc_withcard";
-const char *ECC_NO_CARD = "ecc_nocard";
-const char *ECC_FAKE = "ecc_fake";
+const char *ITEM_ECC_WITH_CARD = "ecc_withcard";
+const char *ITEM_ECC_NO_CARD = "ecc_nocard";
+const char *ITEM_ECC_FAKE = "ecc_fake";
 const int MAX_BYTE_LEN = 10 * 1024 * 1024;
 
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
@@ -315,17 +315,17 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
     value.PutInt(OpKeyData::RULE_ID, bean.ruleId);
 }
 
-int ParserUtil::ParserGlobalEccJson(std::vector<GlobalEcc> &vec)
+int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)
 {
     char *content = nullptr;
     char buf[MAX_PATH_LEN];
-    char *path = GetOneCfgFile(GLOBAL_ECC_PATH, buf, MAX_PATH_LEN);
+    char *path = GetOneCfgFile(ECC_DATA_PATH, buf, MAX_PATH_LEN);
     int ret = DATA_STORAGE_SUCCESS;
     if (path && *path != '\0') {
         ret = LoaderJsonFile(content, path);
     }
     if (ret != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserGlobalEccJson LoaderJsonFile is fail!");
+        DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson LoaderJsonFile is fail!");
         return ret;
     }
     if (content == nullptr) {
@@ -341,45 +341,45 @@ int ParserUtil::ParserGlobalEccJson(std::vector<GlobalEcc> &vec)
     Json::CharReaderBuilder builder;
     Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserGlobalEccJson reader is error!");
+        DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson reader is error!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
     reader = nullptr;
     Json::Value itemRoots = root[ITEM_OPERATOR_INFOS];
     if (itemRoots.size() == 0) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserGlobalEccJson itemRoots size == 0!");
+        DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson itemRoots size == 0!");
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
-    ParserGlobalEccInfos(vec, itemRoots);
+    ParserEccDataInfos(vec, itemRoots);
     return DATA_STORAGE_SUCCESS;
 }
 
-void ParserUtil::ParserGlobalEccInfos(std::vector<GlobalEcc> &vec, Json::Value &roots)
+void ParserUtil::ParserEccDataInfos(std::vector<EccNum> &vec, Json::Value &roots)
 {
     for (int i = 0; i < static_cast<int>(roots.size()); i++) {
         Json::Value itemRoot = roots[i];
-        GlobalEcc bean;
+        EccNum bean;
         bean.name = itemRoot[ITEM_NAME].asString();
         bean.mcc = itemRoot[ITEM_MCC].asString();
         bean.mnc = itemRoot[ITEM_MNC].asString();
         bean.numeric = itemRoot[ITEM_NUMERIC].asString();
-        bean.ecc_withcard = itemRoot[ECC_WITH_CARD].asString();
-        bean.ecc_nocard = itemRoot[ECC_NO_CARD].asString();
-        bean.ecc_fake = itemRoot[ECC_FAKE].asString();
+        bean.ecc_withcard = itemRoot[ITEM_ECC_WITH_CARD].asString();
+        bean.ecc_nocard = itemRoot[ITEM_ECC_NO_CARD].asString();
+        bean.ecc_fake = itemRoot[ITEM_ECC_FAKE].asString();
         vec.push_back(bean);
     }
 }
 
-void ParserUtil::ParserGlobalEccToValuesBucket(NativeRdb::ValuesBucket &value, const GlobalEcc &bean)
+void ParserUtil::ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean)
 {
-    value.PutString(GlobalEccData::NAME, bean.name);
-    value.PutString(GlobalEccData::MCC, bean.mcc);
-    value.PutString(GlobalEccData::MNC, bean.mnc);
-    value.PutString(GlobalEccData::NUMERIC, bean.numeric);
-    value.PutString(GlobalEccData::ECC_WITH_CARD, bean.ecc_withcard);
-    value.PutString(GlobalEccData::ECC_NO_CARD, bean.ecc_nocard);
-    value.PutString(GlobalEccData::ECC_FAKE, bean.ecc_fake);
+    value.PutString(EccData::NAME, bean.name);
+    value.PutString(EccData::MCC, bean.mcc);
+    value.PutString(EccData::MNC, bean.mnc);
+    value.PutString(EccData::NUMERIC, bean.numeric);
+    value.PutString(EccData::ECC_WITH_CARD, bean.ecc_withcard);
+    value.PutString(EccData::ECC_NO_CARD, bean.ecc_nocard);
+    value.PutString(EccData::ECC_FAKE, bean.ecc_fake);
 }
 
 int ParserUtil::LoaderJsonFile(char *&content, const char *path) const

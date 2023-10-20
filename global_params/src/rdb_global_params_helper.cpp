@@ -13,53 +13,53 @@
  * limitations under the License.
  */
 
-#include "rdb_global_ecc_helper.h"
+#include "rdb_global_params_helper.h"
 
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "parser_util.h"
-#include "global_ecc_data.h"
+#include "global_params_data.h"
 #include "rdb_errno.h"
-#include "rdb_global_ecc_callback.h"
+#include "rdb_global_params_callback.h"
 #include "rdb_store_config.h"
 #include "values_bucket.h"
 #include "vector"
 
 namespace OHOS {
 namespace Telephony {
-RdbGlobalEccHelper::RdbGlobalEccHelper() {}
+RdbGlobalParamsHelper::RdbGlobalParamsHelper() {}
 
-int RdbGlobalEccHelper::Init()
+int RdbGlobalParamsHelper::Init()
 {
     int errCode = NativeRdb::E_OK;
     NativeRdb::RdbStoreConfig config(dbPath_);
     config.SetJournalMode(NativeRdb::JournalMode::MODE_TRUNCATE);
-    std::string globalEccStr;
-    CreateGlobalEccTableStr(globalEccStr, TABLE_GLOBAL_ECC);
+    std::string eccDataTableStr;
+    CreateGlobalParamsTableStr(eccDataTableStr, TABLE_ECC_DATA);
     std::vector<std::string> createTableVec;
-    createTableVec.push_back(globalEccStr);
-    RdbGlobalEccCallback callback(createTableVec);
+    createTableVec.push_back(eccDataTableStr);
+    RdbGlobalParamsCallback callback(createTableVec);
     CreateRdbStore(config, VERSION, callback, errCode);
     return errCode;
 }
 
-void RdbGlobalEccHelper::UpdateDbPath(const std::string &path)
+void RdbGlobalParamsHelper::UpdateDbPath(const std::string &path)
 {
     dbPath_ = path + DB_NAME;
 }
 
-void RdbGlobalEccHelper::CreateGlobalEccTableStr(std::string &createTableStr, const std::string &tableName)
+void RdbGlobalParamsHelper::CreateGlobalParamsTableStr(std::string &createTableStr, const std::string &tableName)
 {
     createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append("(");
-    createTableStr.append(GlobalEccData::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
-    createTableStr.append(GlobalEccData::NAME).append(" TEXT DEFAULT '', ");
-    createTableStr.append(GlobalEccData::MCC).append(" TEXT DEFAULT '', ");
-    createTableStr.append(GlobalEccData::MNC).append(" TEXT DEFAULT '', ");
-    createTableStr.append(GlobalEccData::NUMERIC).append(" TEXT DEFAULT '', ");
-    createTableStr.append(GlobalEccData::ECC_WITH_CARD).append(" TEXT DEFAULT '', ");
-    createTableStr.append(GlobalEccData::ECC_NO_CARD).append(" TEXT DEFAULT '', ");
-    createTableStr.append(GlobalEccData::ECC_FAKE).append(" TEXT DEFAULT '', ");
-    createTableStr.append("UNIQUE (").append(GlobalEccData::NUMERIC).append("))");
+    createTableStr.append(EccData::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
+    createTableStr.append(EccData::NAME).append(" TEXT DEFAULT '', ");
+    createTableStr.append(EccData::MCC).append(" TEXT DEFAULT '', ");
+    createTableStr.append(EccData::MNC).append(" TEXT DEFAULT '', ");
+    createTableStr.append(EccData::NUMERIC).append(" TEXT DEFAULT '', ");
+    createTableStr.append(EccData::ECC_WITH_CARD).append(" TEXT DEFAULT '', ");
+    createTableStr.append(EccData::ECC_NO_CARD).append(" TEXT DEFAULT '', ");
+    createTableStr.append(EccData::ECC_FAKE).append(" TEXT DEFAULT '', ");
+    createTableStr.append("UNIQUE (").append(EccData::NUMERIC).append("))");
 }
 } // namespace Telephony
 } // namespace OHOS

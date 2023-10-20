@@ -13,58 +13,59 @@
  * limitations under the License.
  */
 
-#include "rdb_global_ecc_callback.h"
+#include "rdb_global_params_callback.h"
 
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "parser_util.h"
-#include "global_ecc_data.h"
+#include "global_params_data.h"
 #include "rdb_errno.h"
 #include "rdb_store.h"
 #include "values_bucket.h"
 
 namespace OHOS {
 namespace Telephony {
-RdbGlobalEccCallback::RdbGlobalEccCallback(
+RdbGlobalParamsCallback::RdbGlobalParamsCallback(
     const std::vector<std::string> &createTableVec) : RdbBaseCallBack(createTableVec) {}
 
-int RdbGlobalEccCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
+int RdbGlobalParamsCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
 {
-    DATA_STORAGE_LOGI("RdbGlobalEccCallback::OnUpgrade##oldVersion = %d, newVersion = %d\n", oldVersion, newVersion);
+    DATA_STORAGE_LOGI(
+        "RdbGlobalParamsCallback::OnUpgrade##oldVersion = %d, newVersion = %d\n", oldVersion, newVersion);
     return NativeRdb::E_OK;
 }
 
-int RdbGlobalEccCallback::OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVersion, int targetVersion)
+int RdbGlobalParamsCallback::OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVersion, int targetVersion)
 {
     DATA_STORAGE_LOGI(
-        "RdbGlobalEccCallback::OnDowngrade##currentVersion = %d, "
+        "RdbGlobalParamsCallback::OnDowngrade##currentVersion = %d, "
         "targetVersion = %d\n",
         currentVersion, targetVersion);
     return NativeRdb::E_OK;
 }
 
-int RdbGlobalEccCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
+int RdbGlobalParamsCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
-    DATA_STORAGE_LOGI("RdbGlobalEccCallback::OnCreate");
+    DATA_STORAGE_LOGI("RdbGlobalParamsCallback::OnCreate");
     RdbBaseCallBack::OnCreate(rdbStore);
-    InitData(rdbStore, TABLE_GLOBAL_ECC);
+    InitData(rdbStore, TABLE_ECC_DATA);
     return NativeRdb::E_OK;
 }
 
-int RdbGlobalEccCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
+int RdbGlobalParamsCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 {
-    DATA_STORAGE_LOGI("RdbGlobalEccCallback::OnOpen");
+    DATA_STORAGE_LOGI("RdbGlobalParamsCallback::OnOpen");
     return NativeRdb::E_OK;
 }
 
-void RdbGlobalEccCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
+void RdbGlobalParamsCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
 {
     DATA_STORAGE_LOGD("InitData start");
     ParserUtil util;
-    std::vector<GlobalEcc> vec;
-    int ret = util.ParserGlobalEccJson(vec);
+    std::vector<EccNum> vec;
+    int ret = util.ParserEccDataJson(vec);
     if (ret != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("ParserGlobalEccJson fail!");
+        DATA_STORAGE_LOGE("ParserEccDataJson fail!");
         return;
     }
     ret = rdbStore.BeginTransaction();
@@ -75,7 +76,7 @@ void RdbGlobalEccCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::st
     DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
-        util.ParserGlobalEccToValuesBucket(value, vec[i]);
+        util.ParserEccDataToValuesBucket(value, vec[i]);
         int64_t id;
         rdbStore.Insert(id, tableName, value);
     }

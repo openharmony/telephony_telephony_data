@@ -33,7 +33,7 @@ class ValuesBucket;
 namespace Telephony {
 struct OpKey;
 struct PdpProfile;
-struct GlobalEcc;
+struct EccNum;
 class ParserUtil {
 public:
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
@@ -43,9 +43,9 @@ public:
     int ParserOpKeyJson(std::vector<OpKey> &vec, const char *path);
     void ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root);
     void ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const OpKey &bean);
-    int ParserGlobalEccJson(std::vector<GlobalEcc> &vec);
-    void ParserGlobalEccInfos(std::vector<GlobalEcc> &vec, Json::Value &root);
-    void ParserGlobalEccToValuesBucket(NativeRdb::ValuesBucket &value, const GlobalEcc &bean);
+    int ParserEccDataJson(std::vector<EccNum> &vec);
+    void ParserEccDataInfos(std::vector<EccNum> &vec, Json::Value &root);
+    void ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean);
 
 public:
     enum class RuleID {

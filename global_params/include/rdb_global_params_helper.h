@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef DATA_STORAGE_RDB_GLOBAL_ECC_HELPER_H
-#define DATA_STORAGE_RDB_GLOBAL_ECC_HELPER_H
+#ifndef DATA_STORAGE_RDB_GLOBAL_PARAMS_HELPER_H
+#define DATA_STORAGE_RDB_GLOBAL_PARAMS_HELPER_H
 
 #include "iosfwd"
 #include "rdb_base_helper.h"
@@ -22,10 +22,10 @@
 
 namespace OHOS {
 namespace Telephony {
-class RdbGlobalEccHelper : public RdbBaseHelper {
+class RdbGlobalParamsHelper : public RdbBaseHelper {
 public:
-    RdbGlobalEccHelper();
-    ~RdbGlobalEccHelper() = default;
+    RdbGlobalParamsHelper();
+    ~RdbGlobalParamsHelper() = default;
 
     /**
      * Init dataBase
@@ -42,7 +42,7 @@ public:
     void UpdateDbPath(const std::string &path);
 
 private:
-    void CreateGlobalEccTableStr(std::string &createTableStr, const std::string &tableName);
+    void CreateGlobalParamsTableStr(std::string &createTableStr, const std::string &tableName);
 
 private:
     const std::string DB_NAME = "globalparams.db";
@@ -51,4 +51,4 @@ private:
 };
 } // namespace Telephony
 } // namespace OHOS
-#endif // DATA_STORAGE_RDB_GLOBAL_ECC_HELPER_H
+#endif // DATA_STORAGE_RDB_GLOBAL_PARAMS_HELPER_H

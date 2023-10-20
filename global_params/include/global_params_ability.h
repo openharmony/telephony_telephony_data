@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef DATA_STORAGE_GLOBAL_ECC_ABILITY_H
-#define DATA_STORAGE_GLOBAL_ECC_ABILITY_H
+#ifndef DATA_STORAGE_GLOBAL_PARAMS_ABILITY_H
+#define DATA_STORAGE_GLOBAL_PARAMS_ABILITY_H
 
 #include "ability.h"
 #include "ability_lifecycle.h"
@@ -24,7 +24,7 @@
 #include "datashare_values_bucket.h"
 #include "map"
 #include "memory"
-#include "rdb_global_ecc_helper.h"
+#include "rdb_global_params_helper.h"
 #include "rdb_predicates.h"
 #include "string"
 #include "vector"
@@ -32,15 +32,15 @@
 
 namespace OHOS {
 namespace Telephony {
-enum class GlobalEccType {
+enum class GlobalParamsUriType {
     UNKNOW, ECC_LIST
 };
 
-class GlobalEccAbility : public DataShare::DataShareExtAbility {
+class GlobalParamsAbility : public DataShare::DataShareExtAbility {
 public:
-    GlobalEccAbility();
-    virtual ~GlobalEccAbility() override;
-    static GlobalEccAbility* Create();
+    GlobalParamsAbility();
+    virtual ~GlobalParamsAbility() override;
+    static GlobalParamsAbility* Create();
     void DoInit();
     sptr<IRemoteObject> OnConnect(const AAFwk::Want &want) override;
     virtual void OnStart(const AppExecFwk::Want &want) override;
@@ -59,9 +59,9 @@ private:
      * Parse Uri Type
      *
      * @param uri Resource address
-     * @return return GlobalEccType
+     * @return return GlobalParamsUriType
      */
-    GlobalEccType ParseUriType(Uri &uri);
+    GlobalParamsUriType ParseUriType(Uri &uri);
 
     /**
      * Convert DataSharePredicates to RdbPredicates
@@ -80,11 +80,11 @@ private:
     bool IsInitOk();
 
 private:
-    RdbGlobalEccHelper helper_;
+    RdbGlobalParamsHelper helper_;
     std::mutex lock_;
-    bool initDatabaseDir = false;
-    bool initRdbStore = false;
+    bool initDatabaseDir_ = false;
+    bool initRdbStore_ = false;
 };
 } // namespace Telephony
 } // namespace OHOS
-#endif // DATA_STORAGE_GLOBAL_ECC_ABILITY_H
+#endif // DATA_STORAGE_GLOBAL_PARAMS_ABILITY_H

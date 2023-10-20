@@ -53,7 +53,7 @@
                     "//base/telephony/telephony_data:tel_telephony_data",
                     "//base/telephony/telephony_data:Telephony_Data_Storage",
                     "//base/telephony/telephony_data/etc:pdp_profile",
-                    "//base/telephony/telephony_data/etc:global_ecc"
+                    "//base/telephony/telephony_data/etc:global_params_config"
                 ]
             },
             "inner_kits": [
