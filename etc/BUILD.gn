@@ -20,6 +20,17 @@ ohos_prebuilt_etc("pdp_profile_default") {
   subsystem_name = "telephony"
 }
 
+ohos_prebuilt_etc("ecc_data_default") {
+  source = "ecc_data.json"
+  relative_install_dir = "./telephony"
+  part_name = "telephony_data"
+  subsystem_name = "telephony"
+}
+
 group("pdp_profile") {
   deps = [ ":pdp_profile_default" ]
+}
+
+group("global_params_config") {
+  deps = [ ":ecc_data_default" ]
 }

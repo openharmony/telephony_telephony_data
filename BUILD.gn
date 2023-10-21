@@ -61,6 +61,7 @@ config("telephony_data_config") {
     "pdp_profile/include",
     "sim/include",
     "sms_mms/include",
+    "global_params/include",
   ]
 }
 
@@ -72,6 +73,9 @@ ohos_shared_library("tel_telephony_data") {
     "common/src/rdb_base_callback.cpp",
     "common/src/rdb_base_helper.cpp",
     "common/src/telephony_datashare_stub_impl.cpp",
+    "global_params/src/global_params_ability.cpp",
+    "global_params/src/rdb_global_params_callback.cpp",
+    "global_params/src/rdb_global_params_helper.cpp",
     "opkey/src/opkey_ability.cpp",
     "opkey/src/rdb_opkey_callback.cpp",
     "opkey/src/rdb_opkey_helper.cpp",

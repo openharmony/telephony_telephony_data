@@ -20,6 +20,7 @@ ohos_executable("tel_telephony_data_test") {
   include_dirs = [
     "$SOURCE_DIR/common/include",
     "$SOURCE_DIR/interfaces/innerkits/include",
+    "$SOURCE_DIR/global_params/include",
     "$SOURCE_DIR/opkey/include",
     "$SOURCE_DIR/pdp_profile/include",
     "$SOURCE_DIR/sim/include",

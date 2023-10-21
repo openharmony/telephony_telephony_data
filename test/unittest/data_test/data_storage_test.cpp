@@ -24,6 +24,7 @@
 #include "uri.h"
 #include "resource_manager.h"
 
+#include "global_params_data.h"
 #include "sim_data.h"
 #include "sms_mms_data.h"
 #include "pdp_profile_data.h"
@@ -37,10 +38,12 @@ std::map<char, CmdProcessFunc> g_simFuncMap;
 std::map<char, CmdProcessFunc> g_smsFuncMap;
 std::map<char, CmdProcessFunc> g_pdpProfileFuncMap;
 std::map<char, CmdProcessFunc> g_opKeyFuncMap;
+std::map<char, CmdProcessFunc> g_globalParamsFuncMap;
 std::shared_ptr<DataShare::DataShareHelper> simDataHelper = nullptr;
 std::shared_ptr<DataShare::DataShareHelper> smsDataHelper = nullptr;
 std::shared_ptr<DataShare::DataShareHelper> pdpProfileDataHelper = nullptr;
 std::shared_ptr<DataShare::DataShareHelper> opKeyDataHelper = nullptr;
+std::shared_ptr<DataShare::DataShareHelper> globalParamsDataHelper = nullptr;
 std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(
     int32_t systemAbilityId, std::string &uri)
 {
@@ -118,6 +121,19 @@ std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyHelper()
         opKeyDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
     return opKeyDataHelper;
+}
+
+std::shared_ptr<DataShare::DataShareHelper> CreateGlobalParamsHelper()
+{
+    if (globalParamsDataHelper == nullptr) {
+        std::string uri(OPKEY_URI);
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("CreateGlobalParamsHelper uri is nullptr");
+            return nullptr;
+        }
+        globalParamsDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
+    }
+    return globalParamsDataHelper;
 }
 
 int SimSetCardByType(std::shared_ptr<DataShare::DataShareHelper> helper)
@@ -331,6 +347,49 @@ int PdpProfileSelect(std::shared_ptr<DataShare::DataShareHelper> helper)
     return -1;
 }
 
+int GlobalEccInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/ecc_data");
+    DataShare::DataShareValuesBucket value;
+    value.Put(EccData::MCC, "460");
+    value.Put(EccData::MNC, "01");
+    value.Put(EccData::NUMERIC, "46001");
+    return helper->Insert(uri, value);
+}
+
+int GlobalEccUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/ecc_data");
+    DataShare::DataShareValuesBucket values;
+    values.Put(EccData::NAME, "46001");
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(EccData::ID, "1");
+    return helper->Update(uri, predicates, values);
+}
+
+int GlobalEccDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/ecc_data");
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(EccData::ID, "1");
+    return helper->Delete(uri, predicates);
+}
+
+int GlobalEccSelect(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/ecc_data");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+    if (resultSet != nullptr) {
+        int count;
+        resultSet->GetRowCount(count);
+        std::cout << "count is " << count;
+        return count;
+    }
+    return -1;
+}
+
 void Init()
 {
     g_simFuncMap['q'] = SimInsert;
@@ -352,6 +411,10 @@ void Init()
     g_opKeyFuncMap['c'] = OpKeyUpdate;
     g_opKeyFuncMap['v'] = OpKeySelect;
     g_opKeyFuncMap['b'] = OpKeyDelete;
+    g_globalParamsFuncMap['j'] = GlobalEccInsert;
+    g_globalParamsFuncMap['k'] = GlobalEccUpdate;
+    g_globalParamsFuncMap['l'] = GlobalEccSelect;
+    g_globalParamsFuncMap['m'] = GlobalEccDelete;
     ApplyPermission();
 }
 
@@ -401,6 +464,17 @@ int VerifyCmd(char inputCMD, std::shared_ptr<DataShare::DataShareHelper> &helper
             return 0;
         }
     }
+    auto itFunGlobalEcc = g_globalParamsFuncMap.find(inputCMD);
+    if (itFunGlobalEcc != g_globalParamsFuncMap.end()) {
+        auto memberFunc = itFunGlobalEcc->second;
+        if (memberFunc != nullptr) {
+            helper = CreateGlobalParamsHelper();
+            if (helper != nullptr) {
+                (*memberFunc)(helper);
+            }
+            return 0;
+        }
+    }
     return -1;
 }
 
@@ -441,6 +515,10 @@ void PrintfHint()
            "c:OpKeyUpdate()\n"
            "v:OpKeySelect()\n"
            "b:OpKeyDelete()\n"
+           "j:GlobalInsert()\n"
+           "k:GlobalUpdate()\n"
+           "l:GlobalSelect()\n"
+           "m:GlobalDelete()\n"
            "z:exit\n"
            "***********************************\n"
            "your choice: ");

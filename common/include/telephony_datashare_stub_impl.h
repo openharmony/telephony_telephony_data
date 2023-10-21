@@ -48,6 +48,7 @@ public:
     void SetPdpProfileAbility(std::shared_ptr<DataShareExtAbility> extension);
     void SetSimAbility(std::shared_ptr<DataShareExtAbility> extension);
     void SetSmsMmsAbility(std::shared_ptr<DataShareExtAbility> extension);
+    void SetGlobalParamsAbility(std::shared_ptr<DataShareExtAbility> extension);
 
 private:
     std::shared_ptr<DataShareExtAbility> GetOwner(const Uri &uri);
@@ -56,6 +57,7 @@ private:
     std::shared_ptr<DataShareExtAbility> GetPdpProfileAbility();
     std::shared_ptr<DataShareExtAbility> GetSimAbility();
     std::shared_ptr<DataShareExtAbility> GetSmsMmsAbility();
+    std::shared_ptr<DataShareExtAbility> GetGlobalParamsAbility();
 
 private:
     std::shared_ptr<DataShareExtAbility> telephonyDataAbility_ = nullptr;
@@ -63,10 +65,12 @@ private:
     std::shared_ptr<DataShareExtAbility> pdpProfileAbility_ = nullptr;
     std::shared_ptr<DataShareExtAbility> simAbility_ = nullptr;
     std::shared_ptr<DataShareExtAbility> smsMmsAbility_ = nullptr;
+    std::shared_ptr<DataShareExtAbility> globalParamsAbility_ = nullptr;
     std::mutex opKeyMutex_;
     std::mutex pdpProfileMutex_;
     std::mutex simMutex_;
     std::mutex smsMmsMutex_;
+    std::mutex globalParamsMutex_;
 };
 } // namespace DataShare
 } // namespace OHOS
