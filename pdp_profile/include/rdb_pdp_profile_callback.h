@@ -37,6 +37,9 @@ public:
 
 private:
     void InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
+
+private:
+    const int VERSION_2 = 2;
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -52,6 +52,8 @@ const char *ITEM_APN_TYPES = "apn_types";
 const char *ITEM_IP_ADDRESS = "ip_addr";
 const char *ITEM_MMS_IP_ADDRESS = "mms_ip_addr";
 const char *ITEM_HOME_URL = "home_url";
+const char *ITEM_MVNO_TYPE = "mvno_type";
+const char *ITEM_MVNO_MATCH_DATA = "mvno_match_data";
 const char *APN_VERSION = "apn_version";
 const char *OPKEY_INFO_PATH = "etc/telephony/OpkeyInfo.json";
 const char *ITEM_OPERATOR_ID = "operator_id";
@@ -157,6 +159,12 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
         if (itemRoot[ITEM_HOME_URL].isString()) {
             bean.homeUrl = itemRoot[ITEM_HOME_URL].asString();
         }
+        if (itemRoot[ITEM_MVNO_TYPE].isString()) {
+            bean.mvnoType = itemRoot[ITEM_MVNO_TYPE].asString();
+        }
+        if (itemRoot[ITEM_MVNO_MATCH_DATA].isString()) {
+            bean.mvnoMatchData = itemRoot[ITEM_MVNO_MATCH_DATA].asString();
+        }
         vec.push_back(bean);
     }
 }
@@ -180,6 +188,8 @@ void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, 
     value.PutString(PdpProfileData::MMS_IP_ADDRESS, bean.mmsIpAddress);
     value.PutString(PdpProfileData::APN_PROTOCOL, bean.pdpProtocol);
     value.PutString(PdpProfileData::APN_ROAM_PROTOCOL, bean.roamPdpProtocol);
+    value.PutString(PdpProfileData::MVNO_TYPE, bean.mvnoType);
+    value.PutString(PdpProfileData::MVNO_MATCH_DATA, bean.mvnoMatchData);
 }
 
 bool ParserUtil::ParseFromCustomSystem(std::vector<OpKey> &vec)

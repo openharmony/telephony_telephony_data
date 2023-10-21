@@ -68,8 +68,12 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::MMS_IP_ADDRESS).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::BEARING_SYSTEM_TYPE).append(" INTEGER, ");
+    createTableStr.append(PdpProfileData::MVNO_TYPE).append(" TEXT DEFAULT '', ");
+    createTableStr.append(PdpProfileData::MVNO_MATCH_DATA).append(" TEXT DEFAULT '', ");
     createTableStr.append("UNIQUE (").append(PdpProfileData::MCC).append(", ");
     createTableStr.append(PdpProfileData::MNC).append(", ");
+    createTableStr.append(PdpProfileData::MVNO_TYPE).append(", ");
+    createTableStr.append(PdpProfileData::MVNO_MATCH_DATA).append(", ");
     createTableStr.append(PdpProfileData::APN).append(", ");
     createTableStr.append(PdpProfileData::APN_TYPES).append(", ");
     createTableStr.append(PdpProfileData::IS_ROAMING_APN).append(", ");
