@@ -16,6 +16,7 @@
 #include "parser_util.h"
 
 #include <cstdio>
+#include <securec.h>
 #include <unistd.h>
 
 #include "climits"
