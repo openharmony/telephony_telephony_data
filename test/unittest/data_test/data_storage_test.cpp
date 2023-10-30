@@ -416,7 +416,7 @@ int GlobalParamsNumMatchDelete(std::shared_ptr<DataShare::DataShareHelper> helpe
 
 static void DumpNumMatchData(std::shared_ptr<DataShare::DataShareResultSet> resultSet)
 {
-    if (resultSet != nullptr) {
+    if (resultSet == nullptr) {
         std::cout << "resultSet is NULL, count = 0." << std::endl;
         return;
     }
