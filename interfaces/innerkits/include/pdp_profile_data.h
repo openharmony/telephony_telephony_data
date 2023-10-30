@@ -100,6 +100,14 @@ public:
      * @brief MVNO match data
      */
     static constexpr const char *MVNO_MATCH_DATA = "mvno_match_data";
+    /**
+     * @brief APN edit status
+     */
+    static constexpr const char *EDITED_STATUS = "edited";
+    /**
+     * @brief Server address
+     */
+    static constexpr const char *SERVER = "server";
 };
 
 struct PdpProfile {
@@ -121,6 +129,8 @@ struct PdpProfile {
     int bearingSystemType = 0; // see BearingSystemType
     std::string mvnoType = "";
     std::string mvnoMatchData = "";
+    int edited = 0;
+    std::string server = "";
 };
 
 class MvnoType {

@@ -326,6 +326,10 @@ int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShar
     value.Put(PdpProfileData::PROFILE_NAME, "frist_profile_name");
     value.Put(PdpProfileData::MCC, "460");
     value.Put(PdpProfileData::MNC, "91");
+    value.Put(PdpProfileData::MVNO_TYPE, "gid1");
+    value.Put(PdpProfileData::MVNO_MATCH_DATA, "FFF");
+    value.Put(PdpProfileData::EDITED_STATUS, "1");
+    value.Put(PdpProfileData::SERVER, "pdpserver");
     return helper->Insert(uri, value);
 }
 

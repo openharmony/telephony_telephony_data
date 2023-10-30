@@ -67,7 +67,7 @@ private:
 private:
     const std::string DB_NAME = "net.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;
-    const int VERSION = 2;
+    const int VERSION = 3;
 };
 } // namespace Telephony
 } // namespace OHOS
