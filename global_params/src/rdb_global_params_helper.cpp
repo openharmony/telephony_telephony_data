@@ -57,7 +57,7 @@ void RdbGlobalParamsHelper::UpdateDbPath(const std::string &path)
 void RdbGlobalParamsHelper::CreateNumMatchTableStr(std::string &createTableStr)
 {
     DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchTableStr start");
-    createTableStr.append("CREATE TABLE IF NOT EXISTS").append(TABLE_NUMBER_MATCH).append("(");
+    createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_NUMBER_MATCH).append("(");
     createTableStr.append(NumMatchData::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
     createTableStr.append(NumMatchData::NAME).append(" TEXT DEFAULT '', ");
     createTableStr.append(NumMatchData::MCC).append(" TEXT DEFAULT '', ");
