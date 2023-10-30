@@ -101,7 +101,19 @@ void RdbGlobalParamsCallback::InitData(NativeRdb::RdbStore &rdbStore, const std:
             util.ParserEccDataToValuesBucket(value, vec[i]);
             int64_t id;
             rdbStore.Insert(id, tableName, value);
-	}
+        }
+        ret = rdbStore.BeginTransaction();
+        if (ret != NativeRdb::E_OK) {
+            DATA_STORAGE_LOGE("BeginTransaction error!");
+            return;
+        }
+        DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
+        for (size_t i = 0; i < vec.size(); i++) {
+            NativeRdb::ValuesBucket value;
+            util.ParserEccDataToValuesBucket(value, vec[i]);
+            int64_t id;
+            rdbStore.Insert(id, tableName, value);
+        }
     } else {
         DATA_STORAGE_LOGE("RdbGlobalParamsCallback::InitData failed: tableName %s invalid\n", tableName.c_str());
     }
