@@ -38,7 +38,7 @@ using AppExecFwk::Ability;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
 static const std::map<std::string, GlobalParamsUriType> g_globalParamsTypeMap = {
-    { "/globalparams/num_matchs", GlobalParamsUriType:: NUMBER_MATCHS},
+    {"/globalparams/num_matchs", GlobalParamsUriType::NUMBER_MATCHS},
     {"/globalparams/ecc_data", GlobalParamsUriType::ECC_LIST},
 };
 

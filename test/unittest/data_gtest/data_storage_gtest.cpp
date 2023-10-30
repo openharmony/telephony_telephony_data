@@ -29,6 +29,8 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
+const int NUM_MATCH_SHORT_EIGHT = 8;
+const int NUM_MATCH_ELEVEN = 11;
 const int PERMS_NUM = 4;
 const int32_t VOICECALL_CAP_VAL_LEN = 6;
 const std::string KEY_VOICECALL_CAP = "const.telephony.voice.capable";
@@ -370,8 +372,8 @@ int DataStorageGtest::GlobalParamsNumMatchInsert(const std::shared_ptr<DataShare
     value.Put(NumMatchData::MCC, "460");
     value.Put(NumMatchData::MNC, "91");
     value.Put(NumMatchData::MCCMNC, "46091");
-    value.Put(NumMatchData::NUM_MATCH, 11);
-    value.Put(NumMatchData::NUM_MATCH_SHORT, 8);
+    value.Put(NumMatchData::NUM_MATCH, NUM_MATCH_ELEVEN);
+    value.Put(NumMatchData::NUM_MATCH_SHORT, NUM_MATCH_SHORT_EIGHT);
     return helper->Insert(uri, value);
 }
 
@@ -381,7 +383,6 @@ int DataStorageGtest::GlobalParamsNumMatchUpdate(const std::shared_ptr<DataShare
     DataShare::DataShareValuesBucket value;
     value.Put(NumMatchData::NAME, "update_name");
     DataShare::DataSharePredicates predicates;
-    // predicates.EqualTo(NumMatchData::ID, "1");
     predicates.EqualTo(NumMatchData::MCCMNC, "46091");
     return helper->Update(uri, predicates, values);
 }
@@ -436,7 +437,6 @@ int DataSorageGtest::GlobalParamsNumMatchSelect(std::shared_ptr<DataShare::DataS
         int count;
         resultSet->GetRowCount(count);
         std::cout << "count is " << count;
-        // dump resultSet
         DumpNumMatchData(resultSet);
         resultSet->Close();
         return count;
@@ -448,7 +448,6 @@ int DataStorageGtest::GlobalParamsNumMatchDelete(const std::shared_ptr<DataShare
 {
     Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
     DataShare::DataSharePredicates predicates;
-    // predicates.EqualTo(NumMatchData::ID, "1");
     predicates.EqualTo(NumMatchData::MCCMNC, "46091");
     return helper->Delete(uri, predicates);
 }

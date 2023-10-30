@@ -367,7 +367,7 @@ int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec)
         DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson itemRoots size == 0!\n");
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
-    ParserNumMatchInfos(vec,itemRoots);
+    ParserNumMatchInfos(vec, itemRoots);
     return DATA_STORAGE_SUCCESS;
 }
 

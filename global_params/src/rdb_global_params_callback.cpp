@@ -71,12 +71,12 @@ void RdbGlobalParamsCallback::InitData(NativeRdb::RdbStore &rdbStore, const std:
         if (resultCode != DATA_STORAGE_SUCCESS) {
             return;
         }
-		ret = rdbStore.BeginTransaction();
-		if (ret != NativeRdb::E_OK) {
-		    DATA_STORAGE_LOGE("BeginTransaction error!");
-		    return;
-		}
-		DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
+	ret = rdbStore.BeginTransaction();
+	if (ret != NativeRdb::E_OK) {
+	    DATA_STORAGE_LOGE("BeginTransaction error!");
+	    return;
+	}
+	DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
         for (size_t i = 0; i < vec.size(); i++) {
             NativeRdb::ValuesBucket value;
             parser.ParserNumMatchToValuesBucket(value, vec[i]);

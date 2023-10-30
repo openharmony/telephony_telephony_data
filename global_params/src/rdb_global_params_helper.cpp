@@ -35,7 +35,7 @@ int RdbGlobalParamsHelper::Init()
     NativeRdb::RdbStoreConfig config(dbPath_);
     config.SetJournalMode(NativeRdb::JournalMode::MODE_TRUNCATE);
     std::string numMatchTableStr;
-	CreateGlobalParamsTableStr(numMatchTableStr, TABLE_NUMBER_MATCH);
+    CreateGlobalParamsTableStr(numMatchTableStr, TABLE_NUMBER_MATCH);
     std::string numMatchIndexStr;
     CreateNumMatchIndexStr(numMatchIndexStr);
     std::string eccDataTableStr;
@@ -95,12 +95,12 @@ void RdbGlobalParamsHelper::CreateEccDataTableStr(std::string &createTableStr)
 void RdbGlobalParamsHelper::CreateGlobalParamsTableStr(std::string &createTableStr, const std::string &tableName)
 {
     if (tableName == TABLE_ECC_DATA) {
-	    return CreateEccDataTableStr(createTableStr);
-	} else if (tableName == TABLE_NUMBER_MATCH) {
-	    return CreateNumMatchTableStr(createTableStr);
-	} else {
-	   DATA_STORAGE_LOGI("TableName is not TABLE_ECC_DATA or TABLE_NUMBER_MATCH");
-	}
+        return CreateEccDataTableStr(createTableStr);
+    } else if (tableName == TABLE_NUMBER_MATCH) {
+        return CreateNumMatchTableStr(createTableStr);
+    } else {
+        DATA_STORAGE_LOGI("TableName is not TABLE_ECC_DATA or TABLE_NUMBER_MATCH");
+    }
     return;
 }
 int RdbGlobalParamsHelper::CommitTransactionAction()

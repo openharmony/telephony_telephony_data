@@ -42,4 +42,5 @@ group("global_params_config") {
   deps = [
     ":num_match_default",
     ":ecc_data_default",
+  ]
 }
