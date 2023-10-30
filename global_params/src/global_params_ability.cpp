@@ -33,10 +33,13 @@
 #include "utility"
 
 namespace OHOS {
+using AppExecFwk::AbilityLoader;
+using AppExecFwk::Ability;
 namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
 static const std::map<std::string, GlobalParamsUriType> g_globalParamsTypeMap = {
-    {"/globalparams/ecc_data", GlobalParamsUriType::ECC_LIST}
+    { "/globalparams/num_matchs", GlobalParamsUriType:: NUMBER_MATCHS},
+    {"/globalparams/ecc_data", GlobalParamsUriType::ECC_LIST},
 };
 
 GlobalParamsAbility::GlobalParamsAbility() : DataShareExtAbility() {}
@@ -112,17 +115,8 @@ int32_t GlobalParamsAbility::Insert(const Uri &uri, const DataShare::DataShareVa
     if (!IsInitOk()) {
         return DATA_STORAGE_ERROR;
     }
-    std::lock_guard<std::mutex> lock(lock_);
-    Uri tempUri = uri;
-    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
-    int64_t id = DATA_STORAGE_ERROR;
-    if (globalParamsUriType == GlobalParamsUriType::ECC_LIST) {
-        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
-        helper_.Insert(id, values, TABLE_ECC_DATA);
-    } else {
-        DATA_STORAGE_LOGE("GlobalParamsAbility::Insert##uri = %{public}s", uri.ToString().c_str());
-    }
-    return id;
+    DATA_STORAGE_LOGE("GlobalParamsAbility::The insert capability is not supported.");
+    return DATA_STORAGE_ERROR;
 }
 
 std::shared_ptr<DataShare::DataShareResultSet> GlobalParamsAbility::Query(const Uri &uri,
@@ -139,24 +133,33 @@ std::shared_ptr<DataShare::DataShareResultSet> GlobalParamsAbility::Query(const 
     }
     Uri tempUri = uri;
     GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
-    if (globalParamsUriType == GlobalParamsUriType::ECC_LIST) {
-        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_ECC_DATA);
-        if (absRdbPredicates != nullptr) {
-            NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-            auto result = helper_.Query(rdbPredicates, columns);
-            if (result == nullptr) {
-                DATA_STORAGE_LOGE("GlobalParamsAbility::Query  NativeRdb::ResultSet is null!");
-                delete absRdbPredicates;
-                absRdbPredicates = nullptr;
-                return nullptr;
-            }
-            auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
-            sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
+    switch (globalParamsUriType) {
+        case GlobalParamsUriType::NUMBER_MATCHS: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_NUMBER_MATCH);
+            break;
+        }
+        case GlobalParamsUriType::ECC_LIST: {
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_ECC_DATA);
+            break;
+        }
+        default:
+            DATA_STORAGE_LOGE("GlobalParamsAbility::Query failed##uri = %{public}s", uri.ToString().c_str());
+            break;
+    }
+    if (absRdbPredicates != nullptr) {
+        NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
+        auto result = helper_.Query(rdbPredicates, columns);
+        if (result == nullptr) {
+            DATA_STORAGE_LOGE("GlobalParamsAbility::Query  NativeRdb::ResultSet is null!");
             delete absRdbPredicates;
             absRdbPredicates = nullptr;
-        } else {
-            DATA_STORAGE_LOGE("GlobalParamsAbility::Query  NativeRdb::AbsRdbPredicates is null!");
+            return nullptr;
         }
+        auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
+        sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
+        delete absRdbPredicates;
+        absRdbPredicates = nullptr;
     } else {
         DATA_STORAGE_LOGE("GlobalParamsAbility::Query##uri = %{public}s", uri.ToString().c_str());
     }
@@ -175,29 +178,7 @@ int GlobalParamsAbility::Update(
     if (!IsInitOk()) {
         return result;
     }
-    std::lock_guard<std::mutex> guard(lock_);
-    Uri tempUri = uri;
-    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
-    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
-    switch (globalParamsUriType) {
-        case GlobalParamsUriType::ECC_LIST: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_ECC_DATA);
-            break;
-        }
-        default:
-            DATA_STORAGE_LOGE("GlobalParamsAbility::Update##uri = %{public}s", uri.ToString().c_str());
-            break;
-    }
-    if (absRdbPredicates != nullptr) {
-        int changedRows = CHANGED_ROWS;
-        NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
-        result = helper_.Update(changedRows, values, rdbPredicates);
-        delete absRdbPredicates;
-        absRdbPredicates = nullptr;
-    } else if (result == DATA_STORAGE_ERROR) {
-        DATA_STORAGE_LOGE("GlobalParamsAbility::Update  NativeRdb::AbsRdbPredicates is null!");
-    }
+    DATA_STORAGE_LOGE("GlobalParamsAbility::The update capability is not supported.");
     return result;
 }
 
@@ -211,23 +192,7 @@ int GlobalParamsAbility::Delete(const Uri &uri, const DataShare::DataSharePredic
     if (!IsInitOk()) {
         return result;
     }
-    std::lock_guard<std::mutex> guard(lock_);
-    Uri tempUri = uri;
-    GlobalParamsUriType globalParamsUriType = ParseUriType(tempUri);
-    if (globalParamsUriType == GlobalParamsUriType::ECC_LIST) {
-        NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_ECC_DATA);
-        if (absRdbPredicates != nullptr) {
-            NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-            int deletedRows = CHANGED_ROWS;
-            result = helper_.Delete(deletedRows, rdbPredicates);
-            delete absRdbPredicates;
-            absRdbPredicates = nullptr;
-        } else {
-            DATA_STORAGE_LOGE("GlobalParamsAbility::Delete  NativeRdb::AbsRdbPredicates is null!");
-        }
-    } else {
-        DATA_STORAGE_LOGI("GlobalParamsAbility::Delete##uri = %{public}s", uri.ToString().c_str());
-    }
+    DATA_STORAGE_LOGE("GlobalParamsAbility::The delete capability is not supported.");
     return result;
 }
 

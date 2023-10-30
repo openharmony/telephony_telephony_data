@@ -34,9 +34,13 @@
                 "config_policy",
                 "common_event_service",
                 "data_share",
+                "eventhandler",
                 "hilog",
                 "ipc",
                 "napi",
+                "resource_management",
+                "safwk",
+                "samgr",
                 "relational_store"
             ],
             "third_party": [
@@ -53,7 +57,8 @@
                     "//base/telephony/telephony_data:tel_telephony_data",
                     "//base/telephony/telephony_data:Telephony_Data_Storage",
                     "//base/telephony/telephony_data/etc:pdp_profile",
-                    "//base/telephony/telephony_data/etc:global_params_config"
+                    "//base/telephony/telephony_data/etc:global_params_config",
+                    "//base/telephony/telephony_data/test/unittest/data_test:tel_telephony_data_test"
                 ]
             },
             "inner_kits": [

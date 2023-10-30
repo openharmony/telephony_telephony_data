@@ -21,6 +21,9 @@
 #include "vector"
 
 namespace OHOS {
+namespace NativeRdb {
+class RdbStore;
+}
 namespace Telephony {
 class RdbGlobalParamsCallback : public RdbBaseCallBack {
 public:
@@ -33,6 +36,7 @@ public:
     int OnOpen(NativeRdb::RdbStore &rdbStore) override;
 private:
     void InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
+    int ClearData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
 };
 } // namespace Telephony
 } // namespace OHOS

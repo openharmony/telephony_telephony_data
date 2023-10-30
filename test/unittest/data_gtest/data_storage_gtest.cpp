@@ -155,15 +155,15 @@ std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateOpKeyHelper(
 
 std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateGlobalParamsHelper()
 {
-    if (globalParamsDataHelper_ == nullptr) {
-        std::string uri(PDP_PROFILE_URI);
+    if (globalParamsDataHelper == nullptr) {
+        std::string uri(GLOBAL_PARAMS_URI);
         if (uri.data() == nullptr) {
-            DATA_STORAGE_LOGE("CreatePdpProfileHelper uri is nullptr");
+            DATA_STORAGE_LOGE("CreateGlobalParamsHelper uri is nullptr");
             return nullptr;
         }
-        globalParamsDataHelper_ = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
+        globalParamsDataHelper = CreateDataShareHelper(TELEPHONY_SMS_MMS_SYS_ABILITY_ID, uri);
     }
-    return globalParamsDataHelper_;
+    return globalParamsDataHelper;
 }
 
 int DataStorageGtest::OpKeyInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
@@ -362,6 +362,96 @@ int DataStorageGtest::PdpProfileDelete(const std::shared_ptr<DataShare::DataShar
     return helper->Delete(uri, predicates);
 }
 
+int DataStorageGtest::GlobalParamsNumMatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    DataShare::DataShareValuesBucket value;
+    value.Put(NumMatchData::NAME, "frist_numMatch_name");
+    value.Put(NumMatchData::MCC, "460");
+    value.Put(NumMatchData::MNC, "91");
+    value.Put(NumMatchData::MCCMNC, "46091");
+    value.Put(NumMatchData::NUM_MATCH, 11);
+    value.Put(NumMatchData::NUM_MATCH_SHORT, 8);
+    return helper->Insert(uri, value);
+}
+
+int DataStorageGtest::GlobalParamsNumMatchUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    DataShare::DataShareValuesBucket value;
+    value.Put(NumMatchData::NAME, "update_name");
+    DataShare::DataSharePredicates predicates;
+    // predicates.EqualTo(NumMatchData::ID, "1");
+    predicates.EqualTo(NumMatchData::MCCMNC, "46091");
+    return helper->Update(uri, predicates, values);
+}
+
+static void DumpNumMatchData(std::shared_ptr<DataShare::DataShareResultSet> resultSet)
+{
+    if (resultSet == nullptr) {
+        std::cout << "resultSet is NULL, count = 0." << std::endl;
+        return;
+    }
+    int count;
+    resultSet->GetRowCount(count);
+    std::cout << "Dump NumMatchTable: count is " << count << std::endl;
+    for (int row = 0; row < count; row++) {
+        int columnIndex;
+        int id;
+        int match_long;
+        int match_short;
+        std::string name;
+        std::string mcc;
+        std::string mnc;
+        std::string numeric;
+        resultSet->GoToRow(row);
+        resultSet->GetColumnIndex(NumMatchData::ID, columnIndex);
+        resultSet->GetInt(columnIndex, id);
+        resultSet->GetColumnIndex(NumMatchData::NUM_MATCH, columnIndex);
+        resultSet->GetInt(columnIndex, match_long);
+        resultSet->GetColumnIndex(NumMatchData::NUM_MATCH_SHORT, columnIndex);
+        resultSet->GetInt(columnIndex, match_short);
+        resultSet->GetColumnIndex(NumMatchData::NAME, columnIndex);
+        resultSet->GetString(columnIndex, name);
+        resultSet->GetColumnIndex(NumMatchData::MCC, columnIndex);
+        resultSet->GetString(columnIndex, mcc);
+        resultSet->GetColumnIndex(NumMatchData::MNC, columnIndex);
+        resultSet->GetString(columnIndex, mnc);
+        resultSet->GetColumnIndex(NumMatchData::MCCMNC, columnIndex);
+        resultSet->GetString(columnIndex, numeric);
+        std::cout << " Row: " << row << ", id: " << id << ", name: " << name << ", mcc: " << mcc
+                  << ", mnc: " << mnc << ", numeric: " << numeric << ", num_match: " << match_long
+                  << ", num_match_short: " << match_short << std::endl;
+    }
+}
+
+int DataSorageGtest::GlobalParamsNumMatchSelect(std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    DATA_STORAGE_LOGI("GlobalParamsNumMatchSelect ---");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+    if (resultSet != nullptr) {
+        int count;
+        resultSet->GetRowCount(count);
+        std::cout << "count is " << count;
+        // dump resultSet
+        DumpNumMatchData(resultSet);
+        resultSet->Close();
+        return count;
+    }
+    return -1;
+}
+
+int DataStorageGtest::GlobalParamsNumMatchDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    DataShare::DataSharePredicates predicates;
+    // predicates.EqualTo(NumMatchData::ID, "1");
+    predicates.EqualTo(NumMatchData::MCCMNC, "46091");
+    return helper->Delete(uri, predicates);
+}
 int DataStorageGtest::GlobalEccInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
     Uri uri("datashare:///com.ohos.globalparamsability/globalparams/ecc_data");
@@ -698,6 +788,69 @@ HWTEST_F(DataStorageGtest, PdpProfileDelete_001, Function | MediumTest | Level1)
     EXPECT_NE(DATA_STORAGE_ERROR, ret);
 }
 
+/**
+ * @tc.number   GlobalParamsNumMatchInsert_001
+ * @tc.name     insert NumMatch data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalParamsNumMatchInsert_001, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalParamsNumMatchInsert(helper);
+    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+}
+
+/**
+ * @tc.number   GlobalParamsNumMatchUpdate_001
+ * @tc.name     update NumMatch data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalParamsNumMatchUpdate_001, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalParamsNumMatchUpdate(helper);
+    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+}
+
+/**
+ * @tc.number   GlobalParamsNumMatchSelect_001
+ * @tc.name     select NumMatch data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalParamsNumMatchSelect_001, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalParamsNumMatchSelect(helper);
+    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+}
+
+/**
+ * @tc.number   GlobalParamsNumMatchDelete_001
+ * @tc.name     delete NumMatch data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, GlobalParamsNumMatchDelete_001, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
+    ASSERT_TRUE(helper != nullptr);
+    int ret = GlobalParamsNumMatchDelete(helper);
+    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+}
 /**
  * @tc.number   GlobalEccInsert_001
  * @tc.name     insert ecc data
