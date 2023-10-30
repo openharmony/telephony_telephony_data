@@ -375,7 +375,7 @@ int GlobalParamsNumMatchInsert(std::shared_ptr<DataShare::DataShareHelper> helpe
 {
     std::cout << " GlobalParamsNumMatchInsert " << std::endl;
     DATA_STORAGE_LOGI("GlobalParamsNumMatchInsert ---");
-    Uri uri("datashare:///com.ohos.globalparamsability/global_params/num_matchs");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
     DataShare::DataShareValuesBucket value;
     value.Put(NumMatchData::NAME, "frist_numMatch_name");
     value.Put(NumMatchData::MCC, "460");
@@ -392,7 +392,7 @@ int GlobalParamsNumMatchUpdate(std::shared_ptr<DataShare::DataShareHelper> helpe
 {
     std::cout << " GlobalParamsNumMatchUpdate " << std::endl;
     DATA_STORAGE_LOGI("GlobalParamsNumMatchUpdate ---");
-    Uri uri("datashare:///com.ohos.globalparamsability/global_params/num_matchs");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
     DataShare::DataShareValuesBucket values;
     values.Put(NumMatchData::NAME, "update_name");
     DataShare::DataSharePredicates predicates;
@@ -406,7 +406,7 @@ int GlobalParamsNumMatchDelete(std::shared_ptr<DataShare::DataShareHelper> helpe
 {
     std::cout << " GlobalParamsNumMatchDelete " << std::endl;
     DATA_STORAGE_LOGI("GlobalParamsNumMatchDelete ---");
-    Uri uri("datashare:///com.ohos.globalparamsability/global_params/num_matchs");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
     DataShare::DataSharePredicates predicates;
     predicates.EqualTo(NumMatchData::MCCMNC, "46091");
     int ret = helper->Delete(uri, predicates);
@@ -457,7 +457,7 @@ int GlobalParamsNumMatchSelect(std::shared_ptr<DataShare::DataShareHelper> helpe
 {
     std::cout << " GlobalParamsNumMatchSelect " << std::endl;
     DATA_STORAGE_LOGI("GlobalParamsNumMatchSelect ---");
-    Uri uri("datashare:///com.ohos.globalparamsability/global_params/num_matchs");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
     std::vector<std::string> columns;
     DataShare::DataSharePredicates predicates;
     std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
@@ -481,7 +481,7 @@ int GlobalParamsNumMatchSpecifiedQuery(std::shared_ptr<DataShare::DataShareHelpe
 {
     std::cout << " GlobalParamsNumMatchSpecifiedQuery " << std::endl;
     DATA_STORAGE_LOGI("GlobalParamsNumMatchSpecifiedQuery ---");
-    Uri uri("datashare:///com.ohos.globalparamsability/global_params/num_matchs");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
     int vSize = mccmncArray.size();
     for (int i = 0; i < vSize; i++) {
         std::cout << " SpecifiedQuery: " << mccmncArray[i] << std::endl;
