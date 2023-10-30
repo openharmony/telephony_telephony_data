@@ -55,6 +55,8 @@ const char *ITEM_MMS_IP_ADDRESS = "mms_ip_addr";
 const char *ITEM_HOME_URL = "home_url";
 const char *ITEM_MVNO_TYPE = "mvno_type";
 const char *ITEM_MVNO_MATCH_DATA = "mvno_match_data";
+const char *ITEM_EDITED_STATUS = "edited";
+const char *ITEM_SERVER = "server";
 const char *APN_VERSION = "apn_version";
 const char *OPKEY_INFO_PATH = "etc/telephony/OpkeyInfo.json";
 const char *ITEM_OPERATOR_ID = "operator_id";
@@ -121,53 +123,30 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
     for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
         Json::Value itemRoot = root[i];
         PdpProfile bean;
-        if (itemRoot[ITEM_OPERATOR_NAME].isString()) {
-            bean.profileName = itemRoot[ITEM_OPERATOR_NAME].asString();
-        }
-        if (itemRoot[ITEM_AUTH_USER].isString()) {
-            bean.authUser = itemRoot[ITEM_AUTH_USER].asString();
-        }
-        if (itemRoot[ITEM_AUTH_PWD].isString()) {
-            bean.authPwd = itemRoot[ITEM_AUTH_PWD].asString();
-        }
-        std::string authTypeStr;
-        if (itemRoot[ITEM_AUTH_TYPE].isString()) {
-            authTypeStr = itemRoot[ITEM_AUTH_TYPE].asString();
-        }
-        if (authTypeStr.empty()) {
-            bean.authType = 0;
-        } else {
-            bean.authType = atoi(authTypeStr.c_str());
-        }
-        if (itemRoot[ITEM_MCC].isString()) {
-            bean.mcc = itemRoot[ITEM_MCC].asString();
-        }
-        if (itemRoot[ITEM_MNC].isString()) {
-            bean.mnc = itemRoot[ITEM_MNC].asString();
-        }
-        if (itemRoot[ITEM_APN].isString()) {
-            bean.apn = itemRoot[ITEM_APN].asString();
-        }
-        if (itemRoot[ITEM_APN_TYPES].isString()) {
-            bean.apnTypes = itemRoot[ITEM_APN_TYPES].asString();
-        }
-        if (itemRoot[ITEM_MMS_IP_ADDRESS].isString()) {
-            bean.mmsIpAddress = itemRoot[ITEM_MMS_IP_ADDRESS].asString();
-        }
-        if (itemRoot[ITEM_IP_ADDRESS].isString()) {
-            bean.proxyIpAddress = itemRoot[ITEM_IP_ADDRESS].asString();
-        }
-        if (itemRoot[ITEM_HOME_URL].isString()) {
-            bean.homeUrl = itemRoot[ITEM_HOME_URL].asString();
-        }
-        if (itemRoot[ITEM_MVNO_TYPE].isString()) {
-            bean.mvnoType = itemRoot[ITEM_MVNO_TYPE].asString();
-        }
-        if (itemRoot[ITEM_MVNO_MATCH_DATA].isString()) {
-            bean.mvnoMatchData = itemRoot[ITEM_MVNO_MATCH_DATA].asString();
-        }
+        bean.profileName = ParseString(itemRoot[ITEM_OPERATOR_NAME]);
+        bean.authUser = ParseString(itemRoot[ITEM_AUTH_USER]);
+        bean.authPwd = ParseString(itemRoot[ITEM_AUTH_PWD]);
+        std::string authTypeStr = ParseString(itemRoot[ITEM_AUTH_TYPE]);
+        bean.authType = authTypeStr.empty() ? 0 : atoi(authTypeStr.c_str());
+        bean.mcc = ParseString(itemRoot[ITEM_MCC]);
+        bean.mnc = ParseString(itemRoot[ITEM_MNC]);
+        bean.apn = ParseString(itemRoot[ITEM_APN]);
+        bean.apnTypes = ParseString(itemRoot[ITEM_APN_TYPES]);
+        bean.mmsIpAddress = ParseString(itemRoot[ITEM_MMS_IP_ADDRESS]);
+        bean.proxyIpAddress = ParseString(itemRoot[ITEM_IP_ADDRESS]);
+        bean.homeUrl = ParseString(itemRoot[ITEM_HOME_URL]);
+        bean.mvnoType = ParseString(itemRoot[ITEM_MVNO_TYPE]);
+        bean.mvnoMatchData = ParseString(itemRoot[ITEM_MVNO_MATCH_DATA]);
+        bean.server = ParseString(itemRoot[ITEM_SERVER]);
+        std::string editedStr = ParseString(itemRoot[ITEM_EDITED_STATUS]);
+        bean.edited = editedStr.empty() ? 0 : atoi(editedStr.c_str());
         vec.push_back(bean);
     }
+}
+
+std::string ParserUtil::ParseString(const Json::Value &value)
+{
+    return value.isString() ? value.asString() : "";
 }
 
 void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean)
@@ -191,6 +170,8 @@ void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, 
     value.PutString(PdpProfileData::APN_ROAM_PROTOCOL, bean.roamPdpProtocol);
     value.PutString(PdpProfileData::MVNO_TYPE, bean.mvnoType);
     value.PutString(PdpProfileData::MVNO_MATCH_DATA, bean.mvnoMatchData);
+    value.PutInt(PdpProfileData::EDITED_STATUS, bean.edited);
+    value.PutString(PdpProfileData::SERVER, bean.server);
 }
 
 bool ParserUtil::ParseFromCustomSystem(std::vector<OpKey> &vec)

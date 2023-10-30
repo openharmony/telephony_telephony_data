@@ -59,6 +59,7 @@ public:
     };
 
 private:
+    std::string ParseString(const Json::Value &value);
     int LoaderJsonFile(char *&content, const char *path) const;
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);

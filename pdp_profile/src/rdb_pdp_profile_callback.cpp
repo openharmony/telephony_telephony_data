@@ -27,13 +27,24 @@ namespace OHOS {
 namespace Telephony {
 int RdbPdpProfileCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
 {
-    DATA_STORAGE_LOGI(
-        "RdbPdpProfileCallback::OnUpgrade##oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
-    if (oldVersion < newVersion && newVersion == VERSION_2) {
+    DATA_STORAGE_LOGI("upgrade start oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
+    if (oldVersion < VERSION_2 && newVersion >= VERSION_2) {
         rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
-                                std::string(PdpProfileData::MVNO_TYPE) + " TEXT;");
+                            std::string(PdpProfileData::MVNO_TYPE) + " TEXT;");
         rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
-                                std::string(PdpProfileData::MVNO_MATCH_DATA) + " TEXT;");
+                            std::string(PdpProfileData::MVNO_MATCH_DATA) + " TEXT;");
+        oldVersion = VERSION_2;
+    }
+    if (oldVersion < VERSION_3 && newVersion >= VERSION_3) {
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
+                            std::string(PdpProfileData::EDITED_STATUS) + " INTEGER;");
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
+                            std::string(PdpProfileData::SERVER) + " TEXT;");
+        oldVersion = VERSION_3;
+    }
+    if (oldVersion != newVersion) {
+        DATA_STORAGE_LOGE("upgrade error oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
+        return NativeRdb::E_ERROR;
     }
     return NativeRdb::E_OK;
 }
