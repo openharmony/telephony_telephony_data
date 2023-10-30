@@ -20,6 +20,7 @@
 #include "rdb_base_helper.h"
 #include "string"
 #include "vector"
+
 namespace OHOS {
 namespace Telephony {
 class RdbGlobalParamsHelper : public RdbBaseHelper {
