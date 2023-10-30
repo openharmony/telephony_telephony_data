@@ -863,15 +863,15 @@ HWTEST_F(DataStorageGtest, GlobalEccInsert_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalEccInsert(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
 }
 
 /**
- * @tc.number   GlobalEccInsert_002
+ * @tc.number   GlobalEccUpdate_002
  * @tc.name     update ecc data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, GlobalEccInsert_002, Function | MediumTest | Level2)
+HWTEST_F(DataStorageGtest, GlobalEccUpdate_002, Function | MediumTest | Level2)
 {
     if (!HasVoiceCapability()) {
         return;
@@ -879,15 +879,15 @@ HWTEST_F(DataStorageGtest, GlobalEccInsert_002, Function | MediumTest | Level2)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalEccUpdate(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
 }
 
 /**
- * @tc.number   GlobalEccInsert_003
+ * @tc.number   GlobalEccSelect_003
  * @tc.name     select ecc data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, GlobalEccInsert_003, Function | MediumTest | Level1)
+HWTEST_F(DataStorageGtest, GlobalEccSelect_003, Function | MediumTest | Level1)
 {
     if (!HasVoiceCapability()) {
         return;
@@ -899,11 +899,11 @@ HWTEST_F(DataStorageGtest, GlobalEccInsert_003, Function | MediumTest | Level1)
 }
 
 /**
- * @tc.number   GlobalEccInsert_004
+ * @tc.number   GlobalEccDelete_004
  * @tc.name     delete ecc data
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, GlobalEccInsert_004, Function | MediumTest | Level1)
+HWTEST_F(DataStorageGtest, GlobalEccDelete_004, Function | MediumTest | Level1)
 {
     if (!HasVoiceCapability()) {
         return;
@@ -911,7 +911,7 @@ HWTEST_F(DataStorageGtest, GlobalEccInsert_004, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalEccDelete(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
 }
 #else // TEL_TEST_UNSUPPORT
 /**
