@@ -40,7 +40,7 @@ group("pdp_profile") {
 
 group("global_params_config") {
   deps = [
+    ":ecc_data_default",
     ":num_match_default",
-    ":ecc_data_default"
   ]
 }
