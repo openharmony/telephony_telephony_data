@@ -67,41 +67,41 @@ void RdbGlobalParamsCallback::InitData(NativeRdb::RdbStore &rdbStore, const std:
     ParserUtil util;
     if (tableName.compare(TABLE_NUMBER_MATCH) == 0) {
         std::vector<NumMatch> vec;
-        int resultCode = parser.ParserNumMatchJson(vec);
+        int resultCode = util.ParserNumMatchJson(vec);
         if (resultCode != DATA_STORAGE_SUCCESS) {
             return;
         }
-	ret = rdbStore.BeginTransaction();
-	if (ret != NativeRdb::E_OK) {
-	    DATA_STORAGE_LOGE("BeginTransaction error!");
-	    return;
-	}
-	DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
+        resultCode = rdbStore.BeginTransaction();
+        if (resultCode != NativeRdb::E_OK) {
+            DATA_STORAGE_LOGE("BeginTransaction error!");
+            return;
+        }
+        DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
         for (size_t i = 0; i < vec.size(); i++) {
             NativeRdb::ValuesBucket value;
-            parser.ParserNumMatchToValuesBucket(value, vec[i]);
+            util.ParserNumMatchToValuesBucket(value, vec[i]);
             int64_t id;
             rdbStore.Insert(id, tableName, value);
         }
     } else if (tableName.compare(TABLE_ECC_DATA) == 0) {
-    std::vector<EccNum> vec;
-    int ret = util.ParserEccDataJson(vec);
-    if (ret != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("ParserEccDataJson fail!");
-        return;
-    }
-    ret = rdbStore.BeginTransaction();
-    if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("BeginTransaction error!");
-        return;
-    }
-    DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
-    for (size_t i = 0; i < vec.size(); i++) {
-        NativeRdb::ValuesBucket value;
-        util.ParserEccDataToValuesBucket(value, vec[i]);
-        int64_t id;
-        rdbStore.Insert(id, tableName, value);
+        std::vector<EccNum> vec;
+        int ret = util.ParserEccDataJson(vec);
+        if (ret != DATA_STORAGE_SUCCESS) {
+            DATA_STORAGE_LOGE("ParserEccDataJson fail!");
+            return;
         }
+        ret = rdbStore.BeginTransaction();
+        if (ret != NativeRdb::E_OK) {
+            DATA_STORAGE_LOGE("BeginTransaction error!");
+            return;
+        }
+        DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
+        for (size_t i = 0; i < vec.size(); i++) {
+            NativeRdb::ValuesBucket value;
+            util.ParserEccDataToValuesBucket(value, vec[i]);
+            int64_t id;
+            rdbStore.Insert(id, tableName, value);
+	}
     } else {
         DATA_STORAGE_LOGE("RdbGlobalParamsCallback::InitData failed: tableName %s invalid\n", tableName.c_str());
     }

@@ -381,13 +381,8 @@ int GlobalParamsNumMatchInsert(std::shared_ptr<DataShare::DataShareHelper> helpe
     value.Put(NumMatchData::MCC, "460");
     value.Put(NumMatchData::MNC, "91");
     value.Put(NumMatchData::MCCMNC, "46091");
-<<<<<<< HEAD
-    value.Put(NumMatchData::NUM_MATCH, 11);
-    value.Put(NumMatchData::NUM_MATCH_SHORT, 8);
-=======
     value.Put(NumMatchData::NUM_MATCH, NUM_MATCH_ELEVEN);
     value.Put(NumMatchData::NUM_MATCH_SHORT, NUM_MATCH_SHORT_EIGHT);
->>>>>>> support number match
     int ret = helper->Insert(uri, value);
     std::cout << "Result: " << ret << std::endl;
     return ret;
@@ -401,10 +396,6 @@ int GlobalParamsNumMatchUpdate(std::shared_ptr<DataShare::DataShareHelper> helpe
     DataShare::DataShareValuesBucket values;
     values.Put(NumMatchData::NAME, "update_name");
     DataShare::DataSharePredicates predicates;
-<<<<<<< HEAD
-    // predicates.EqualTo(NumMatchData::ID, "1");
-=======
->>>>>>> support number match
     predicates.EqualTo(NumMatchData::MCCMNC, "46091");
     int ret = helper->Update(uri, predicates, values);
     std::cout << "Result: " << ret << std::endl;
@@ -417,10 +408,6 @@ int GlobalParamsNumMatchDelete(std::shared_ptr<DataShare::DataShareHelper> helpe
     DATA_STORAGE_LOGI("GlobalParamsNumMatchDelete ---");
     Uri uri("datashare:///com.ohos.globalparamsability/global_params/num_matchs");
     DataShare::DataSharePredicates predicates;
-<<<<<<< HEAD
-    // predicates.EqualTo(NumMatchData::ID, "1");
-=======
->>>>>>> support number match
     predicates.EqualTo(NumMatchData::MCCMNC, "46091");
     int ret = helper->Delete(uri, predicates);
     std::cout << "Result: " << ret << std::endl;
@@ -478,10 +465,6 @@ int GlobalParamsNumMatchSelect(std::shared_ptr<DataShare::DataShareHelper> helpe
         int count;
         resultSet->GetRowCount(count);
         std::cout << "count is " << count;
-<<<<<<< HEAD
-        // dump resultSet
-=======
->>>>>>> support number match
         DumpNumMatchData(resultSet);
         resultSet->Close();
         std::cout << "Result: " << count << std::endl;
@@ -490,12 +473,9 @@ int GlobalParamsNumMatchSelect(std::shared_ptr<DataShare::DataShareHelper> helpe
     std::cout << "Result: -1" << std::endl;
     return -1;
 }
-<<<<<<< HEAD
-std::vector<std::string> mccmncArray = {"46021", "46091", "23204", "25013", "99998", "330110", "63402", "310800", "60402", "60203"};
-=======
+
 std::vector<std::string> mccmncArray = {"46021", "46091", "23204", "25013", "99998", "330110",
     "63402", "310800", "60402", "60203"};
->>>>>>> support number match
 
 int GlobalParamsNumMatchSpecifiedQuery(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
@@ -513,10 +493,6 @@ int GlobalParamsNumMatchSpecifiedQuery(std::shared_ptr<DataShare::DataShareHelpe
             int count;
             resultSet->GetRowCount(count);
             std::cout << "count is " << count << std::endl;
-<<<<<<< HEAD
-            // dump resultSet
-=======
->>>>>>> support number match
             DumpNumMatchData(resultSet);
             resultSet->Close();
         } else {
@@ -593,11 +569,7 @@ void Init()
     g_globalParamsFuncMap['2'] = GlobalParamsNumMatchUpdate;
     g_globalParamsFuncMap['3'] = GlobalParamsNumMatchSelect;
     g_globalParamsFuncMap['4'] = GlobalParamsNumMatchDelete;
-<<<<<<< HEAD
-	g_globalParamsFuncMap['5'] = GlobalParamsNumMatchSpecifiedQuery;
-=======
     g_globalParamsFuncMap['5'] = GlobalParamsNumMatchSpecifiedQuery;
->>>>>>> support number match
     g_globalParamsFuncMap['j'] = GlobalEccInsert;
     g_globalParamsFuncMap['k'] = GlobalEccUpdate;
     g_globalParamsFuncMap['l'] = GlobalEccSelect;
@@ -662,11 +634,7 @@ int VerifyCmd(char inputCMD, std::shared_ptr<DataShare::DataShareHelper> &helper
             return 0;
         }
     }
-<<<<<<< HEAD
-	auto itFunGlobalParams = g_globalParamsFuncMap.find(inputCMD);
-=======
     auto itFunGlobalParams = g_globalParamsFuncMap.find(inputCMD);
->>>>>>> support number match
     if (itFunGlobalParams != g_globalParamsFuncMap.end()) {
         auto memberFunc = itFunGlobalParams->second;
         if (memberFunc != nullptr) {

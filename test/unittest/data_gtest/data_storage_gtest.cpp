@@ -380,7 +380,7 @@ int DataStorageGtest::GlobalParamsNumMatchInsert(const std::shared_ptr<DataShare
 int DataStorageGtest::GlobalParamsNumMatchUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
     Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
-    DataShare::DataShareValuesBucket value;
+    DataShare::DataShareValuesBucket values;
     value.Put(NumMatchData::NAME, "update_name");
     DataShare::DataSharePredicates predicates;
     predicates.EqualTo(NumMatchData::MCCMNC, "46091");
@@ -426,7 +426,7 @@ static void DumpNumMatchData(std::shared_ptr<DataShare::DataShareResultSet> resu
     }
 }
 
-int DataSorageGtest::GlobalParamsNumMatchSelect(std::shared_ptr<DataShare::DataShareHelper> &helper) const
+int DataStorageGtest::GlobalParamsNumMatchSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
     DATA_STORAGE_LOGI("GlobalParamsNumMatchSelect ---");
     Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
