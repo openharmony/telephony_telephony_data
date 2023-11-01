@@ -57,17 +57,17 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::MNC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MCCMNC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::APN).append(" TEXT DEFAULT '', ");
-    createTableStr.append(PdpProfileData::AUTH_TYPE).append(" INTEGER, ");
+    createTableStr.append(PdpProfileData::AUTH_TYPE).append(" INTEGER DEFAULT -1, ");
     createTableStr.append(PdpProfileData::AUTH_USER).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::AUTH_PWD).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::APN_TYPES).append(" TEXT DEFAULT '', ");
-    createTableStr.append(PdpProfileData::IS_ROAMING_APN).append(" INTEGER, ");
+    createTableStr.append(PdpProfileData::IS_ROAMING_APN).append(" INTEGER DEFAULT 1, ");
     createTableStr.append(PdpProfileData::APN_PROTOCOL).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::APN_ROAM_PROTOCOL).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::HOME_URL).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MMS_IP_ADDRESS).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append(" TEXT DEFAULT '', ");
-    createTableStr.append(PdpProfileData::BEARING_SYSTEM_TYPE).append(" INTEGER, ");
+    createTableStr.append(PdpProfileData::BEARING_SYSTEM_TYPE).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(PdpProfileData::MVNO_TYPE).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MVNO_MATCH_DATA).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::EDITED_STATUS).append(" INTEGER DEFAULT 0, ");
@@ -83,6 +83,11 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::APN_ROAM_PROTOCOL).append(", ");
     createTableStr.append(PdpProfileData::HOME_URL).append(", ");
     createTableStr.append(PdpProfileData::MMS_IP_ADDRESS).append(", ");
+    createTableStr.append(PdpProfileData::PROFILE_NAME).append(", ");
+    createTableStr.append(PdpProfileData::BEARING_SYSTEM_TYPE).append(", ");
+    createTableStr.append(PdpProfileData::AUTH_USER).append(", ");
+    createTableStr.append(PdpProfileData::AUTH_PWD).append(", ");
+    createTableStr.append(PdpProfileData::EDITED_STATUS).append(", ");
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append("))");
 }
 

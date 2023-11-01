@@ -116,11 +116,11 @@ struct PdpProfile {
     std::string mcc = "";
     std::string mnc = "";
     std::string apn = "";
-    int authType = 0;
+    int authType = -1;
     std::string authUser = "";
     std::string authPwd = "";
     std::string apnTypes = ""; // see ApnType
-    int isRoamingApn = 0;
+    int isRoamingApn = 1;
     std::string homeUrl = "";
     std::string proxyIpAddress = "";
     std::string mmsIpAddress = "";

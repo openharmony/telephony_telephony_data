@@ -57,6 +57,7 @@ const char *ITEM_MVNO_TYPE = "mvno_type";
 const char *ITEM_MVNO_MATCH_DATA = "mvno_match_data";
 const char *ITEM_EDITED_STATUS = "edited";
 const char *ITEM_SERVER = "server";
+const char *ITEM_BEARER = "bearing_system_type";
 const char *APN_VERSION = "apn_version";
 const char *OPKEY_INFO_PATH = "etc/telephony/OpkeyInfo.json";
 const char *ITEM_OPERATOR_ID = "operator_id";
@@ -127,7 +128,7 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
         bean.authUser = ParseString(itemRoot[ITEM_AUTH_USER]);
         bean.authPwd = ParseString(itemRoot[ITEM_AUTH_PWD]);
         std::string authTypeStr = ParseString(itemRoot[ITEM_AUTH_TYPE]);
-        bean.authType = authTypeStr.empty() ? 0 : atoi(authTypeStr.c_str());
+        bean.authType = authTypeStr.empty() ? -1 : atoi(authTypeStr.c_str());
         bean.mcc = ParseString(itemRoot[ITEM_MCC]);
         bean.mnc = ParseString(itemRoot[ITEM_MNC]);
         bean.apn = ParseString(itemRoot[ITEM_APN]);
@@ -140,6 +141,8 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
         bean.server = ParseString(itemRoot[ITEM_SERVER]);
         std::string editedStr = ParseString(itemRoot[ITEM_EDITED_STATUS]);
         bean.edited = editedStr.empty() ? 0 : atoi(editedStr.c_str());
+        std::string bearingStr = ParseString(itemRoot[ITEM_BEARER]);
+        bean.bearingSystemType = bearingStr.empty() ? 0 : atoi(bearingStr.c_str());
         vec.push_back(bean);
     }
 }
@@ -172,6 +175,7 @@ void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, 
     value.PutString(PdpProfileData::MVNO_MATCH_DATA, bean.mvnoMatchData);
     value.PutInt(PdpProfileData::EDITED_STATUS, bean.edited);
     value.PutString(PdpProfileData::SERVER, bean.server);
+    value.PutInt(PdpProfileData::BEARING_SYSTEM_TYPE, bean.bearingSystemType);
 }
 
 bool ParserUtil::ParseFromCustomSystem(std::vector<OpKey> &vec)
