@@ -330,6 +330,7 @@ int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShar
     value.Put(PdpProfileData::MVNO_MATCH_DATA, "FFF");
     value.Put(PdpProfileData::EDITED_STATUS, "1");
     value.Put(PdpProfileData::SERVER, "pdpserver");
+    value.Put(PdpProfileData::BEARING_SYSTEM_TYPE, "1");
     return helper->Insert(uri, value);
 }
 
