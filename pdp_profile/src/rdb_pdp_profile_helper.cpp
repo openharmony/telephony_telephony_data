@@ -57,7 +57,7 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::MNC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MCCMNC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::APN).append(" TEXT DEFAULT '', ");
-    createTableStr.append(PdpProfileData::AUTH_TYPE).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append(PdpProfileData::AUTH_TYPE).append(" INTEGER, ");
     createTableStr.append(PdpProfileData::AUTH_USER).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::AUTH_PWD).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::APN_TYPES).append(" TEXT DEFAULT '', ");
