@@ -128,7 +128,7 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
         bean.authUser = ParseString(itemRoot[ITEM_AUTH_USER]);
         bean.authPwd = ParseString(itemRoot[ITEM_AUTH_PWD]);
         std::string authTypeStr = ParseString(itemRoot[ITEM_AUTH_TYPE]);
-        bean.authType = authTypeStr.empty() ? -1 : atoi(authTypeStr.c_str());
+        bean.authType = authTypeStr.empty() ? 0 : atoi(authTypeStr.c_str());
         bean.mcc = ParseString(itemRoot[ITEM_MCC]);
         bean.mnc = ParseString(itemRoot[ITEM_MNC]);
         bean.apn = ParseString(itemRoot[ITEM_APN]);
