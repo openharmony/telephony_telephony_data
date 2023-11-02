@@ -116,7 +116,7 @@ struct PdpProfile {
     std::string mcc = "";
     std::string mnc = "";
     std::string apn = "";
-    int authType = -1;
+    int authType = 0;
     std::string authUser = "";
     std::string authPwd = "";
     std::string apnTypes = ""; // see ApnType
