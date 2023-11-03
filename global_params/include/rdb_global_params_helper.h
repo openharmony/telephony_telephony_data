@@ -19,6 +19,7 @@
 #include "iosfwd"
 #include "rdb_base_helper.h"
 #include "string"
+#include "vector"
 
 namespace OHOS {
 namespace Telephony {
@@ -43,10 +44,31 @@ public:
 
 private:
     void CreateGlobalParamsTableStr(std::string &createTableStr, const std::string &tableName);
+    /**
+     * Create number_match table
+     *
+     * @param createTableStr Create table statement
+     */
+    void CreateNumMatchTableStr(std::string &createTableStr);
+    
+    /**
+     * Create number_match index
+     *
+     * @param createIndexStr Create index statement
+     */
+    void CreateNumMatchIndexStr(std::string &createIndexStr);
+    
+    /**
+     * Create ecc_data table
+     *
+     * @param createTableStr Create table statement
+     */
+    void CreateEccDataTableStr(std::string &createTableStr);
+    int CommitTransactionAction();
 
 private:
     const std::string DB_NAME = "globalparams.db";
-    std::string dbPath_;
+    std::string dbPath_ = FOLDER_PATH + DB_NAME;
     const int VERSION = 1;
 };
 } // namespace Telephony

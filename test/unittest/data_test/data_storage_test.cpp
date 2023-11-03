@@ -23,7 +23,9 @@
 #include "values_bucket.h"
 #include "uri.h"
 #include "resource_manager.h"
-
+#include "nativetoken_kit.h"
+#include "accesstoken_kit.h"
+#include "token_setproc.h"
 #include "global_params_data.h"
 #include "sim_data.h"
 #include "sms_mms_data.h"
@@ -33,6 +35,9 @@
 
 namespace OHOS {
 namespace Telephony {
+const int PERMS_NUM = 4;
+const int NUM_MATCH_SHORT_EIGHT = 8;
+const int NUM_MATCH_ELEVEN = 11;
 using CmdProcessFunc = int (*)(std::shared_ptr<DataShare::DataShareHelper> helper);
 std::map<char, CmdProcessFunc> g_simFuncMap;
 std::map<char, CmdProcessFunc> g_smsFuncMap;
@@ -63,7 +68,26 @@ std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(
 
 void ApplyPermission()
 {
-    return;
+    const char *perms[PERMS_NUM] = {
+        "ohos.permission.READ_MESSAGES",
+        "ohos.permission.ANSWER_CALL",
+        "ohos.permission.SET_TELEPHONY_STATE",
+        "ohos.permission.GET_TELEPHONY_STATE",
+    };
+    
+    NativeTokenInfoParams testCallInfoParams = {
+        .dcapsNum = 0,
+        .permsNum = PERMS_NUM,
+        .aclsNum = 0,
+        .dcaps = nullptr,
+        .perms = perms,
+        .acls = nullptr,
+        .processName = "tel_telephony_data_test",
+        .aplStr = "system_basic",
+    };
+    Security::AccessToken::AccessTokenID currentID_ = GetAccessTokenId(&testCallInfoParams);
+    SetSelfTokenID(currentID_);
+    Security::AccessToken::AccessTokenKit::ReloadNativeTokenInfo();
 }
 
 void RemovePermission()
@@ -126,7 +150,7 @@ std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyHelper()
 std::shared_ptr<DataShare::DataShareHelper> CreateGlobalParamsHelper()
 {
     if (globalParamsDataHelper == nullptr) {
-        std::string uri(OPKEY_URI);
+        std::string uri(GLOBAL_PARAMS_URI);
         if (uri.data() == nullptr) {
             DATA_STORAGE_LOGE("CreateGlobalParamsHelper uri is nullptr");
             return nullptr;
@@ -347,6 +371,136 @@ int PdpProfileSelect(std::shared_ptr<DataShare::DataShareHelper> helper)
     return -1;
 }
 
+int GlobalParamsNumMatchInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    std::cout << " GlobalParamsNumMatchInsert " << std::endl;
+    DATA_STORAGE_LOGI("GlobalParamsNumMatchInsert ---");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    DataShare::DataShareValuesBucket value;
+    value.Put(NumMatchData::NAME, "frist_numMatch_name");
+    value.Put(NumMatchData::MCC, "460");
+    value.Put(NumMatchData::MNC, "91");
+    value.Put(NumMatchData::MCCMNC, "46091");
+    value.Put(NumMatchData::NUM_MATCH, NUM_MATCH_ELEVEN);
+    value.Put(NumMatchData::NUM_MATCH_SHORT, NUM_MATCH_SHORT_EIGHT);
+    int ret = helper->Insert(uri, value);
+    std::cout << "Result: " << ret << std::endl;
+    return ret;
+}
+
+int GlobalParamsNumMatchUpdate(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    std::cout << " GlobalParamsNumMatchUpdate " << std::endl;
+    DATA_STORAGE_LOGI("GlobalParamsNumMatchUpdate ---");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    DataShare::DataShareValuesBucket values;
+    values.Put(NumMatchData::NAME, "update_name");
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(NumMatchData::MCCMNC, "46091");
+    int ret = helper->Update(uri, predicates, values);
+    std::cout << "Result: " << ret << std::endl;
+    return ret;
+}
+
+int GlobalParamsNumMatchDelete(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    std::cout << " GlobalParamsNumMatchDelete " << std::endl;
+    DATA_STORAGE_LOGI("GlobalParamsNumMatchDelete ---");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(NumMatchData::MCCMNC, "46091");
+    int ret = helper->Delete(uri, predicates);
+    std::cout << "Result: " << ret << std::endl;
+    return ret;
+}
+
+static void DumpNumMatchData(std::shared_ptr<DataShare::DataShareResultSet> resultSet)
+{
+    if (resultSet == nullptr) {
+        std::cout << "resultSet is NULL, count = 0." << std::endl;
+        return;
+    }
+    int count;
+    resultSet->GetRowCount(count);
+    std::cout << "Dump NumMatchTable: count is " << count << std::endl;
+    for (int row = 0; row < count; row++) {
+        int columnIndex;
+        int id;
+        int match_long;
+        int match_short;
+        std::string name;
+        std::string mcc;
+        std::string mnc;
+        std::string numeric;
+        resultSet->GoToRow(row);
+        resultSet->GetColumnIndex(NumMatchData::ID, columnIndex);
+        resultSet->GetInt(columnIndex, id);
+        resultSet->GetColumnIndex(NumMatchData::NUM_MATCH, columnIndex);
+        resultSet->GetInt(columnIndex, match_long);
+        resultSet->GetColumnIndex(NumMatchData::NUM_MATCH_SHORT, columnIndex);
+        resultSet->GetInt(columnIndex, match_short);
+        resultSet->GetColumnIndex(NumMatchData::NAME, columnIndex);
+        resultSet->GetString(columnIndex, name);
+        resultSet->GetColumnIndex(NumMatchData::MCC, columnIndex);
+        resultSet->GetString(columnIndex, mcc);
+        resultSet->GetColumnIndex(NumMatchData::MNC, columnIndex);
+        resultSet->GetString(columnIndex, mnc);
+        resultSet->GetColumnIndex(NumMatchData::MCCMNC, columnIndex);
+        resultSet->GetString(columnIndex, numeric);
+        std::cout << " Row: " << row << ", id: " << id << ", name: " << name << ", mcc: " << mcc
+                  << ", mnc: " << mnc << ", numeric: " << numeric << ", num_match: " << match_long
+                  << ", num_match_short: " << match_short << std::endl;
+    }
+}
+
+int GlobalParamsNumMatchSelect(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    std::cout << " GlobalParamsNumMatchSelect " << std::endl;
+    DATA_STORAGE_LOGI("GlobalParamsNumMatchSelect ---");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+    if (resultSet != nullptr) {
+        int count;
+        resultSet->GetRowCount(count);
+        std::cout << "count is " << count;
+        DumpNumMatchData(resultSet);
+        resultSet->Close();
+        std::cout << "Result: " << count << std::endl;
+        return count;
+    }
+    std::cout << "Result: -1" << std::endl;
+    return -1;
+}
+
+std::vector<std::string> mccmncArray = {"46021", "46091", "23204", "25013", "99998", "330110",
+    "63402", "310800", "60402", "60203"};
+
+int GlobalParamsNumMatchSpecifiedQuery(std::shared_ptr<DataShare::DataShareHelper> helper)
+{
+    std::cout << " GlobalParamsNumMatchSpecifiedQuery " << std::endl;
+    DATA_STORAGE_LOGI("GlobalParamsNumMatchSpecifiedQuery ---");
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/num_matchs");
+    int vSize = mccmncArray.size();
+    for (int i = 0; i < vSize; i++) {
+        std::cout << " SpecifiedQuery: " << mccmncArray[i] << std::endl;
+        std::vector<std::string> columns;
+        DataShare::DataSharePredicates predicates;
+        predicates.EqualTo(NumMatchData::MCCMNC, mccmncArray[i]);
+        std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+        if (resultSet != nullptr) {
+            int count;
+            resultSet->GetRowCount(count);
+            std::cout << "count is " << count << std::endl;
+            DumpNumMatchData(resultSet);
+            resultSet->Close();
+        } else {
+            std::cout << "Result: No found!" << std::endl;
+        }
+    }
+    return 0;
+}
 int GlobalEccInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
 {
     Uri uri("datashare:///com.ohos.globalparamsability/globalparams/ecc_data");
@@ -411,6 +565,11 @@ void Init()
     g_opKeyFuncMap['c'] = OpKeyUpdate;
     g_opKeyFuncMap['v'] = OpKeySelect;
     g_opKeyFuncMap['b'] = OpKeyDelete;
+    g_globalParamsFuncMap['1'] = GlobalParamsNumMatchInsert;
+    g_globalParamsFuncMap['2'] = GlobalParamsNumMatchUpdate;
+    g_globalParamsFuncMap['3'] = GlobalParamsNumMatchSelect;
+    g_globalParamsFuncMap['4'] = GlobalParamsNumMatchDelete;
+    g_globalParamsFuncMap['5'] = GlobalParamsNumMatchSpecifiedQuery;
     g_globalParamsFuncMap['j'] = GlobalEccInsert;
     g_globalParamsFuncMap['k'] = GlobalEccUpdate;
     g_globalParamsFuncMap['l'] = GlobalEccSelect;
@@ -475,6 +634,17 @@ int VerifyCmd(char inputCMD, std::shared_ptr<DataShare::DataShareHelper> &helper
             return 0;
         }
     }
+    auto itFunGlobalParams = g_globalParamsFuncMap.find(inputCMD);
+    if (itFunGlobalParams != g_globalParamsFuncMap.end()) {
+        auto memberFunc = itFunGlobalParams->second;
+        if (memberFunc != nullptr) {
+            helper = CreateGlobalParamsHelper();
+            if (helper != nullptr) {
+                (*memberFunc)(helper);
+            }
+            return 0;
+        }
+    }
     return -1;
 }
 
@@ -515,6 +685,12 @@ void PrintfHint()
            "c:OpKeyUpdate()\n"
            "v:OpKeySelect()\n"
            "b:OpKeyDelete()\n"
+           "0:help\n"
+           "1:GlobalParamsNumMatchInsert()\n"
+           "2:GlobalParamsNumMatchUpdate()\n"
+           "3:GlobalParamsNumMatchSelect()\n"
+           "4:GlobalParamsNumMatchDelete()\n"
+		   "5:GlobalParamsNumMatchSpecifiedQuery()\n"
            "j:GlobalInsert()\n"
            "k:GlobalUpdate()\n"
            "l:GlobalSelect()\n"
@@ -530,6 +706,7 @@ void Looper()
     bool loopFlag = true;
     std::shared_ptr<DataShare::DataShareHelper> helper = nullptr;
     Init();
+    PrintfHint();
     while (loopFlag) {
         PrintfHint();
         std::cin >> inputCMD;
@@ -538,6 +715,10 @@ void Looper()
             continue;
         }
         switch (inputCMD) {
+            case '0': {
+                PrintfHint();
+                break;
+            }
             case 'g': {
                 ResourceTest();
                 break;

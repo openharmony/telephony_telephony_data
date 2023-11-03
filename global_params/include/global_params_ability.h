@@ -16,12 +16,16 @@
 #ifndef DATA_STORAGE_GLOBAL_PARAMS_ABILITY_H
 #define DATA_STORAGE_GLOBAL_PARAMS_ABILITY_H
 
+#include <functional>
+
+#include "__mutex_base"
 #include "ability.h"
 #include "ability_lifecycle.h"
 #include "abs_shared_result_set.h"
 #include "datashare_ext_ability.h"
 #include "datashare_ext_ability_context.h"
 #include "datashare_values_bucket.h"
+#include "iosfwd"
 #include "map"
 #include "memory"
 #include "rdb_global_params_helper.h"
@@ -31,9 +35,17 @@
 #include "want.h"
 
 namespace OHOS {
+namespace NativeRdb {
+class AbsRdbPredicates;
+class ResultSet;
+class DataAbilityPredicates;
+class ValuesBucket;
+}
 namespace Telephony {
 enum class GlobalParamsUriType {
-    UNKNOW, ECC_LIST
+    UNKNOW,
+	ECC_LIST,
+	NUMBER_MATCHS
 };
 
 class GlobalParamsAbility : public DataShare::DataShareExtAbility {

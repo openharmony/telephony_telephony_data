@@ -33,6 +33,7 @@ class ValuesBucket;
 namespace Telephony {
 struct OpKey;
 struct PdpProfile;
+struct NumMatch;
 struct EccNum;
 class ParserUtil {
 public:
@@ -43,6 +44,9 @@ public:
     int ParserOpKeyJson(std::vector<OpKey> &vec, const char *path);
     void ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root);
     void ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const OpKey &bean);
+    int ParserNumMatchJson(std::vector<NumMatch> &vec);
+    void ParserNumMatchInfos(std::vector<NumMatch> &vec, Json::Value &root);
+    void ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, const NumMatch &bean);
     int ParserEccDataJson(std::vector<EccNum> &vec);
     void ParserEccDataInfos(std::vector<EccNum> &vec, Json::Value &root);
     void ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean);

@@ -71,8 +71,12 @@ const char *ITEM_ICCID = "iccid";
 const char *ITEM_OPERATOR_NAME_OPKEY = "operator_name";
 const char *ITEM_OPERATOR_KEY = "operator_key";
 const char *ITEM_OPERATOR_KEY_EXT = "operator_key_ext";
+const char *NUM_MATCH_PATH = "etc/telephony/number_match.json";
 const char *ECC_DATA_PATH = "etc/telephony/ecc_data.json";
+const char *ITEM_NUM_MATCH_INFOS = "numMatchs";
 const char *ITEM_NAME = "name";
+const char *ITEM_NUM_MATCH = "num_match";
+const char *ITEM_NUM_MATCH_SHORT = "num_match_short";
 const char *ITEM_NUMERIC = "numeric";
 const char *ITEM_ECC_WITH_CARD = "ecc_withcard";
 const char *ITEM_ECC_NO_CARD = "ecc_nocard";
@@ -309,6 +313,73 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
     value.PutString(OpKeyData::OPERATOR_KEY, bean.operatorKey);
     value.PutString(OpKeyData::OPERATOR_KEY_EXT, bean.operatorKeyExt);
     value.PutInt(OpKeyData::RULE_ID, bean.ruleId);
+}
+
+int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec)
+{
+    char *content = nullptr;
+    char buf[MAX_PATH_LEN];
+    char *path = GetOneCfgFile(NUM_MATCH_PATH, buf, MAX_PATH_LEN);
+    int ret = DATA_STORAGE_SUCCESS;
+    if (path && *path != '\0') {
+        ParserUtil parser;
+        ret = parser.LoaderJsonFile(content, path);
+    }
+    if (ret != DATA_STORAGE_SUCCESS) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson LoaderJsonFile is fail!\n");
+        return ret;
+    }
+    if (content == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
+        return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
+    const int contentLength = strlen(content);
+    const std::string rawJson(content);
+    free(content);
+    content = nullptr;
+    JSONCPP_STRING err;
+    Json::Value root;
+    Json::CharReaderBuilder builder;
+    Json::CharReader *reader(builder.newCharReader());
+    if (!reader->parse(rawJson.c_str(), rawJson.c_str() +contentLength, &root, &err)) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson reader is error!\n");
+        return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
+    delete reader;
+    reader = nullptr;
+    Json::Value itemRoots = root[ITEM_NUM_MATCH_INFOS];
+    if (itemRoots.size() == 0) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson itemRoots size == 0!\n");
+        return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
+    }
+    ParserNumMatchInfos(vec, itemRoots);
+    return DATA_STORAGE_SUCCESS;
+}
+
+void ParserUtil::ParserNumMatchInfos(std::vector<NumMatch> &vec, Json::Value &root)
+{
+    for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
+        Json::Value itemRoot = root[i];
+        NumMatch bean;
+        bean.name = itemRoot[ITEM_NAME].asString();
+        bean.mcc = itemRoot[ITEM_MCC].asString();
+        bean.mnc = itemRoot[ITEM_MNC].asString();
+        bean.numMatch = itemRoot[ITEM_NUM_MATCH].asInt();
+        bean.numMatchShort = itemRoot[ITEM_NUM_MATCH_SHORT].asInt();
+        vec.push_back(bean);
+    }
+}
+
+void ParserUtil::ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, const NumMatch &bean)
+{
+    value.PutString(NumMatchData::NAME, bean.name);
+    value.PutString(NumMatchData::MCC, bean.mcc);
+    value.PutString(NumMatchData::MNC, bean.mnc);
+    std::string mccmnc(bean.mcc);
+    mccmnc.append(bean.mnc);
+    value.PutString(NumMatchData::MCCMNC, mccmnc);
+    value.PutInt(NumMatchData::NUM_MATCH, bean.numMatch);
+    value.PutInt(NumMatchData::NUM_MATCH_SHORT, bean.numMatchShort);
 }
 
 int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)

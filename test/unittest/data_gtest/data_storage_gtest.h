@@ -68,6 +68,10 @@ public:
     int OpKeyUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int OpKeySelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int OpKeyDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int GlobalParamsNumMatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int GlobalParamsNumMatchUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int GlobalParamsNumMatchSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int GlobalParamsNumMatchDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
@@ -78,7 +82,7 @@ private:
     std::shared_ptr<DataShare::DataShareHelper> smsDataHelper = nullptr;
     std::shared_ptr<DataShare::DataShareHelper> pdpProfileDataHelper = nullptr;
     std::shared_ptr<DataShare::DataShareHelper> opKeyDataHelper = nullptr;
-    std::shared_ptr<DataShare::DataShareHelper> globalParamsDataHelper_ = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> globalParamsDataHelper = nullptr;
 };
 } // namespace Telephony
 } // namespace OHOS

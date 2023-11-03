@@ -18,6 +18,48 @@
 
 namespace OHOS {
 namespace Telephony {
+class NumMatchData {
+public:
+    /**
+     * @brief Id
+     */
+    static constexpr const char *ID = "id";
+    /**
+     * @brief name
+     */
+    static constexpr const char *NAME = "name";
+    /**
+     * @brief Mobile country code
+     */
+    static constexpr const char *MCC = "mcc";
+    /**
+     * @brief Mobile network code
+     */
+    static constexpr const char *MNC = "mnc";
+    /**
+     * @brief Mobile country code and network code
+     */
+    static constexpr const char *MCCMNC = "numeric";
+    /**
+     * @brief num_match
+     */
+    static constexpr const char *NUM_MATCH = "num_match";
+    /**
+     * @brief num_match_short
+     */
+    static constexpr const char *NUM_MATCH_SHORT = "num_match_short";
+};
+
+struct NumMatch {
+    int id = 0;
+    std::string name = "";
+    std::string mcc = "";
+    std::string mnc = "";
+    std::string numeric = "";
+    int numMatch = 0;
+    int numMatchShort = 0;
+};
+
 class EccData {
 public:
     /**
@@ -65,6 +107,8 @@ struct EccNum {
     std::string ecc_fake = "";
 };
 
+constexpr const char *NUMERIC_INDEX = "numericIndex";
+constexpr const char *TABLE_NUMBER_MATCH = "number_match";
 static constexpr const char *TABLE_ECC_DATA = "ecc_data";
 static constexpr const char *GLOBAL_PARAMS_URI = "datashare:///com.ohos.globalparamsability";
 } // namespace Telephony

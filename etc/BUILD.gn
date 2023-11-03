@@ -27,10 +27,20 @@ ohos_prebuilt_etc("ecc_data_default") {
   subsystem_name = "telephony"
 }
 
+ohos_prebuilt_etc("num_match_default") {
+  source = "number_match.json"
+  relative_install_dir = "./telephony"
+  part_name = "telephony_data"
+  subsystem_name = "telephony"
+}
+
 group("pdp_profile") {
   deps = [ ":pdp_profile_default" ]
 }
 
 group("global_params_config") {
-  deps = [ ":ecc_data_default" ]
+  deps = [
+    ":ecc_data_default",
+    ":num_match_default",
+  ]
 }

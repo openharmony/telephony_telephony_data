@@ -34,9 +34,15 @@ int RdbGlobalParamsHelper::Init()
     int errCode = NativeRdb::E_OK;
     NativeRdb::RdbStoreConfig config(dbPath_);
     config.SetJournalMode(NativeRdb::JournalMode::MODE_TRUNCATE);
+    std::string numMatchTableStr;
+    CreateGlobalParamsTableStr(numMatchTableStr, TABLE_NUMBER_MATCH);
+    std::string numMatchIndexStr;
+    CreateNumMatchIndexStr(numMatchIndexStr);
     std::string eccDataTableStr;
     CreateGlobalParamsTableStr(eccDataTableStr, TABLE_ECC_DATA);
     std::vector<std::string> createTableVec;
+    createTableVec.push_back(numMatchTableStr);
+    createTableVec.push_back(numMatchIndexStr);
     createTableVec.push_back(eccDataTableStr);
     RdbGlobalParamsCallback callback(createTableVec);
     CreateRdbStore(config, VERSION, callback, errCode);
@@ -48,9 +54,34 @@ void RdbGlobalParamsHelper::UpdateDbPath(const std::string &path)
     dbPath_ = path + DB_NAME;
 }
 
-void RdbGlobalParamsHelper::CreateGlobalParamsTableStr(std::string &createTableStr, const std::string &tableName)
+void RdbGlobalParamsHelper::CreateNumMatchTableStr(std::string &createTableStr)
 {
-    createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append("(");
+    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchTableStr start");
+    createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_NUMBER_MATCH).append("(");
+    createTableStr.append(NumMatchData::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
+    createTableStr.append(NumMatchData::NAME).append(" TEXT DEFAULT '', ");
+    createTableStr.append(NumMatchData::MCC).append(" TEXT DEFAULT '', ");
+    createTableStr.append(NumMatchData::MNC).append(" TEXT DEFAULT '', ");
+    createTableStr.append(NumMatchData::MCCMNC).append(" TEXT NOT NULL , ");
+    createTableStr.append(NumMatchData::NUM_MATCH).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append(NumMatchData::NUM_MATCH_SHORT).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append("UNIQUE (").append(NumMatchData::MCCMNC).append(", ");
+    createTableStr.append(NumMatchData::NAME).append("))");
+    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchTableStr end: %s", createTableStr.c_str());
+}
+
+void RdbGlobalParamsHelper::CreateNumMatchIndexStr(std::string &createIndexStr)
+{
+    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchIndexStr start");
+    createIndexStr.append("CREATE INDEX IF NOT EXISTS [").append(NUMERIC_INDEX).append("]");
+    createIndexStr.append("ON [").append(TABLE_NUMBER_MATCH).append("]");
+    createIndexStr.append("([").append(NumMatchData::MCCMNC).append("])");
+    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchIndexStr end: %s", createIndexStr.c_str());
+}
+
+void RdbGlobalParamsHelper::CreateEccDataTableStr(std::string &createTableStr)
+{
+    createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_ECC_DATA).append("(");
     createTableStr.append(EccData::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
     createTableStr.append(EccData::NAME).append(" TEXT DEFAULT '', ");
     createTableStr.append(EccData::MCC).append(" TEXT DEFAULT '', ");
@@ -60,6 +91,25 @@ void RdbGlobalParamsHelper::CreateGlobalParamsTableStr(std::string &createTableS
     createTableStr.append(EccData::ECC_NO_CARD).append(" TEXT DEFAULT '', ");
     createTableStr.append(EccData::ECC_FAKE).append(" TEXT DEFAULT '', ");
     createTableStr.append("UNIQUE (").append(EccData::NUMERIC).append("))");
+}
+void RdbGlobalParamsHelper::CreateGlobalParamsTableStr(std::string &createTableStr, const std::string &tableName)
+{
+    if (tableName == TABLE_ECC_DATA) {
+        return CreateEccDataTableStr(createTableStr);
+    } else if (tableName == TABLE_NUMBER_MATCH) {
+        return CreateNumMatchTableStr(createTableStr);
+    } else {
+        DATA_STORAGE_LOGI("TableName is not TABLE_ECC_DATA or TABLE_NUMBER_MATCH");
+    }
+    return;
+}
+int RdbGlobalParamsHelper::CommitTransactionAction()
+{
+    int result = Commit();
+    if (result != NativeRdb::E_OK) {
+        RollBack();
+    }
+    return result;
 }
 } // namespace Telephony
 } // namespace OHOS
