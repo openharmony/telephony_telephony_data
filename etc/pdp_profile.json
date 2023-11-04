@@ -255,6 +255,58 @@
             "home_url": "http://mmsc.myuni.com.cn",
             "mms_ip_addr": "10.0.0.172:80",
             "apn_types": "mms"
+        },
+        {
+            "operator_name": "CBNET",
+            "mcc": "460",
+            "mnc": "15",
+            "apn": "cbnet",
+            "apn_types": "default,supl"
+        },
+        {
+            "operator_name": "ims",
+            "mcc": "460",
+            "mnc": "15",
+            "apn": "ims",
+            "apn_types": "ims"
+        },
+        {
+            "operator_name": "ims",
+            "mcc": "460",
+            "mnc": "60",
+            "apn": "ims",
+            "apn_types": "ims"
+        },
+        {
+            "operator_name": "internet",
+            "mcc": "460",
+            "mnc": "61",
+            "apn": "ipv6",
+            "apn_types": "default"
+        },
+        {
+            "operator_name": "MMS",
+            "mcc": "460",
+            "mnc": "61",
+            "apn": "hwmobile",
+            "port": "8080",
+            "home_url": "http://192.168.111.14:37080/was",
+            "mms_ip_addr": "192.168.111.32",
+            "apn_types": "mms"
+        },
+        {
+            "operator_name": "ims",
+            "mcc": "460",
+            "mnc": "61",
+            "apn": "ims",
+            "apn_types": "ims"
+        },
+        {
+            "operator_name": "VoWifi Xcap",
+            "mcc": "460",
+            "mnc": "61",
+            "apn": "ims.com",
+            "apn_types": "xcap"
         }
     ]
 }
