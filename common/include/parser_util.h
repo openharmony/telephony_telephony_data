@@ -67,6 +67,7 @@ private:
     int LoaderJsonFile(char *&content, const char *path) const;
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
+    std::string GetCustFile(const char *&file, const char *key);
 };
 } // namespace Telephony
 } // namespace OHOS
