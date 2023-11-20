@@ -34,6 +34,7 @@
 #include "memory"
 #include "new"
 #include "opkey_data.h"
+#include "parameters.h"
 #include "pdp_profile_data.h"
 #include "values_bucket.h"
 #include "vector"
@@ -82,6 +83,8 @@ const char *ITEM_ECC_WITH_CARD = "ecc_withcard";
 const char *ITEM_ECC_NO_CARD = "ecc_nocard";
 const char *ITEM_ECC_FAKE = "ecc_fake";
 const int MAX_BYTE_LEN = 10 * 1024 * 1024;
+static constexpr const char *CUST_RULE_PATH_KEY = "const.telephony.rule_path";
+static constexpr const char *CUST_NETWORK_PATH_KEY = "const.telephony.network_path";
 
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 {
@@ -185,7 +188,8 @@ void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, 
 bool ParserUtil::ParseFromCustomSystem(std::vector<OpKey> &vec)
 {
     DATA_STORAGE_LOGI("ParserUtil ParseFromCustomSystem");
-    CfgFiles *cfgFiles = GetCfgFiles(OPKEY_INFO_PATH);
+    std::string file = GetCustFile(OPKEY_INFO_PATH, CUST_RULE_PATH_KEY);
+    CfgFiles *cfgFiles = GetCfgFiles(file.c_str());
     if (cfgFiles == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil ParseFromCustomSystem cfgFiles is null");
         return false;
@@ -319,7 +323,8 @@ int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec)
 {
     char *content = nullptr;
     char buf[MAX_PATH_LEN];
-    char *path = GetOneCfgFile(NUM_MATCH_PATH, buf, MAX_PATH_LEN);
+    std::string file = GetCustFile(NUM_MATCH_PATH, CUST_NETWORK_PATH_KEY);
+    char *path = GetOneCfgFile(file.c_str(), buf, MAX_PATH_LEN);
     int ret = DATA_STORAGE_SUCCESS;
     if (path && *path != '\0') {
         ParserUtil parser;
@@ -386,7 +391,8 @@ int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)
 {
     char *content = nullptr;
     char buf[MAX_PATH_LEN];
-    char *path = GetOneCfgFile(ECC_DATA_PATH, buf, MAX_PATH_LEN);
+    std::string file = GetCustFile(ECC_DATA_PATH, CUST_NETWORK_PATH_KEY);
+    char *path = GetOneCfgFile(file.c_str(), buf, MAX_PATH_LEN);
     int ret = DATA_STORAGE_SUCCESS;
     if (path && *path != '\0') {
         ret = LoaderJsonFile(content, path);
@@ -512,6 +518,17 @@ int ParserUtil::CloseFile(FILE *f) const
         return static_cast<int>(LoadProFileErrorType::CLOSE_FILE_ERROR);
     }
     return DATA_STORAGE_SUCCESS;
+}
+
+std::string ParserUtil::GetCustFile(const char *&file, const char *key)
+{
+    std::string custFile = system::GetParameter(key, "");
+    if (!custFile.empty()) {
+        custFile.append(file);
+    } else {
+        custFile = file;
+    }
+    return custFile;
 }
 } // namespace Telephony
 } // namespace OHOS
