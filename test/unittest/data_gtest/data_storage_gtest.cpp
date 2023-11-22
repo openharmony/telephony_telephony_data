@@ -512,12 +512,12 @@ HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
     }
     std::shared_ptr<DataShare::DataShareHelper> smsHelper = CreateSmsHelper();
     std::shared_ptr<DataShare::DataShareHelper> simHelper = CreateSimHelper();
-    bool ret = (smsHelper != nullptr);
-    bool ret2 = (simHelper != nullptr);
+    bool retSms = (smsHelper != nullptr);
+    bool retSim = (simHelper != nullptr);
     smsHelper = nullptr;
     simHelper = nullptr;
-    EXPECT_TRUE(ret);
-    EXPECT_TRUE(ret2);
+    EXPECT_TRUE(retSms);
+    EXPECT_TRUE(retSim);
 }
 
 /**
