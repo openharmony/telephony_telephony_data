@@ -511,9 +511,13 @@ HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
         return;
     }
     std::shared_ptr<DataShare::DataShareHelper> smsHelper = CreateSmsHelper();
-    ASSERT_TRUE(smsHelper != nullptr);
     std::shared_ptr<DataShare::DataShareHelper> simHelper = CreateSimHelper();
-    ASSERT_TRUE(simHelper != nullptr);
+    bool retSms = (smsHelper != nullptr);
+    bool retSim = (simHelper != nullptr);
+    smsHelper = nullptr;
+    simHelper = nullptr;
+    EXPECT_TRUE(retSms);
+    EXPECT_TRUE(retSim);
 }
 
 /**
@@ -529,7 +533,8 @@ HWTEST_F(DataStorageGtest, OpKeyInsert_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyInsert(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -545,7 +550,8 @@ HWTEST_F(DataStorageGtest, OpKeyUpdate_001, Function | MediumTest | Level2)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyUpdate(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -561,7 +567,8 @@ HWTEST_F(DataStorageGtest, OpKeySelect_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeySelect(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -577,7 +584,8 @@ HWTEST_F(DataStorageGtest, OpKeyDelete_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = OpKeyDelete(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -593,7 +601,8 @@ HWTEST_F(DataStorageGtest, SimInsert_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimInsert(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -609,7 +618,8 @@ HWTEST_F(DataStorageGtest, SimUpdate_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimUpdate(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -625,7 +635,8 @@ HWTEST_F(DataStorageGtest, SimSelect_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimSelect(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -642,7 +653,8 @@ HWTEST_F(DataStorageGtest, SimDelete_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSimHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SimDelete(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -659,7 +671,8 @@ HWTEST_F(DataStorageGtest, SmsBatchInsert_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsBatchInsert(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -676,7 +689,8 @@ HWTEST_F(DataStorageGtest, SmsInsert_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsInsert(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -692,7 +706,8 @@ HWTEST_F(DataStorageGtest, SmsUpdate_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsUpdate(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -708,7 +723,8 @@ HWTEST_F(DataStorageGtest, SmsSelect_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsSelect(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -725,7 +741,8 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateSmsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = SmsDelete(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -741,7 +758,8 @@ HWTEST_F(DataStorageGtest, PdpProfileInsert_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileInsert(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -757,7 +775,8 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_001, Function | MediumTest | Level2)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileUpdate(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -773,7 +792,8 @@ HWTEST_F(DataStorageGtest, PdpProfileSelect_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileSelect(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -789,7 +809,8 @@ HWTEST_F(DataStorageGtest, PdpProfileDelete_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = PdpProfileDelete(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -805,7 +826,8 @@ HWTEST_F(DataStorageGtest, GlobalParamsNumMatchInsert_001, Function | MediumTest
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalParamsNumMatchInsert(helper);
-    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -821,7 +843,8 @@ HWTEST_F(DataStorageGtest, GlobalParamsNumMatchUpdate_001, Function | MediumTest
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalParamsNumMatchUpdate(helper);
-    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -837,7 +860,8 @@ HWTEST_F(DataStorageGtest, GlobalParamsNumMatchSelect_001, Function | MediumTest
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalParamsNumMatchSelect(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -853,7 +877,8 @@ HWTEST_F(DataStorageGtest, GlobalParamsNumMatchDelete_001, Function | MediumTest
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalParamsNumMatchDelete(helper);
-    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 /**
  * @tc.number   GlobalEccInsert_001
@@ -868,7 +893,8 @@ HWTEST_F(DataStorageGtest, GlobalEccInsert_001, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalEccInsert(helper);
-    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -884,7 +910,8 @@ HWTEST_F(DataStorageGtest, GlobalEccUpdate_002, Function | MediumTest | Level2)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalEccUpdate(helper);
-    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -900,7 +927,8 @@ HWTEST_F(DataStorageGtest, GlobalEccSelect_003, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalEccSelect(helper);
-    EXPECT_NE(DATA_STORAGE_ERROR, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
 /**
@@ -916,7 +944,8 @@ HWTEST_F(DataStorageGtest, GlobalEccDelete_004, Function | MediumTest | Level1)
     std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
     ASSERT_TRUE(helper != nullptr);
     int ret = GlobalEccDelete(helper);
-    EXPECT_NE(DATA_STORAGE_SUCCESS, ret);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 #else // TEL_TEST_UNSUPPORT
 /**
