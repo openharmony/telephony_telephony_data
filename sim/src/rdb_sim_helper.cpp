@@ -62,7 +62,7 @@ void RdbSimHelper::CreateSimInfoTableStr(std::string &createTableStr)
     createTableStr.append(SimData::IS_VOICE_CARD).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SimData::IS_MESSAGE_CARD).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SimData::IS_CELLULAR_DATA_CARD).append(" INTEGER DEFAULT 0, ");
-    createTableStr.append(SimData::IS_ACTIVE).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append(SimData::IS_ACTIVE).append(" INTEGER DEFAULT 1, ");
     createTableStr.append(SimData::CARD_TYPE).append(" INTEGER , ");
     createTableStr.append(SimData::IMS_SWITCH).append(" INTEGER DEFAULT -1, ");
     createTableStr.append(SimData::LANGUAGE).append(" TEXT DEFAULT '', ");

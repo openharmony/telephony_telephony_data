@@ -113,6 +113,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson reader is error!");
+        delete reader;
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
@@ -230,6 +231,7 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
     Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos reader is error!");
+        delete reader;
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
@@ -415,6 +417,7 @@ int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)
     Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
         DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson reader is error!");
+        delete reader;
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     delete reader;
