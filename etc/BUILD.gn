@@ -34,6 +34,13 @@ ohos_prebuilt_etc("num_match_default") {
   subsystem_name = "telephony"
 }
 
+ohos_prebuilt_etc("opkey_info_default") {
+  source = "OpkeyInfo.json"
+  relative_install_dir = "./telephony"
+  part_name = "telephony_data"
+  subsystem_name = "telephony"
+}
+
 group("pdp_profile") {
   deps = [ ":pdp_profile_default" ]
 }

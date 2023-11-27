@@ -1,0 +1,108 @@
+{
+    "version": 1,
+    "operator_id": [{
+        "operator_key": "46000",
+        "operator_key_ext": "46000",
+        "operator_name": "CMCC_CN",
+        "rule": {
+            "mcc_mnc": "46000"
+            }
+        },
+        {
+        "operator_key": "46002",
+        "operator_key_ext": "46002",
+        "operator_name": "CMCC_CN",
+        "rule": {
+            "mcc_mnc": "46002"
+            }
+        },
+        {
+            "operator_key": "46004",
+            "operator_key_ext": "46004",
+            "operator_name": "CMCC_CN",
+            "rule": {
+                "mcc_mnc": "46004"
+                }
+        },
+        {
+            "operator_key": "46007",
+            "operator_key_ext": "46007",
+            "operator_name": "CMCC_CN",
+            "rule": {
+                "mcc_mnc": "46007"
+                }
+        },
+        {
+            "operator_key": "46008",
+            "operator_key_ext": "46008",
+            "operator_name": "CMCC_CN",
+            "rule": {
+                "mcc_mnc": "46008"
+                }
+        },
+        {
+            "operator_key": "46001",
+            "operator_key_ext": "46001",
+            "operator_name": "CUCC_CN",
+            "rule": {
+                "mcc_mnc": "46001"
+                }
+        },
+        {
+            "operator_key": "46006",
+            "operator_key_ext": "46006",
+            "operator_name": "CUCC_CN",
+            "rule": {
+                "mcc_mnc": "46006"
+                }
+        },
+        {
+            "operator_key": "46009",
+            "operator_key_ext": "46009",
+            "operator_name": "CUCC_CN",
+            "rule": {
+                "mcc_mnc": "46009"
+                }
+        },
+        {
+            "operator_key": "46003",
+            "operator_key_ext": "46003",
+            "operator_name": "TELECOM_CN",
+            "rule": {
+                "mcc_mnc": "46003"
+                }
+        },
+        {
+            "operator_key": "46011",
+            "operator_key_ext": "46011",
+            "operator_name": "TELECOM_CN",
+            "rule": {
+                "mcc_mnc": "46011"
+                }
+        },
+        {
+            "operator_key": "46012",
+            "operator_key_ext": "46012",
+            "operator_name": "TELECOM_CN",
+            "rule": {
+                "mcc_mnc": "46012"
+                }
+        },
+        {
+            "operator_key": "46015",
+            "operator_key_ext": "46015",
+            "operator_name": "CBN_CN",
+            "rule": {
+                "mcc_mnc": "46015"
+                }
+        },
+        {
+            "operator_key": "00101",
+            "operator_key_ext": "00101",
+            "operator_name": "GCF_00101",
+            "rule": {
+                "mcc_mnc": "00101"
+                }
+        }
+    ]
+}
