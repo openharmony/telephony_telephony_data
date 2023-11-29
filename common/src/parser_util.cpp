@@ -60,7 +60,7 @@ const char *ITEM_EDITED_STATUS = "edited";
 const char *ITEM_SERVER = "server";
 const char *ITEM_BEARER = "bearing_system_type";
 const char *ITEM_IS_ROAMING_APN = "is_roaming_apn";
-const char *ITEM_PROTOCOL = "protocol";
+const char *ITEM_APN_PROTOCOL = "apn_protocol";
 const char *ITEM_ROAMING_PROTOCOL = "apn_roam_protocol";
 const char *APN_VERSION = "apn_version";
 const char *OPKEY_INFO_PATH = "etc/telephony/OpkeyInfo.json";
@@ -156,7 +156,7 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
         bean.bearingSystemType = bearingStr.empty() ? 0 : atoi(bearingStr.c_str());
         std::string isRoamingApnStr = ParseString(itemRoot[ITEM_IS_ROAMING_APN]);
         bean.isRoamingApn = isRoamingApnStr.empty() ? 0 : atoi(isRoamingApnStr.c_str());
-        bean.pdpProtocol = ParseString(itemRoot[ITEM_PROTOCOL]);
+        bean.pdpProtocol = ParseString(itemRoot[ITEM_APN_PROTOCOL]);
         bean.roamPdpProtocol = ParseString(itemRoot[ITEM_ROAMING_PROTOCOL]);
         vec.push_back(bean);
     }
