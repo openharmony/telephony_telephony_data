@@ -15,6 +15,12 @@ import("//build/ohos.gni")
 SOURCE_DIR = "../../../"
 
 ohos_executable("tel_telephony_data_test") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  branch_protector_ret = "pac_ret"
   sources = [ "$SOURCE_DIR/test/unittest/data_test/data_storage_test.cpp" ]
 
   include_dirs = [

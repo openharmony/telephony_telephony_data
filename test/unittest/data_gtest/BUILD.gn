@@ -59,6 +59,19 @@ ohos_unittest("tel_telephony_data_gtest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
+
+  cflags = [
+    "-flto",
+    "-fsanitize=cfi",
+    "-fsanitize-cfi-cross-dso",
+    "-fvisibility=hidden",
+  ]
+
+  ldflags = [
+    "-flto",
+    "-fsanitize=cfi",
+    "-fsanitize-cfi-cross-dso",
+  ]
 }
 
 group("unittest") {
