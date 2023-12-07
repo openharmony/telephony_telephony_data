@@ -17,6 +17,7 @@
 
 #include "data_storage_log_wrapper.h"
 #include "rdb_errno.h"
+#include "sim_data.h"
 
 namespace OHOS {
 namespace NativeRdb {
@@ -25,10 +26,19 @@ class RdbStore;
 namespace Telephony {
 int RdbSimCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
 {
-    DATA_STORAGE_LOGI(
-        "Data_Storage RdbSimCallback::OnUpgrade##oldVersion = %d, "
-        "newVersion = %d\n",
-        oldVersion, newVersion);
+    DATA_STORAGE_LOGI("upgrade start oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
+    if (oldVersion < VERSION_2 && newVersion >= VERSION_2) {
+        rdbStore.ExecuteSql(
+            "ALTER TABLE " + std::string(TABLE_SIM_INFO) + " DROP COLUMN " + std::string(SimData::IS_ACTIVE) + ";");
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                            std::string(SimData::IS_ACTIVE) + " INTEGER DEFAULT " + "1;");
+        oldVersion = VERSION_2;
+    }
+
+    if (oldVersion != newVersion) {
+        DATA_STORAGE_LOGE("upgrade error oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
+        return NativeRdb::E_ERROR;
+    }
     return NativeRdb::E_OK;
 }
 

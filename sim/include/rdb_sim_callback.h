@@ -33,6 +33,9 @@ public:
     int OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion) override;
     int OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVersion, int targetVersion) override;
     int OnOpen(NativeRdb::RdbStore &rdbStore) override;
+
+private:
+    const int VERSION_2 = 2;
 };
 } // namespace Telephony
 } // namespace OHOS
