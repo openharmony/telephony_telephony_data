@@ -32,7 +32,7 @@ int RdbSimCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int
             "ALTER TABLE " + std::string(TABLE_SIM_INFO) + " DROP COLUMN " + std::string(SimData::IS_ACTIVE) + ";");
         rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
                             std::string(SimData::IS_ACTIVE) + " INTEGER DEFAULT " + "1;");
-        oldVersion = newVersion;
+        oldVersion = VERSION_2;
     }
 
     if (oldVersion != newVersion) {
