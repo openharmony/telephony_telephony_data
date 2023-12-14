@@ -87,6 +87,7 @@ void RdbSmsMmsHelper::CreateSmsMmsInfoTableStr(std::string &createTableStr)
     createTableStr.append(SmsMmsInfo::DEVICE_ID).append(" INTEGER , ");
     createTableStr.append(SmsMmsInfo::IS_SUBSECTION).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SmsMmsInfo::IS_SEND_REPORT).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append(SmsMmsInfo::IS_ADVANCED_SECURITY).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SmsMmsInfo::MSG_CODE).append(" INTEGER DEFAULT 0)");
 }
 

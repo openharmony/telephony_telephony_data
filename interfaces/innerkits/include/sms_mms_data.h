@@ -116,6 +116,10 @@ public:
      * @brief Whether to send a report
      */
     static constexpr const char *IS_SEND_REPORT = "is_send_report";
+    /**
+     * @brief Whether in advanced security status
+     */
+    static constexpr const char *IS_ADVANCED_SECURITY = "is_advanced_security";
 };
 
 class SmsSubsection {
