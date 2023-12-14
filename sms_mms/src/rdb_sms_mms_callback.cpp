@@ -17,6 +17,7 @@
 
 #include "data_storage_log_wrapper.h"
 #include "rdb_errno.h"
+#include "sms_mms_data.h"
 
 namespace OHOS {
 namespace NativeRdb {
@@ -29,6 +30,16 @@ int RdbSmsMmsCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, 
         "Data_Storage RdbSmsMmsCallback::OnUpgrade##oldVersion = %d, "
         "newVersion = %d\n",
         oldVersion, newVersion);
+    if (oldVersion < VERSION_2 && newVersion >= VERSION_2) {
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SMS_MMS_INFO) + " ADD COLUMN " +
+                            std::string(SmsMmsInfo::IS_ADVANCED_SECURITY) + " INTEGER DEFAULT " + "0;");
+        oldVersion = VERSION_2;
+    }
+
+    if (oldVersion != newVersion) {
+        DATA_STORAGE_LOGE("upgrade error oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
+        return NativeRdb::E_ERROR;
+    }
     return NativeRdb::E_OK;
 }
 
