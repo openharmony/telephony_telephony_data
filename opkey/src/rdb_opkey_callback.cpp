@@ -60,18 +60,28 @@ int RdbOpKeyCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 
 void RdbOpKeyCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
 {
+    DATA_STORAGE_LOGI("InitData::start");
     ParserUtil util;
     std::vector<OpKey> vec;
     if (!util.ParseFromCustomSystem(vec)) {
+        DATA_STORAGE_LOGE("Parse OpKey info fail");
         return;
     }
     ClearData(rdbStore);
+    int32_t result = rdbStore.BeginTransaction();
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("BeginTransaction error!");
+        return;
+    }
+    DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
         util.ParserOpKeyToValuesBucket(value, vec[i]);
         int64_t id;
         rdbStore.Insert(id, tableName, value);
     }
+    rdbStore.Commit();
+    DATA_STORAGE_LOGI("InitData::end");
 }
 
 int RdbOpKeyCallback::ClearData(NativeRdb::RdbStore &rdbStore)
