@@ -354,7 +354,8 @@ int DataStorageGtest::PdpProfileUpdate2(const std::shared_ptr<DataShare::DataSha
     Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/preferapn");
     DataShare::DataShareValuesBucket values;
     DataShare::DataSharePredicates predicates;
-    values.Put(PdpProfileData::PROFILE_ID, 1110);
+    int testId = 1110;
+    values.Put(PdpProfileData::PROFILE_ID, testId);
     values.Put(PdpProfileData::SIM_ID, 0);
     return helper->Update(uri, predicates, values);
 }

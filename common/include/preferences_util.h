@@ -19,16 +19,11 @@
 #include <stdint.h>
 #include <string>
 
-#include "iosfwd"
-#include "memory"
+#include "preferences.h"
 #include "preferences_errno.h"
 #include "singleton.h"
 
 namespace OHOS {
-namespace NativePreferences {
-class Preferences;
-class PreferencesObserver;
-} // namespace NativePreferences
 namespace Telephony {
 class PreferencesUtil : public DelayedSingleton<PreferencesUtil> {
     DECLARE_DELAYED_SINGLETON(PreferencesUtil);
