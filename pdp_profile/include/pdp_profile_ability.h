@@ -44,7 +44,10 @@ class ValuesBucket;
 }
 namespace Telephony {
 enum class PdpProfileUriType {
-    UNKNOW, PDP_PROFILE, RESET
+    UNKNOW,
+    PDP_PROFILE,
+    RESET,
+    PREFER_APN,
 };
 class PdpProfileAbility : public DataShare::DataShareExtAbility {
 public:
@@ -88,6 +91,12 @@ private:
     * @return true : succeed ,false : failed
     */
     bool IsInitOk();
+    int UpdatePreferApn(const DataShare::DataShareValuesBucket &value);
+    int SetPreferApn(int simId, int profileId);
+    int GetPreferApn(const std::string &queryString);
+    std::string GetQueryKey(const std::string &queryString, const std::string &key);
+    bool HasColumnValue(
+        const OHOS::NativeRdb::ValuesBucket &value, const char *columnName, NativeRdb::ValueObject &valueObject);
 
 private:
     RdbPdpProfileHelper helper_;

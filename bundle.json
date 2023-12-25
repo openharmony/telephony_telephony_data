@@ -39,6 +39,7 @@
                 "init",
                 "ipc",
                 "napi",
+                "preferences",
                 "resource_management",
                 "safwk",
                 "samgr",

@@ -62,7 +62,10 @@ public:
     int SmsDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PdpProfileUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PdpProfileUpdate2(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PdpProfileUpdate3(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PdpProfileSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PdpProfileSelect2(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PdpProfileDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int OpKeyInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int OpKeyUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;

@@ -2,8 +2,8 @@
   "app": {
     "bundleName": "com.ohos.telephonydataability",
     "vendor": "ohos",
-    "versionCode": 1000014,
-    "versionName": "1.0.14",
+    "versionCode": 1000015,
+    "versionName": "1.0.15",
     "icon": "",
     "label": "$string:app_name",
     "generateBuildHash": true,
