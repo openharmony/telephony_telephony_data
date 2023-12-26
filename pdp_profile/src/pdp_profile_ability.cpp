@@ -197,13 +197,11 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
         if (result == nullptr) {
             DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::ResultSet is null!");
             delete absRdbPredicates;
-            absRdbPredicates = nullptr;
             return nullptr;
         }
         auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
         sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
         delete absRdbPredicates;
-        absRdbPredicates = nullptr;
         return sharedPtrResult;
     }
     DATA_STORAGE_LOGE("PdpProfileAbility::Query##uri = %{public}s", uri.ToString().c_str());
