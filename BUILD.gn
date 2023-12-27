@@ -76,6 +76,7 @@ ohos_shared_library("tel_telephony_data") {
     "common/src/data_storage_log_wrapper.cpp",
     "common/src/parser_util.cpp",
     "common/src/permission_util.cpp",
+    "common/src/preferences_util.cpp",
     "common/src/rdb_base_callback.cpp",
     "common/src/rdb_base_helper.cpp",
     "common/src/telephony_datashare_stub_impl.cpp",
@@ -119,6 +120,7 @@ ohos_shared_library("tel_telephony_data") {
     "init:libbegetutil",
     "ipc:ipc_single",
     "napi:ace_napi",
+    "preferences:native_preferences",
     "relational_store:native_rdb",
     "relational_store:rdb_data_share_adapter",
   ]

@@ -108,6 +108,10 @@ public:
      * @brief Server address
      */
     static constexpr const char *SERVER = "server";
+    /**
+     * @brief SIM Id of the SIM card
+     */
+    static constexpr const char *SIM_ID = "sim_id";
 };
 
 struct PdpProfile {
@@ -172,6 +176,9 @@ enum class BearingSystemType {
     IS95AS
 };
 
+inline static const std::string PREFER_APN_ID = "preferapn_id";
+constexpr const int32_t DEFAULT_SIM_ID = 0;
+constexpr const int32_t INVALID_PROFILE_ID = -1;
 constexpr const char *TABLE_PDP_PROFILE = "pdp_profile";
 constexpr const char *TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
 constexpr const char *PDP_PROFILE_URI = "datashare:///com.ohos.pdpprofileability";

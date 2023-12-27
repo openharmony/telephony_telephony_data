@@ -26,6 +26,7 @@
 #include "new"
 #include "pdp_profile_data.h"
 #include "permission_util.h"
+#include "preferences_util.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
 #include "telephony_datashare_stub_impl.h"
@@ -40,6 +41,7 @@ const int32_t CHANGED_ROWS = 0;
 static const std::map<std::string, PdpProfileUriType> pdpProfileUriMap_ = {
     { "/net/pdp_profile", PdpProfileUriType::PDP_PROFILE },
     { "/net/pdp_profile/reset", PdpProfileUriType::RESET },
+    { "/net/pdp_profile/preferapn", PdpProfileUriType::PREFER_APN },
 };
 
 PdpProfileAbility::PdpProfileAbility() : DataShareExtAbility() {}
@@ -73,6 +75,10 @@ void PdpProfileAbility::DoInit()
         initDatabaseDir = true;
         path.append("/");
         helper_.UpdateDbPath(path);
+        auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+        if (preferencesUtil != nullptr) {
+            preferencesUtil->UpdatePath(path);
+        }
         int rdbInitCode = helper_.Init();
         if (rdbInitCode == NativeRdb::E_OK) {
             initRdbStore = true;
@@ -130,6 +136,35 @@ int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBu
     return id;
 }
 
+std::string PdpProfileAbility::GetQueryKey(const std::string &queryString, const std::string &key)
+{
+    size_t pos = queryString.find(key);
+    if (pos != std::string::npos) {
+        return queryString.substr(pos + key.length());
+    }
+    return "";
+}
+
+int PdpProfileAbility::GetPreferApn(const std::string &queryString)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
+        return NativePreferences::E_ERROR;
+    }
+    return preferencesUtil->ObtainInt(PREFER_APN_ID + GetQueryKey(queryString, "simId="), INVALID_PROFILE_ID);
+}
+
+int PdpProfileAbility::SetPreferApn(int simId, int profileId)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
+        return NativePreferences::E_ERROR;
+    }
+    return preferencesUtil->SaveInt(PREFER_APN_ID + std::to_string(simId), profileId);
+}
+
 std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Uri &uri,
     const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
@@ -144,27 +179,32 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
     }
     Uri tempUri = uri;
     PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
-    if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
+    if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE || pdpProfileUriType == PdpProfileUriType::PREFER_APN) {
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
-        if (absRdbPredicates != nullptr) {
-            NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-            auto result = helper_.Query(rdbPredicates, columns);
-            if (result == nullptr) {
-                DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::ResultSet is null!");
-                delete absRdbPredicates;
-                absRdbPredicates = nullptr;
-                return nullptr;
-            }
-            auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
-            sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
-            delete absRdbPredicates;
-            absRdbPredicates = nullptr;
-        } else {
+        if (absRdbPredicates == nullptr) {
             DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::AbsRdbPredicates is null!");
+            return sharedPtrResult;
         }
-    } else {
-        DATA_STORAGE_LOGE("PdpProfileAbility::Query##uri = %{public}s", uri.ToString().c_str());
+        NativeRdb::RdbPredicates rdbPredicates("");
+        if (pdpProfileUriType == PdpProfileUriType::PREFER_APN) {
+            DataShare::DataSharePredicates preferapnPredicates;
+            preferapnPredicates.EqualTo(PdpProfileData::PROFILE_ID, GetPreferApn(tempUri.GetQuery()));
+            rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), preferapnPredicates);
+        } else if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
+            rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
+        }
+        auto result = helper_.Query(rdbPredicates, columns);
+        if (result == nullptr) {
+            DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::ResultSet is null!");
+            delete absRdbPredicates;
+            return nullptr;
+        }
+        auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
+        sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
+        delete absRdbPredicates;
+        return sharedPtrResult;
     }
+    DATA_STORAGE_LOGE("PdpProfileAbility::Query##uri = %{public}s", uri.ToString().c_str());
     return sharedPtrResult;
 }
 
@@ -197,6 +237,12 @@ int PdpProfileAbility::Update(
             }
             break;
         }
+        case PdpProfileUriType::PREFER_APN: {
+            result = (UpdatePreferApn(value) == NativeRdb::E_OK)
+                         ? NativeRdb::E_OK
+                         : static_cast<int>(LoadProFileErrorType::PREFER_APN_FAIL);
+            break;
+        }
         default:
             DATA_STORAGE_LOGE("PdpProfileAbility::Update##uri = %{public}s", uri.ToString().c_str());
             break;
@@ -212,6 +258,39 @@ int PdpProfileAbility::Update(
         DATA_STORAGE_LOGE("PdpProfileAbility::Update  NativeRdb::AbsRdbPredicates is null!");
     }
     return result;
+}
+
+int PdpProfileAbility::UpdatePreferApn(const DataShare::DataShareValuesBucket &sharedValue)
+{
+    OHOS::NativeRdb::ValuesBucket value = RdbDataShareAdapter::RdbUtils::ToValuesBucket(sharedValue);
+    int result = DATA_STORAGE_ERROR;
+    NativeRdb::ValueObject valueObject;
+    if (!HasColumnValue(value, PdpProfileData::PROFILE_ID, valueObject)) {
+        return result;
+    }
+    int profileId = INVALID_PROFILE_ID;
+    valueObject.GetInt(profileId);
+    if (!HasColumnValue(value, PdpProfileData::SIM_ID, valueObject)) {
+        return result;
+    }
+    int simId = DEFAULT_SIM_ID;
+    valueObject.GetInt(simId);
+    return SetPreferApn(simId, profileId);
+}
+
+bool PdpProfileAbility::HasColumnValue(
+    const OHOS::NativeRdb::ValuesBucket &value, const char *columnName, NativeRdb::ValueObject &valueObject)
+{
+    if (!value.HasColumn(columnName)) {
+        DATA_STORAGE_LOGE("the column in valuesBucket does not exist!");
+        return false;
+    }
+    bool isExistValue = value.GetObject(columnName, valueObject);
+    if (!isExistValue) {
+        DATA_STORAGE_LOGE("failed to get value in valuesBucket!");
+        return false;
+    }
+    return true;
 }
 
 int PdpProfileAbility::Delete(const Uri &uri, const DataShare::DataSharePredicates &predicates)
