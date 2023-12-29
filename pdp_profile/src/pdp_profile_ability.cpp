@@ -268,13 +268,18 @@ int PdpProfileAbility::UpdatePreferApn(const DataShare::DataShareValuesBucket &s
     if (!HasColumnValue(value, PdpProfileData::PROFILE_ID, valueObject)) {
         return result;
     }
+    double temp = 0;
     int profileId = INVALID_PROFILE_ID;
-    valueObject.GetInt(profileId);
+    if (valueObject.GetDouble(temp) == NativeRdb::E_OK) {
+        profileId = ceil(temp);
+    }
     if (!HasColumnValue(value, PdpProfileData::SIM_ID, valueObject)) {
         return result;
     }
     int simId = DEFAULT_SIM_ID;
-    valueObject.GetInt(simId);
+    if (valueObject.GetDouble(temp) == NativeRdb::E_OK) {
+        simId = ceil(temp);
+    }
     return SetPreferApn(simId, profileId);
 }
 

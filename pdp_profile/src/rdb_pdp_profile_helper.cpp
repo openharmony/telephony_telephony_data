@@ -19,6 +19,7 @@
 #include "data_storage_log_wrapper.h"
 #include "parser_util.h"
 #include "pdp_profile_data.h"
+#include "preferences_util.h"
 #include "rdb_errno.h"
 #include "rdb_pdp_profile_callback.h"
 #include "rdb_store_config.h"
@@ -93,6 +94,10 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
 
 int RdbPdpProfileHelper::ResetApn()
 {
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil != nullptr) {
+        preferencesUtil->DeleteProfiles();
+    }
     int ret = BeginTransaction();
     if (ret != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn BeginTransaction is error!");
