@@ -354,9 +354,10 @@ int DataStorageGtest::PdpProfileUpdate2(const std::shared_ptr<DataShare::DataSha
     Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/preferapn");
     DataShare::DataShareValuesBucket values;
     DataShare::DataSharePredicates predicates;
-    int testId = 1110;
+    double testId = 1110;
+    double testSImId = 1;
     values.Put(PdpProfileData::PROFILE_ID, testId);
-    values.Put(PdpProfileData::SIM_ID, 0);
+    values.Put(PdpProfileData::SIM_ID, testSImId);
     return helper->Update(uri, predicates, values);
 }
 
@@ -367,6 +368,14 @@ int DataStorageGtest::PdpProfileUpdate3(const std::shared_ptr<DataShare::DataSha
     DataShare::DataSharePredicates predicates;
     values.Put(PdpProfileData::PROFILE_ID, -1);
     values.Put(PdpProfileData::SIM_ID, 0);
+    return helper->Update(uri, predicates, values);
+}
+
+int DataStorageGtest::PdpProfileUpdate4(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/reset");
+    DataShare::DataShareValuesBucket values;
+    DataShare::DataSharePredicates predicates;
     return helper->Update(uri, predicates, values);
 }
 
@@ -903,6 +912,26 @@ HWTEST_F(DataStorageGtest, PdpProfileUpdate_003, Function | MediumTest | Level2)
         return;
     }
     int ret = PdpProfileUpdate3(helper);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
+}
+
+/**
+ * @tc.number   PdpProfileUpdate_004
+ * @tc.name     update apn data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, PdpProfileUpdate_004, Function | MediumTest | Level2)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    int ret = PdpProfileUpdate4(helper);
     helper = nullptr;
     EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
