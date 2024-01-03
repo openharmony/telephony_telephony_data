@@ -156,8 +156,10 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
         bean.bearingSystemType = bearingStr.empty() ? 0 : atoi(bearingStr.c_str());
         std::string isRoamingApnStr = ParseString(itemRoot[ITEM_IS_ROAMING_APN]);
         bean.isRoamingApn = isRoamingApnStr.empty() ? 0 : atoi(isRoamingApnStr.c_str());
-        bean.pdpProtocol = ParseString(itemRoot[ITEM_APN_PROTOCOL]);
-        bean.roamPdpProtocol = ParseString(itemRoot[ITEM_ROAMING_PROTOCOL]);
+        std::string pdpProtocolStr = ParseString(itemRoot[ITEM_APN_PROTOCOL]);
+        bean.pdpProtocol = pdpProtocolStr.empty() ? "IP" : pdpProtocolStr;
+        std::string roamPdpProtocolStr = ParseString(itemRoot[ITEM_ROAMING_PROTOCOL]);
+        bean.roamPdpProtocol = roamPdpProtocolStr.empty() ? "IP" : roamPdpProtocolStr;
         vec.push_back(bean);
     }
 }
