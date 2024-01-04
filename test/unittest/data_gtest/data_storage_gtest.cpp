@@ -334,7 +334,7 @@ int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShar
     value.Put(PdpProfileData::SERVER, "pdpserver");
     value.Put(PdpProfileData::BEARING_SYSTEM_TYPE, "1");
     value.Put(PdpProfileData::IS_ROAMING_APN, "0");
-    value.Put(PdpProfileData::APN_PROTOCOL, "IPV4");
+    value.Put(PdpProfileData::APN_PROTOCOL, "IP");
     value.Put(PdpProfileData::APN_ROAM_PROTOCOL, "IPV6");
     return helper->Insert(uri, value);
 }
