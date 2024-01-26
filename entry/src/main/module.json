@@ -12,14 +12,7 @@
     "deliveryWithInstall": true,
     "installationFree": false,
     "pages": "",
-    "abilities": [
-      {
-        "name": "MainAbility",
-        "srcEntrance": "",
-        "description": "dataability_description",
-        "visible": false
-      }
-    ],
+    "abilities": [],
     "extensionAbilities": [
       {
         "name": "OpKeyAbility",
