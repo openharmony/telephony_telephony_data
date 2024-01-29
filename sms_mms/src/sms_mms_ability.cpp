@@ -255,7 +255,7 @@ NativeRdb::AbsRdbPredicates *SmsMmsAbility::GetPredicates(MessageUriType message
             return absRdbPredicates;
         }
         default:
-            DATA_STORAGE_LOGI("GetPredicates##uri = %{public}s", uri.ToString().c_str());
+            DATA_STORAGE_LOGD("GetPredicates##uri = %{private}s", uri.ToString().c_str());
             return absRdbPredicates;
     }
 }
@@ -418,11 +418,11 @@ MessageUriType SmsMmsAbility::ParseUriType(Uri &uri)
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
         if (!path.empty() && !smsMmsUriMap_.empty()) {
-            DATA_STORAGE_LOGD("SmsMmsAbility::ParseUriType##path = %{public}s", path.c_str());
+            DATA_STORAGE_LOGD("SmsMmsAbility::ParseUriType##path = %{private}s", path.c_str());
             auto it = smsMmsUriMap_.find(path);
             if (it != smsMmsUriMap_.end()) {
                 messageUriType = it->second;
-                DATA_STORAGE_LOGI("SmsMmsAbility::ParseUriType##messageUriType = %{public}d", messageUriType);
+                DATA_STORAGE_LOGD("SmsMmsAbility::ParseUriType##messageUriType = %{private}d", messageUriType);
             }
         }
     }
