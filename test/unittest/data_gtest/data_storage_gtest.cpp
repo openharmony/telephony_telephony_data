@@ -203,7 +203,7 @@ int DataStorageGtest::OpKeySelect(const std::shared_ptr<DataShare::DataShareHelp
     if (resultSet != nullptr) {
         int count;
         resultSet->GetRowCount(count);
-        DATA_STORAGE_LOGE("OpKeySelectret cnt: %{public}d", count);
+        DATA_STORAGE_LOGI("OpKeySelectret cnt: %{public}d", count);
         return count;
     }
     return -1;
