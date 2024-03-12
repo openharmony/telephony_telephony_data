@@ -38,6 +38,8 @@ struct EccNum;
 class ParserUtil {
 public:
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
+    int ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *filePath);
+    int ParserPdpProfile(std::vector<PdpProfile> &vec, const char *opkey);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
     bool ParseFromCustomSystem(std::vector<OpKey> &vec);
@@ -68,6 +70,7 @@ private:
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
     std::string GetCustFile(const char *&file, const char *key);
+    bool isNeedInsertToTable(Json::Value &content);
 };
 } // namespace Telephony
 } // namespace OHOS

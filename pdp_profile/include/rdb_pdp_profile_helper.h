@@ -42,11 +42,12 @@ public:
     void UpdateDbPath(const std::string &path);
 
     /**
-     * Reload pdp_profile table data form config json file
+     * init pdp_profile table data form config json file
      *
+     * @param opkey opkey
      * @return 0 is succeed else failed
      */
-    int ResetApn();
+    int initAPNDatabase(const std::string &opkey);
 
 private:
     /**
@@ -56,13 +57,6 @@ private:
      * @param tableName tableName
      */
     void CreatePdpProfileTableStr(std::string &createTableStr, const std::string &tableName);
-
-    /**
-     * Commit the transaction action
-     *
-     * @return 0 is succeed else failed
-     */
-    int CommitTransactionAction();
 
 private:
     const std::string DB_NAME = "net.db";

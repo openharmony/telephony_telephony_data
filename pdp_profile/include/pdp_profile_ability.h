@@ -46,6 +46,7 @@ namespace Telephony {
 enum class PdpProfileUriType {
     UNKNOW,
     PDP_PROFILE,
+    INIT,
     RESET,
     PREFER_APN,
 };
@@ -58,6 +59,7 @@ public:
     sptr<IRemoteObject> OnConnect(const AAFwk::Want &want) override;
     virtual void OnStart(const AppExecFwk::Want &want) override;
     virtual int Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value) override;
+    virtual int BatchInsert(const Uri &uri, const std::vector<DataShare::DataShareValuesBucket> &values) override;
     virtual std::shared_ptr<DataShare::DataShareResultSet> Query(const Uri &uri,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
         DataShare::DatashareBusinessError &businessError) override;
@@ -86,10 +88,10 @@ private:
         const std::string &tableName, const DataShare::DataSharePredicates &predicates);
 
     /**
-    * Check whether the initialization succeeds
-    *
-    * @return true : succeed ,false : failed
-    */
+     * Check whether the initialization succeeds
+     *
+     * @return true : succeed ,false : failed
+     */
     bool IsInitOk();
     int UpdatePreferApn(const DataShare::DataShareValuesBucket &value);
     int SetPreferApn(int simId, int profileId);
@@ -103,6 +105,10 @@ private:
     std::mutex lock_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
+    void getTargetOpkey(int slotId, std::string &opkey);
+    int resetApn(Uri &uri);
+    std::shared_ptr<NativeRdb::ResultSet> QueryPdpProfile(Uri &uri, const std::string &tableName,
+        const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
 };
 } // namespace Telephony
 } // namespace OHOS

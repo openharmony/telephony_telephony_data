@@ -68,7 +68,7 @@ public:
 private:
     int IsExistStore();
 
-private:
+protected:
     std::shared_ptr<NativeRdb::RdbStore> store_;
 };
 } // namespace Telephony

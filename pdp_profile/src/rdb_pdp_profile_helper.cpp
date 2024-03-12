@@ -54,6 +54,7 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append("(");
     createTableStr.append(PdpProfileData::PROFILE_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
     createTableStr.append(PdpProfileData::PROFILE_NAME).append(" TEXT DEFAULT '', ");
+    createTableStr.append(PdpProfileData::OPKEY).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MCC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MNC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MCCMNC).append(" TEXT DEFAULT '', ");
@@ -92,65 +93,41 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append("))");
 }
 
-int RdbPdpProfileHelper::ResetApn()
+int RdbPdpProfileHelper::initAPNDatabase(const std::string &opKey)
 {
-    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
-    if (preferencesUtil != nullptr) {
-        preferencesUtil->DeleteProfiles();
+    if (store_ == nullptr) {
+        return NativeRdb::E_ERROR;
     }
-    int ret = BeginTransaction();
-    if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn BeginTransaction is error!");
-        return ret;
-    }
-    std::string pdpProfileStr;
-    CreatePdpProfileTableStr(pdpProfileStr, TEMP_TABLE_PDP_PROFILE);
-    ret = ExecuteSql(pdpProfileStr);
-    if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn create table temp_pdp_profile ret = %{public}d", ret);
-        return ret;
-    }
-    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn create table success");
+    DATA_STORAGE_LOGD("initAPNDatabase start");
     ParserUtil util;
     std::vector<PdpProfile> vec;
-    ret = util.ParserPdpProfileJson(vec);
-    if (ret != DATA_STORAGE_SUCCESS) {
-        RollBack();
-        return ret;
+    int resultCode = util.ParserPdpProfile(vec, opKey.c_str());
+    if (resultCode != DATA_STORAGE_SUCCESS) {
+        DATA_STORAGE_LOGE("initAPNDatabase fail");
+        return DATA_STORAGE_ERROR;
     }
+    int32_t result = store_->BeginTransaction();
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("BeginTransaction error!");
+        return DATA_STORAGE_ERROR;
+    }
+    DATA_STORAGE_LOGD("initAPNDatabase size = %{public}zu", vec.size());
+
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
         util.ParserPdpProfileToValuesBucket(value, vec[i]);
+        value.PutString(PdpProfileData::OPKEY, opKey);
         int64_t id;
-        Insert(id, value, TEMP_TABLE_PDP_PROFILE);
+        result = store_->InsertWithConflictResolution(
+            id, TABLE_PDP_PROFILE, value, NativeRdb::ConflictResolution::ON_CONFLICT_REPLACE);
+        if (result != DATA_STORAGE_SUCCESS) {
+            DATA_STORAGE_LOGI("initAPNDatabase Conflict.");
+            continue;
+        }
     }
-    ret = ExecuteSql("drop table " + std::string(TABLE_PDP_PROFILE));
-    if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn drop table ret = %{public}d", ret);
-        RollBack();
-        return ret;
-    }
-    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn success");
-    std::string sql;
-    sql.append("alter table ").append(TEMP_TABLE_PDP_PROFILE).append(" rename to ").append(TABLE_PDP_PROFILE);
-    ret = ExecuteSql(sql);
-    if (ret != NativeRdb::E_OK) {
-        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn alter table ret = %{public}d", ret);
-        RollBack();
-        return ret;
-    }
-    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn alter table success");
-    ret = CommitTransactionAction();
-    return ret;
-}
-
-int RdbPdpProfileHelper::CommitTransactionAction()
-{
-    int result = Commit();
-    if (result != NativeRdb::E_OK) {
-        RollBack();
-    }
-    return result;
+    store_->Commit();
+    DATA_STORAGE_LOGD("initAPNDatabase end");
+    return NativeRdb::E_OK;
 }
 } // namespace Telephony
 } // namespace OHOS

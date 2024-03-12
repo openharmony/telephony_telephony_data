@@ -29,6 +29,10 @@ public:
      */
     static constexpr const char *PROFILE_NAME = "profile_name";
     /**
+     * @brief Operator key
+     */
+    static constexpr const char *OPKEY = "opkey";
+    /**
      * @brief Mobile country code
      */
     static constexpr const char *MCC = "mcc";

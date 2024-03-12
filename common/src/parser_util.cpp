@@ -25,6 +25,7 @@
 #include "cstdio"
 #include "cstdlib"
 #include "cstring"
+#include "core_service_client.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "global_params_data.h"
@@ -91,15 +92,56 @@ static constexpr const char *CUST_NETWORK_PATH_KEY = "const.telephony.network_pa
 
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 {
-    char *content = nullptr;
     char buf[MAX_PATH_LEN];
     char *path = GetOneCfgFile(PATH, buf, MAX_PATH_LEN);
+    return ParserPdpProfileJson(vec, path);
+}
+ 
+int ParserUtil::ParserPdpProfile(std::vector<PdpProfile> &vec, const char *opkey)
+{
+    char *pathSuffix = NULL;
+    const char *opKeyDir = "etc/carrier/";
+    size_t bufSize = strlen(opKeyDir) + strlen(opkey) + strlen(PATH) + 1;
+    bufSize = bufSize <= MAX_PATH_LEN ? bufSize : MAX_PATH_LEN;
+    pathSuffix = (char *)calloc(bufSize, sizeof(char));
+ 
+    int ret = DATA_STORAGE_ERROR;
+    if (pathSuffix == NULL) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfile pathSuffix is null.");
+        return ret;
+    }
+    if (sprintf_s(pathSuffix, bufSize, "%s%s%s", opKeyDir, opkey, PATH) <= 0) {
+        return ret;
+    }
+    DATA_STORAGE_LOGI("ParserUtil::ParserPdpProfile pathSuffix = %{public}s", pathSuffix);
+    CfgFiles *cfgFiles = GetCfgFiles(pathSuffix);
+    if (cfgFiles == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil ParseFromCustomSystem cfgFiles is null");
+        return ret;
+    }
+    char *filePath = nullptr;
+    ret = DATA_STORAGE_SUCCESS;
+    for (int32_t i = MAX_CFG_POLICY_DIRS_CNT - 1; i >= 0; i--) {
+        filePath = cfgFiles->paths[i];
+        if (filePath && *filePath != '\0') {
+            if (ParserPdpProfileJson(vec, filePath) != DATA_STORAGE_SUCCESS) {
+                ret = DATA_STORAGE_ERROR;
+            }
+        }
+    }
+    FreeCfgFiles(cfgFiles);
+    return ret;
+}
+
+int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *path)
+{
+    char *content = nullptr;
     int ret = DATA_STORAGE_SUCCESS;
     if (path && *path != '\0') {
         ret = LoaderJsonFile(content, path);
     }
     if (ret != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail!");
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail! path = %{public}s", path);
         return ret;
     }
     if (content == nullptr) {
@@ -115,7 +157,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     Json::CharReaderBuilder builder;
     Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson reader is error!");
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson reader is error! path = %{public}s", path);
         delete reader;
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
@@ -123,7 +165,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     reader = nullptr;
     Json::Value itemRoots = root[ITEM_OPERATOR_INFOS];
     if (itemRoots.size() == 0) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson itemRoots size == 0!");
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson itemRoots size == 0! path = %{public}s", path);
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserPdpProfileInfos(vec, itemRoots);
@@ -134,6 +176,9 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
 {
     for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
         Json::Value itemRoot = root[i];
+        if (!isNeedInsertToTable(itemRoot)) {
+            continue;
+        }
         PdpProfile bean;
         bean.profileName = ParseString(itemRoot[ITEM_OPERATOR_NAME]);
         bean.authUser = ParseString(itemRoot[ITEM_AUTH_USER]);
@@ -541,6 +586,18 @@ std::string ParserUtil::GetCustFile(const char *&file, const char *key)
         custFile = file;
     }
     return custFile;
+}
+
+bool ParserUtil::isNeedInsertToTable(Json::Value &content)
+{
+    if (content.empty()) {
+        return false;
+    }
+    Json::FastWriter fastWriter;
+    const Json::String &string = fastWriter.write(content);
+    std::string res(string.c_str());
+    DATA_STORAGE_LOGI("ParserUtil::isNeedInsertToTable res: %{public}s", res.c_str());
+    return DelayedRefSingleton<CoreServiceClient>::GetInstance().IsAllowedInsertApn(res);
 }
 } // namespace Telephony
 } // namespace OHOS
