@@ -93,15 +93,72 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append("))");
 }
 
-int RdbPdpProfileHelper::initAPNDatabase(const std::string &opKey)
+int RdbPdpProfileHelper::ResetApn()
 {
-    if (store_ == nullptr) {
+    int ret = BeginTransaction();
+    if (ret != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn BeginTransaction is error!");
+        return ret;
+    }
+    std::string pdpProfileStr;
+    CreatePdpProfileTableStr(pdpProfileStr, TEMP_TABLE_PDP_PROFILE);
+    ret = ExecuteSql(pdpProfileStr);
+    if (ret != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn create table temp_pdp_profile ret = %{public}d", ret);
+        return ret;
+    }
+    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn create table success");
+    ParserUtil util;
+    std::vector<PdpProfile> vec;
+    ret = util.ParserPdpProfileJson(vec);
+    if (ret != DATA_STORAGE_SUCCESS) {
+        RollBack();
+        return ret;
+    }
+    for (size_t i = 0; i < vec.size(); i++) {
+        NativeRdb::ValuesBucket value;
+        util.ParserPdpProfileToValuesBucket(value, vec[i]);
+        int64_t id;
+        Insert(id, value, TEMP_TABLE_PDP_PROFILE);
+    }
+    ret = ExecuteSql("drop table " + std::string(TABLE_PDP_PROFILE));
+    if (ret != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn drop table ret = %{public}d", ret);
+        RollBack();
+        return ret;
+    }
+    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn success");
+    std::string sql;
+    sql.append("alter table ").append(TEMP_TABLE_PDP_PROFILE).append(" rename to ").append(TABLE_PDP_PROFILE);
+    ret = ExecuteSql(sql);
+    if (ret != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("RdbPdpProfileHelper::ResetApn alter table ret = %{public}d", ret);
+        RollBack();
+        return ret;
+    }
+    DATA_STORAGE_LOGI("RdbPdpProfileHelper::ResetApn alter table success");
+    ret = CommitTransactionAction();
+    return ret;
+}
+
+int RdbPdpProfileHelper::CommitTransactionAction()
+{
+    int result = Commit();
+    if (result != NativeRdb::E_OK) {
+        RollBack();
+    }
+    return result;
+}
+
+int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey)
+{
+    if (store_ == nullptr || opKey.empty()) {
         return NativeRdb::E_ERROR;
     }
     DATA_STORAGE_LOGD("initAPNDatabase start");
     ParserUtil util;
     std::vector<PdpProfile> vec;
-    int resultCode = util.ParserPdpProfile(vec, opKey.c_str());
+    int resultCode = util.ParserPdpProfileJson(vec, slotId);
     if (resultCode != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("initAPNDatabase fail");
         return DATA_STORAGE_ERROR;
