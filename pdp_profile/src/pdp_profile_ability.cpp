@@ -266,6 +266,10 @@ int PdpProfileAbility::Update(
         }
         case PdpProfileUriType::RESET: {
             result = resetApn(tempUri);
+            if (result != NativeRdb::E_OK) {
+                DATA_STORAGE_LOGE("PdpProfileAbility::Update  ResetApn fail!");
+                result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
+            }
             break;
         }
         case PdpProfileUriType::PREFER_APN: {
