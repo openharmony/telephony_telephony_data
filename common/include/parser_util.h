@@ -38,8 +38,8 @@ struct EccNum;
 class ParserUtil {
 public:
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
+    int ParserPdpProfileJson(std::vector<PdpProfile> &vec, int slotId);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *filePath);
-    int ParserPdpProfile(std::vector<PdpProfile> &vec, const char *opkey);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
     bool ParseFromCustomSystem(std::vector<OpKey> &vec);
@@ -54,6 +54,8 @@ public:
     void ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean);
 
 public:
+    inline static const int MODE_SLOT_0 = 11;
+    inline static const int MODE_SLOT_1 = 12;
     enum class RuleID {
         RULE_EMPTY = 0x0,
         RULE_MCCMNC = 0x1,
