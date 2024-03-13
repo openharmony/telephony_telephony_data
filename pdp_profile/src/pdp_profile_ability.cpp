@@ -129,14 +129,14 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
     Uri tempUri = uri;
     PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
     if (pdpProfileUriType == PdpProfileUriType::INIT) {
-        const std::string &slotId = GetQueryKey(tempUri.GetQuery(), "slotId=");
-        DATA_STORAGE_LOGI("PdpProfileAbility::BatchInsert INIT, simId= %{public}s", slotId.c_str());
-        if (!slotId.empty()) {
+        const std::string &slotIdStr = GetQueryKey(tempUri.GetQuery(), "slotId=");
+        DATA_STORAGE_LOGI("PdpProfileAbility::BatchInsert INIT, slotIdStr= %{public}s", slotIdStr.c_str());
+        if (!slotIdStr.empty()) {
             std::string opkey;
-            getTargetOpkey(std::stoi(slotId), opkey);
-            helper_.initAPNDatabase(opkey);
+            int slotId = std::stoi(slotIdStr);
+            getTargetOpkey(slotId, opkey);
+            helper_.initAPNDatabase(slotId, opkey);
         }
- 
         return DATA_STORAGE_SUCCESS;
     }
     return DATA_STORAGE_ERROR;
@@ -478,13 +478,13 @@ int PdpProfileAbility::resetApn(Uri &uri)
     getTargetOpkey(slotId, opkey);
     if (opkey.empty()) {
         DATA_STORAGE_LOGE("PdpProfileAbility::resetApn opkey empty!");
-        return DATA_STORAGE_ERROR;
+        return helper_.ResetApn();
     }
     NativeRdb::RdbPredicates rdbPredicates(TABLE_PDP_PROFILE);
     rdbPredicates.EqualTo(PdpProfileData::OPKEY, opkey);
     int deletedRows = CHANGED_ROWS;
     helper_.Delete(deletedRows, rdbPredicates);
-    int result = helper_.initAPNDatabase(opkey);
+    int result = helper_.initAPNDatabase(slotId, opkey);
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("PdpProfileAbility::resetApn fail!");
         result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
