@@ -42,12 +42,20 @@ public:
     void UpdateDbPath(const std::string &path);
 
     /**
+     * Reload pdp_profile table data form config json file
+     *
+     * @return 0 is succeed else failed
+     */
+    int ResetApn();
+
+    /**
      * init pdp_profile table data form config json file
      *
+     * @param slotId slotId
      * @param opkey opkey
      * @return 0 is succeed else failed
      */
-    int initAPNDatabase(const std::string &opkey);
+    int initAPNDatabase(int slotId, const std::string &opkey);
 
 private:
     /**
@@ -57,6 +65,13 @@ private:
      * @param tableName tableName
      */
     void CreatePdpProfileTableStr(std::string &createTableStr, const std::string &tableName);
+
+    /**
+     * Commit the transaction action
+     *
+     * @return 0 is succeed else failed
+     */
+    int CommitTransactionAction();
 
 private:
     const std::string DB_NAME = "net.db";
