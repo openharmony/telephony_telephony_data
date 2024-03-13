@@ -37,6 +37,7 @@
 #include "opkey_data.h"
 #include "parameters.h"
 #include "pdp_profile_data.h"
+#include "telephony_types.h"
 #include "values_bucket.h"
 #include "vector"
 
@@ -97,35 +98,24 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     return ParserPdpProfileJson(vec, path);
 }
  
-int ParserUtil::ParserPdpProfile(std::vector<PdpProfile> &vec, const char *opkey)
+int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, int slotId)
 {
-    char *pathSuffix = NULL;
-    const char *opKeyDir = "etc/carrier/";
-    size_t bufSize = strlen(opKeyDir) + strlen(opkey) + strlen(PATH) + 1;
-    bufSize = bufSize <= MAX_PATH_LEN ? bufSize : MAX_PATH_LEN;
-    pathSuffix = (char *)calloc(bufSize, sizeof(char));
- 
+    int mode = MODE_SLOT_0;
+    if (slotId == SimSlotId::SIM_SLOT_1) {
+        mode = MODE_SLOT_1;
+    }
+    CfgFiles *cfgFiles = GetCfgFilesEx(PATH, mode, nullptr);
     int ret = DATA_STORAGE_ERROR;
-    if (pathSuffix == NULL) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfile pathSuffix is null.");
-        return ret;
-    }
-    if (sprintf_s(pathSuffix, bufSize, "%s%s%s", opKeyDir, opkey, PATH) <= 0) {
-        return ret;
-    }
-    DATA_STORAGE_LOGI("ParserUtil::ParserPdpProfile pathSuffix = %{public}s", pathSuffix);
-    CfgFiles *cfgFiles = GetCfgFiles(pathSuffix);
     if (cfgFiles == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil ParseFromCustomSystem cfgFiles is null");
         return ret;
     }
     char *filePath = nullptr;
-    ret = DATA_STORAGE_SUCCESS;
     for (int32_t i = MAX_CFG_POLICY_DIRS_CNT - 1; i >= 0; i--) {
         filePath = cfgFiles->paths[i];
         if (filePath && *filePath != '\0') {
-            if (ParserPdpProfileJson(vec, filePath) != DATA_STORAGE_SUCCESS) {
-                ret = DATA_STORAGE_ERROR;
+            if (ParserPdpProfileJson(vec, filePath) == DATA_STORAGE_SUCCESS) {
+                ret = DATA_STORAGE_SUCCESS;
             }
         }
     }
@@ -145,7 +135,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *path)
         return ret;
     }
     if (content == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
+        DATA_STORAGE_LOGE("ParserUtil::content is nullptr! path = %{public}s", path);
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     const int contentLength = strlen(content);
