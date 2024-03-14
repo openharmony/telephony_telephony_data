@@ -150,15 +150,28 @@ int RdbPdpProfileHelper::CommitTransactionAction()
     return result;
 }
 
-int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey)
+int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, bool needCheckFile)
 {
     if (store_ == nullptr || opKey.empty()) {
         return NativeRdb::E_ERROR;
     }
     DATA_STORAGE_LOGD("initAPNDatabase start");
     ParserUtil util;
+    char *path = util.GetPdpProfilePath(slotId);
+    const std::string &checksum = util.GetFileChecksum(path);
+    if (checksum.empty()) {
+        DATA_STORAGE_LOGE("The file MD5 is null. The file may be damaged. path: %{public}s", path);
+        return NativeRdb::E_ERROR;
+    }
+    if (needCheckFile) {
+        const std::string &lastCheckSum = GetPreferApnConfChecksum();
+        if (checksum.compare(lastCheckSum) == 0) {
+            DATA_STORAGE_LOGD("The file is not changed and does not need to be loaded again.");
+            return DATA_STORAGE_SUCCESS;
+        }
+    }
     std::vector<PdpProfile> vec;
-    int resultCode = util.ParserPdpProfileJson(vec, slotId);
+    int resultCode = util.ParserPdpProfileJson(vec, path);
     if (resultCode != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("initAPNDatabase fail");
         return DATA_STORAGE_ERROR;
@@ -175,14 +188,13 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey)
         util.ParserPdpProfileToValuesBucket(value, vec[i]);
         value.PutString(PdpProfileData::OPKEY, opKey);
         int64_t id;
-        result = store_->InsertWithConflictResolution(
+        store_->InsertWithConflictResolution(
             id, TABLE_PDP_PROFILE, value, NativeRdb::ConflictResolution::ON_CONFLICT_REPLACE);
-        if (result != DATA_STORAGE_SUCCESS) {
-            DATA_STORAGE_LOGI("initAPNDatabase Conflict.");
-            continue;
-        }
     }
-    store_->Commit();
+    result = CommitTransactionAction();
+    if (result == NativeRdb::E_OK) {
+        SetPreferApnConfChecksum(checksum);
+    }
     DATA_STORAGE_LOGD("initAPNDatabase end");
     return NativeRdb::E_OK;
 }
