@@ -198,5 +198,26 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
     DATA_STORAGE_LOGD("initAPNDatabase end");
     return NativeRdb::E_OK;
 }
+
+std::string RdbPdpProfileHelper::GetPreferApnConfChecksum()
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
+        return "";
+    }
+
+    return preferencesUtil->ObtainString(APN_CONF_CHECKSUM, "");
+}
+
+int RdbPdpProfileHelper::SetPreferApnConfChecksum(std::string checkSum)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
+        return NativePreferences::E_ERROR;
+    }
+    return preferencesUtil->SaveString(APN_CONF_CHECKSUM, checkSum);
+}
 } // namespace Telephony
 } // namespace OHOS
