@@ -160,7 +160,7 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
     char *path = util.GetPdpProfilePath(slotId);
     const std::string &checksum = util.GetFileChecksum(path);
     if (checksum.empty()) {
-        DATA_STORAGE_LOGE("The file MD5 is null. The file may be damaged. path: %{public}s", path);
+        DATA_STORAGE_LOGE("The file checkSum is null! path: %{public}s", path);
         return NativeRdb::E_ERROR;
     }
     if (needCheckFile) {
