@@ -594,7 +594,7 @@ bool ParserUtil::IsNeedInsertToTable(Json::Value &content)
     Json::FastWriter fastWriter;
     const Json::String &string = fastWriter.write(content);
     std::string res(string.c_str());
-    DATA_STORAGE_LOGI("ParserUtil::isNeedInsertToTable res: %{public}s", res.c_str());
+    DATA_STORAGE_LOGI("ParserUtil::IsNeedInsertToTable res: %{public}s", res.c_str());
     return DelayedRefSingleton<CoreServiceClient>::GetInstance().IsAllowedInsertApn(res);
 }
 } // namespace Telephony
