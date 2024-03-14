@@ -47,7 +47,8 @@
                 "relational_store"
             ],
             "third_party": [
-                "jsoncpp"
+                "jsoncpp",
+                "openssl"
             ]
         },
         "build": {
