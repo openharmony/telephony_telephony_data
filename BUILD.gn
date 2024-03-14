@@ -103,7 +103,7 @@ ohos_shared_library("tel_telephony_data") {
 
   deps = [
     "//third_party/jsoncpp:jsoncpp",
-    "//third_party/openssl:libcrypto_shared",
+    "//third_party/zlib:libz",
   ]
 
   external_deps = [
