@@ -53,9 +53,10 @@ public:
      *
      * @param slotId slotId
      * @param opkey opkey
+     * @param needCheckFile need Check File
      * @return 0 is succeed else failed
      */
-    int initAPNDatabase(int slotId, const std::string &opkey);
+    int initAPNDatabase(int slotId, const std::string &opkey, bool needCheckFile);
 
 private:
     /**
@@ -72,6 +73,20 @@ private:
      * @return 0 is succeed else failed
      */
     int CommitTransactionAction();
+
+    /**
+     * Get the Checksum of last ApnConf file
+     *
+     * @return the Checksum of last ApnConf file
+     */
+    std::string GetPreferApnConfChecksum();
+
+    /**
+     * Set the Checksum of ApnConf file
+     *
+     * @return 0 is succeed else failed
+     */
+    int SetPreferApnConfChecksum(std::string checksum);
 
 private:
     const std::string DB_NAME = "net.db";
