@@ -40,6 +40,10 @@
 #include "telephony_types.h"
 #include "values_bucket.h"
 #include "vector"
+#include <openssl/md5.h>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 
 namespace OHOS {
 namespace Telephony {
@@ -97,31 +101,6 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     char *path = GetOneCfgFile(PATH, buf, MAX_PATH_LEN);
     return ParserPdpProfileJson(vec, path);
 }
- 
-int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, int slotId)
-{
-    int mode = MODE_SLOT_0;
-    if (slotId == SimSlotId::SIM_SLOT_1) {
-        mode = MODE_SLOT_1;
-    }
-    CfgFiles *cfgFiles = GetCfgFilesEx(PATH, mode, nullptr);
-    int ret = DATA_STORAGE_ERROR;
-    if (cfgFiles == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil ParseFromCustomSystem cfgFiles is null");
-        return ret;
-    }
-    char *filePath = nullptr;
-    for (int32_t i = MAX_CFG_POLICY_DIRS_CNT - 1; i >= 0; i--) {
-        filePath = cfgFiles->paths[i];
-        if (filePath && *filePath != '\0') {
-            if (ParserPdpProfileJson(vec, filePath) == DATA_STORAGE_SUCCESS) {
-                ret = DATA_STORAGE_SUCCESS;
-            }
-        }
-    }
-    FreeCfgFiles(cfgFiles);
-    return ret;
-}
 
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *path)
 {
@@ -166,7 +145,7 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
 {
     for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
         Json::Value itemRoot = root[i];
-        if (!isNeedInsertToTable(itemRoot)) {
+        if (!IsNeedInsertToTable(itemRoot)) {
             continue;
         }
         PdpProfile bean;
@@ -578,7 +557,45 @@ std::string ParserUtil::GetCustFile(const char *&file, const char *key)
     return custFile;
 }
 
-bool ParserUtil::isNeedInsertToTable(Json::Value &content)
+char *ParserUtil::GetPdpProfilePath(int slotId)
+{
+    int mode = MODE_SLOT_0;
+    if (slotId == SimSlotId::SIM_SLOT_1) {
+        mode = MODE_SLOT_1;
+    }
+    char buf[MAX_PATH_LEN];
+    return GetOneCfgFileEx(PATH, buf, MAX_PATH_LEN, mode, nullptr);
+}
+
+std::string ParserUtil::GetFileChecksum(char *path)
+{
+    std::ifstream file(path, std::ios::in | std::ios::binary);
+    if (!file) {
+        std::cerr << "Failed to open file: " << path << std::endl;
+        return "";
+    }
+
+    MD5_CTX md5Context;
+    MD5_Init(&md5Context);
+
+    char buffer[1024];
+    while (file.read(buffer, sizeof(buffer))) {
+        MD5_Update(&md5Context, buffer, sizeof(buffer));
+    }
+
+    MD5_Update(&md5Context, buffer, file.gcount());
+    unsigned char md5Digest[MD5_DIGEST_LENGTH];
+    MD5_Final(md5Digest, &md5Context);
+
+    std::stringstream stream;
+    for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
+        stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(md5Digest[i]);
+    }
+
+    return stream.str();
+}
+
+bool ParserUtil::IsNeedInsertToTable(Json::Value &content)
 {
     if (content.empty()) {
         return false;
