@@ -37,8 +37,9 @@ struct NumMatch;
 struct EccNum;
 class ParserUtil {
 public:
+    char *GetPdpProfilePath(int slotId);
+    std::string GetFileChecksum(char *path);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
-    int ParserPdpProfileJson(std::vector<PdpProfile> &vec, int slotId);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *filePath);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
@@ -72,7 +73,7 @@ private:
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
     std::string GetCustFile(const char *&file, const char *key);
-    bool isNeedInsertToTable(Json::Value &content);
+    bool IsNeedInsertToTable(Json::Value &content);
 };
 } // namespace Telephony
 } // namespace OHOS
