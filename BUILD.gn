@@ -101,7 +101,10 @@ ohos_shared_library("tel_telephony_data") {
 
   public_configs = [ ":telephony_innerkits_config" ]
 
-  deps = [ "//third_party/jsoncpp:jsoncpp" ]
+  deps = [
+    "//third_party/jsoncpp:jsoncpp",
+    "//third_party/openssl:libcrypto_shared",
+  ]
 
   external_deps = [
     "ability_base:want",
