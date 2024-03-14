@@ -40,10 +40,9 @@
 #include "telephony_types.h"
 #include "values_bucket.h"
 #include "vector"
-#include <openssl/md5.h>
-#include <iostream>
-#include <iomanip>
 #include <fstream>
+#include <iostream>
+#include <zlib.h>
 
 namespace OHOS {
 namespace Telephony {
@@ -91,6 +90,7 @@ const char *ITEM_NUMERIC = "numeric";
 const char *ITEM_ECC_WITH_CARD = "ecc_withcard";
 const char *ITEM_ECC_NO_CARD = "ecc_nocard";
 const char *ITEM_ECC_FAKE = "ecc_fake";
+const int BYTE_LEN = 1024 * 1024;
 const int MAX_BYTE_LEN = 10 * 1024 * 1024;
 static constexpr const char *CUST_RULE_PATH_KEY = "const.telephony.rule_path";
 static constexpr const char *CUST_NETWORK_PATH_KEY = "const.telephony.network_path";
@@ -569,30 +569,21 @@ char *ParserUtil::GetPdpProfilePath(int slotId)
 
 std::string ParserUtil::GetFileChecksum(char *path)
 {
-    std::ifstream file(path, std::ios::in | std::ios::binary);
-    if (!file) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open()) {
         std::cerr << "Failed to open file: " << path << std::endl;
         return "";
     }
-
-    MD5_CTX md5Context;
-    MD5_Init(&md5Context);
-
-    char buffer[1024];
-    while (file.read(buffer, sizeof(buffer))) {
-        MD5_Update(&md5Context, buffer, sizeof(buffer));
+    std::vector<char> buffer(BYTE_LEN);
+    uint32_t crc32 = crc32_z(0L, Z_NULL, 0);
+    while (file) {
+        file.read(buffer.data(), buffer.size());
+        auto bytesRead = file.gcount();
+        if (bytesRead > 0) {
+            crc32 = crc32_z(crc32, reinterpret_cast<const Bytef *>(buffer.data()), static_cast<uInt>(bytesRead));
+        }
     }
-
-    MD5_Update(&md5Context, buffer, file.gcount());
-    unsigned char md5Digest[MD5_DIGEST_LENGTH];
-    MD5_Final(md5Digest, &md5Context);
-
-    std::stringstream stream;
-    for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
-        stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(md5Digest[i]);
-    }
-
-    return stream.str();
+    return std::to_string(crc32);
 }
 
 bool ParserUtil::IsNeedInsertToTable(Json::Value &content)
