@@ -564,7 +564,9 @@ char *ParserUtil::GetPdpProfilePath(int slotId)
         mode = MODE_SLOT_1;
     }
     char buf[MAX_PATH_LEN];
-    return GetOneCfgFileEx(PATH, buf, MAX_PATH_LEN, mode, nullptr);
+    char *ret = GetOneCfgFileEx(PATH, buf, MAX_PATH_LEN, mode, nullptr);
+    DATA_STORAGE_LOGD("ParserUtil::GetPdpProfilePath ret:%{public}s", ret);
+    return ret;
 }
 
 std::string ParserUtil::GetFileChecksum(char *path)
