@@ -181,6 +181,7 @@ enum class BearingSystemType {
 };
 
 inline static const std::string PREFER_APN_ID = "preferapn_id";
+inline static const std::string APN_CONF_CHECKSUM = "apn_conf_checksum";
 constexpr const int32_t DEFAULT_SIM_ID = 0;
 constexpr const int32_t INVALID_PROFILE_ID = -1;
 constexpr const char *TABLE_PDP_PROFILE = "pdp_profile";
