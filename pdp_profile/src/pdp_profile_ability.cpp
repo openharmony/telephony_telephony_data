@@ -135,7 +135,7 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
             std::string opkey;
             int slotId = std::stoi(slotIdStr);
             getTargetOpkey(slotId, opkey);
-            helper_.initAPNDatabase(slotId, opkey);
+            helper_.initAPNDatabase(slotId, opkey, true);
         }
         return DATA_STORAGE_SUCCESS;
     }
@@ -488,7 +488,7 @@ int PdpProfileAbility::resetApn(Uri &uri)
     rdbPredicates.EqualTo(PdpProfileData::OPKEY, opkey);
     int deletedRows = CHANGED_ROWS;
     helper_.Delete(deletedRows, rdbPredicates);
-    int result = helper_.initAPNDatabase(slotId, opkey);
+    int result = helper_.initAPNDatabase(slotId, opkey, false);
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("PdpProfileAbility::resetApn fail!");
         result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
