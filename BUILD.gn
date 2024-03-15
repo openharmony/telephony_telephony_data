@@ -101,10 +101,7 @@ ohos_shared_library("tel_telephony_data") {
 
   public_configs = [ ":telephony_innerkits_config" ]
 
-  deps = [
-    "//third_party/jsoncpp:jsoncpp",
-    "//third_party/zlib:libz",
-  ]
+  deps = [ "//third_party/jsoncpp:jsoncpp" ]
 
   external_deps = [
     "ability_base:want",
@@ -127,6 +124,7 @@ ohos_shared_library("tel_telephony_data") {
     "preferences:native_preferences",
     "relational_store:native_rdb",
     "relational_store:rdb_data_share_adapter",
+    "zlib:libz"
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"DataStorage\"",
