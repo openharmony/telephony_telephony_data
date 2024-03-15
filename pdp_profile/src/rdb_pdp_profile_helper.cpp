@@ -205,7 +205,7 @@ bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(std::string &checkSum)
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
     if (preferencesUtil != nullptr) {
         std::string lastCheckSum = preferencesUtil->ObtainString(APN_CONF_CHECKSUM, "");
-        if (checksum.compare(lastCheckSum) == 0) {
+        if (checkSum.compare(lastCheckSum) == 0) {
             return false;
         }
     }
