@@ -102,7 +102,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
     return ParserPdpProfileJson(vec, path);
 }
 
-int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *path)
+int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *path)
 {
     char *content = nullptr;
     int ret = DATA_STORAGE_SUCCESS;
