@@ -110,11 +110,11 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *path)
         ret = LoaderJsonFile(content, path);
     }
     if (ret != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail! path = %{public}s", path);
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail!");
         return ret;
     }
     if (content == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil::content is nullptr! path = %{public}s", path);
+        DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     const int contentLength = strlen(content);
@@ -126,7 +126,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *path)
     Json::CharReaderBuilder builder;
     Json::CharReader *reader(builder.newCharReader());
     if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson reader is error! path = %{public}s", path);
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson reader is error!");
         delete reader;
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
@@ -134,7 +134,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *path)
     reader = nullptr;
     Json::Value itemRoots = root[ITEM_OPERATOR_INFOS];
     if (itemRoots.size() == 0) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson itemRoots size == 0! path = %{public}s", path);
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson itemRoots size == 0!");
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserPdpProfileInfos(vec, itemRoots);
