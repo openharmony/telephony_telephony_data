@@ -557,7 +557,7 @@ std::string ParserUtil::GetCustFile(const char *&file, const char *key)
     return custFile;
 }
 
-char *ParserUtil::GetPdpProfilePath(int slotId)
+int ParserUtil::GetPdpProfilePath(int slotId, std::string &path)
 {
     int mode = MODE_SLOT_0;
     if (slotId == SimSlotId::SIM_SLOT_1) {
@@ -565,16 +565,25 @@ char *ParserUtil::GetPdpProfilePath(int slotId)
     }
     char buf[MAX_PATH_LEN];
     char *ret = GetOneCfgFileEx(PATH, buf, MAX_PATH_LEN, mode, nullptr);
-    DATA_STORAGE_LOGD("ParserUtil::GetPdpProfilePath ret:%{public}s", ret);
-    return ret;
+    if (ret && *ret != '\0') {
+        path = ret;
+        return OPERATION_OK;
+    }
+    DATA_STORAGE_LOGE("ParserUtil::GetPdpProfilePath fail");
+    return OPERATION_ERROR;
 }
 
-std::string ParserUtil::GetFileChecksum(char *path)
+int ParserUtil::GetFileChecksum(const char *path, std::string &checkSum)
 {
-    std::ifstream file(path, std::ios::binary);
+    char realPath[PATH_MAX] = {0x00};
+    if (realpath(path, realPath) == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::GetFileChecksum Failed to get realPath!");
+        return OPERATION_ERROR;
+    }
+    std::ifstream file(realPath, std::ios::binary);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << path << std::endl;
-        return "";
+        DATA_STORAGE_LOGE("ParserUtil::GetFileChecksum Failed to open file!");
+        return OPERATION_ERROR;
     }
     std::vector<char> buffer(BYTE_LEN);
     uint32_t crc32 = crc32_z(0L, Z_NULL, 0);
@@ -585,7 +594,8 @@ std::string ParserUtil::GetFileChecksum(char *path)
             crc32 = crc32_z(crc32, reinterpret_cast<const Bytef *>(buffer.data()), static_cast<uInt>(bytesRead));
         }
     }
-    return std::to_string(crc32);
+    checkSum = std::to_string(crc32);
+    return OPERATION_OK;
 }
 
 bool ParserUtil::IsNeedInsertToTable(Json::Value &content)
