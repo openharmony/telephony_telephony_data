@@ -19,6 +19,9 @@
 #include <securec.h>
 #include <unistd.h>
 
+#include <fstream>
+#include <iostream>
+#include <zlib.h>
 #include "climits"
 #include "config_policy_utils.h"
 #include "cstdint"
@@ -40,9 +43,6 @@
 #include "telephony_types.h"
 #include "values_bucket.h"
 #include "vector"
-#include <fstream>
-#include <iostream>
-#include <zlib.h>
 
 namespace OHOS {
 namespace Telephony {
