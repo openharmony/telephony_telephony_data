@@ -44,11 +44,11 @@
                 "resource_management",
                 "safwk",
                 "samgr",
-                "relational_store"
+                "relational_store",
+                "zlib"
             ],
             "third_party": [
-                "jsoncpp",
-                "zlib"
+                "jsoncpp"
             ]
         },
         "build": {
