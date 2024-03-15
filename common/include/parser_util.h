@@ -37,10 +37,10 @@ struct NumMatch;
 struct EccNum;
 class ParserUtil {
 public:
-    char *GetPdpProfilePath(int slotId);
-    std::string GetFileChecksum(char *path);
+    int GetPdpProfilePath(int slotId, std::string &path);
+    int GetFileChecksum(const char *path, std::string &checkSum);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
-    int ParserPdpProfileJson(std::vector<PdpProfile> &vec, char *filePath);
+    int ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *filePath);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
     bool ParseFromCustomSystem(std::vector<OpKey> &vec);
