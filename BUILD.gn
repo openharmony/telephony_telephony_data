@@ -124,7 +124,7 @@ ohos_shared_library("tel_telephony_data") {
     "preferences:native_preferences",
     "relational_store:native_rdb",
     "relational_store:rdb_data_share_adapter",
-    "zlib:libz"
+    "zlib:libz",
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"DataStorage\"",
