@@ -75,15 +75,17 @@ private:
     int CommitTransactionAction();
 
     /**
-     * Get the Checksum of last ApnConf file
+     * Is ApnDb need Update
      *
-     * @return the Checksum of last ApnConf file
+     * @param checksum checksum to compare
+     * @return bool Is ApnDb need Update
      */
-    std::string GetPreferApnConfChecksum();
+    bool IsApnDbUpdateNeeded(std::string &checksum);
 
     /**
      * Set the Checksum of ApnConf file
      *
+     * @param checksum checksum to set
      * @return 0 is succeed else failed
      */
     int SetPreferApnConfChecksum(std::string checksum);
