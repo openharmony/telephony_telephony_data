@@ -157,21 +157,23 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
     }
     DATA_STORAGE_LOGD("initAPNDatabase start");
     ParserUtil util;
-    char *path = util.GetPdpProfilePath(slotId);
-    const std::string &checksum = util.GetFileChecksum(path);
-    if (checksum.empty()) {
-        DATA_STORAGE_LOGE("The file checkSum is null! path: %{public}s", path);
+    std::string path;
+    util.GetPdpProfilePath(slotId, path);
+    if (path.empty()) {
         return NativeRdb::E_ERROR;
     }
-    if (needCheckFile) {
-        const std::string &lastCheckSum = GetPreferApnConfChecksum();
-        if (checksum.compare(lastCheckSum) == 0) {
-            DATA_STORAGE_LOGD("The file is not changed and does not need to be loaded again.");
-            return DATA_STORAGE_SUCCESS;
-        }
+    std::string checksum;
+    util.GetFileChecksum(path.c_str(), checksum);
+    if (checksum.empty()) {
+        DATA_STORAGE_LOGE("The file checksum is null!");
+        return NativeRdb::E_ERROR;
+    }
+    if (needCheckFile && !IsApnDbUpdateNeeded(checksum)) {
+        DATA_STORAGE_LOGI("The file is not changed and does not need to be loaded again.");
+        return DATA_STORAGE_SUCCESS;
     }
     std::vector<PdpProfile> vec;
-    int resultCode = util.ParserPdpProfileJson(vec, path);
+    int resultCode = util.ParserPdpProfileJson(vec, path.c_str());
     if (resultCode != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("initAPNDatabase fail");
         return DATA_STORAGE_ERROR;
@@ -182,7 +184,6 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
         return DATA_STORAGE_ERROR;
     }
     DATA_STORAGE_LOGD("initAPNDatabase size = %{public}zu", vec.size());
-
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
         util.ParserPdpProfileToValuesBucket(value, vec[i]);
@@ -199,15 +200,16 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
     return NativeRdb::E_OK;
 }
 
-std::string RdbPdpProfileHelper::GetPreferApnConfChecksum()
+bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(std::string &checkSum)
 {
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
-    if (preferencesUtil == nullptr) {
-        DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
-        return "";
+    if (preferencesUtil != nullptr) {
+        std::string lastCheckSum = preferencesUtil->ObtainString(APN_CONF_CHECKSUM, "");
+        if (checksum.compare(lastCheckSum) == 0) {
+            return false;
+        }
     }
-
-    return preferencesUtil->ObtainString(APN_CONF_CHECKSUM, "");
+    return true;
 }
 
 int RdbPdpProfileHelper::SetPreferApnConfChecksum(std::string checkSum)
