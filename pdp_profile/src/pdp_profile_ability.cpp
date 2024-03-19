@@ -135,7 +135,7 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
             std::string opkey;
             int slotId = std::stoi(slotIdStr);
             getTargetOpkey(slotId, opkey);
-            helper_.initAPNDatabase(slotId, opkey, true);
+            helper_.InitAPNDatabase(slotId, opkey, true);
         }
         return DATA_STORAGE_SUCCESS;
     }
@@ -433,7 +433,6 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
         return helper_.Query(ConvertPredicates(tableName, predicates), columns);
     }
     constexpr int32_t FIELD_IDX = 0;
-    constexpr int32_t VALUE_IDX = 1;
     auto &operations = predicates.GetOperationList();
     std::vector<DataShare::OperationItem> operationsRes;
     bool isMccMnc = false;
@@ -443,8 +442,7 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
             continue;
         }
         std::string filed = static_cast<std::string>(oper.GetSingle(FIELD_IDX));
-        std::string value = static_cast<std::string>(oper.GetSingle(VALUE_IDX));
-        if (filed == "mccmnc" && oper.operation == DataShare::EQUAL_TO) {
+        if (filed == PdpProfileData::MCCMNC && oper.operation == DataShare::EQUAL_TO) {
             isMccMnc = true;
             operationsRes.push_back({DataShare::EQUAL_TO, {PdpProfileData::OPKEY, opkey}});
             continue;
@@ -488,7 +486,7 @@ int PdpProfileAbility::resetApn(Uri &uri)
     rdbPredicates.EqualTo(PdpProfileData::OPKEY, opkey);
     int deletedRows = CHANGED_ROWS;
     helper_.Delete(deletedRows, rdbPredicates);
-    int result = helper_.initAPNDatabase(slotId, opkey, false);
+    int result = helper_.InitAPNDatabase(slotId, opkey, false);
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("PdpProfileAbility::resetApn fail!");
         result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
