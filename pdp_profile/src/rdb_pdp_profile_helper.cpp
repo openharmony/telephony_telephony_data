@@ -150,12 +150,12 @@ int RdbPdpProfileHelper::CommitTransactionAction()
     return result;
 }
 
-int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, bool needCheckFile)
+int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, bool isNeedCheckFile)
 {
     if (store_ == nullptr || opKey.empty()) {
         return NativeRdb::E_ERROR;
     }
-    DATA_STORAGE_LOGD("initAPNDatabase start");
+    DATA_STORAGE_LOGD("InitAPNDatabase start");
     ParserUtil util;
     std::string path;
     util.GetPdpProfilePath(slotId, path);
@@ -165,17 +165,17 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
     std::string checksum;
     util.GetFileChecksum(path.c_str(), checksum);
     if (checksum.empty()) {
-        DATA_STORAGE_LOGE("The file checksum is null!");
+        DATA_STORAGE_LOGE("InitAPNDatabase fail! checksum is null!");
         return NativeRdb::E_ERROR;
     }
-    if (needCheckFile && !IsApnDbUpdateNeeded(checksum)) {
+    if (isNeedCheckFile && !IsApnDbUpdateNeeded(checksum)) {
         DATA_STORAGE_LOGI("The file is not changed and does not need to be loaded again.");
         return DATA_STORAGE_SUCCESS;
     }
     std::vector<PdpProfile> vec;
     int resultCode = util.ParserPdpProfileJson(vec, path.c_str());
     if (resultCode != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("initAPNDatabase fail");
+        DATA_STORAGE_LOGE("InitAPNDatabase fail");
         return DATA_STORAGE_ERROR;
     }
     int32_t result = store_->BeginTransaction();
@@ -183,7 +183,7 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
         DATA_STORAGE_LOGE("BeginTransaction error!");
         return DATA_STORAGE_ERROR;
     }
-    DATA_STORAGE_LOGD("initAPNDatabase size = %{public}zu", vec.size());
+    DATA_STORAGE_LOGD("InitAPNDatabase size = %{public}zu", vec.size());
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
         util.ParserPdpProfileToValuesBucket(value, vec[i]);
@@ -196,7 +196,7 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
     if (result == NativeRdb::E_OK) {
         SetPreferApnConfChecksum(checksum);
     }
-    DATA_STORAGE_LOGD("initAPNDatabase end");
+    DATA_STORAGE_LOGD("InitAPNDatabase end");
     return result;
 }
 
@@ -212,7 +212,7 @@ bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(std::string &checkSum)
     return true;
 }
 
-int RdbPdpProfileHelper::SetPreferApnConfChecksum(std::string checkSum)
+int RdbPdpProfileHelper::SetPreferApnConfChecksum(std::string &checkSum)
 {
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
     if (preferencesUtil == nullptr) {
