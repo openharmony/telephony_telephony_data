@@ -197,7 +197,7 @@ int RdbPdpProfileHelper::initAPNDatabase(int slotId, const std::string &opKey, b
         SetPreferApnConfChecksum(checksum);
     }
     DATA_STORAGE_LOGD("initAPNDatabase end");
-    return NativeRdb::E_OK;
+    return result;
 }
 
 bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(std::string &checkSum)
