@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,26 +61,37 @@ private:
 #define LOG_DOMAIN 0xD001F08
 #endif
 
-static constexpr OHOS::HiviewDFX::HiLogLabel DATA_STORAGE_LABEL = {LOG_CORE, LOG_DOMAIN,
-    TELEPHONY_LOG_TAG};
-
 #define DATA_STORAGE_FILENAME (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
 
 #define OHOS_DEBUG
 #ifndef OHOS_DEBUG
-#define PRINT_DATASTORAGE_LOG(op, fmt, ...) (void)OHOS::HiviewDFX::HiLog::op(DATA_STORAGE_LABEL, fmt, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGE(fmt, ...) \
+    (void)HILOG_IMPL(LOG_CORE, LOG_ERROR, LOG_DOMAIN, TELEPHONY_LOG_TAG, fmt, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGW(fmt, ...) \
+    (void)HILOG_IMPL(LOG_CORE, LOG_WARN, LOG_DOMAIN, TELEPHONY_LOG_TAG, fmt, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGI(fmt, ...) \
+    (void)HILOG_IMPL(LOG_CORE, LOG_INFO, LOG_DOMAIN, TELEPHONY_LOG_TAG, fmt, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGF(fmt, ...) \
+    (void)HILOG_IMPL(LOG_CORE, LOG_FATAL, LOG_DOMAIN, TELEPHONY_LOG_TAG, fmt, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGD(fmt, ...) \
+    (void)HILOG_IMPL(LOG_CORE, LOG_DEBUG, LOG_DOMAIN, TELEPHONY_LOG_TAG, fmt, ##__VA_ARGS__)
 #else
-#define PRINT_DATASTORAGE_LOG(op, fmt, ...) \
-    (void)OHOS::HiviewDFX::HiLog::op(DATA_STORAGE_LABEL, "[%{public}s-(%{public}s:%{public}d)] " fmt, __FUNCTION__, \
-        DATA_STORAGE_FILENAME, __LINE__, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGE(fmt, ...)                                                                                   \
+    (void)HILOG_IMPL(LOG_CORE, LOG_ERROR, LOG_DOMAIN, TELEPHONY_LOG_TAG, "[%{public}s-(%{public}s:%{public}d)] " fmt, \
+    __FUNCTION__, DATA_STORAGE_FILENAME, __LINE__, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGW(fmt, ...)                                                                                  \
+    (void)HILOG_IMPL(LOG_CORE, LOG_WARN, LOG_DOMAIN, TELEPHONY_LOG_TAG, "[%{public}s-(%{public}s:%{public}d)] " fmt, \
+    __FUNCTION__, DATA_STORAGE_FILENAME, __LINE__, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGI(fmt, ...)                                                                                  \
+    (void)HILOG_IMPL(LOG_CORE, LOG_INFO, LOG_DOMAIN, TELEPHONY_LOG_TAG, "[%{public}s-(%{public}s:%{public}d)] " fmt, \
+    __FUNCTION__, DATA_STORAGE_FILENAME, __LINE__, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGF(fmt, ...)                                                                                   \
+    (void)HILOG_IMPL(LOG_CORE, LOG_FATAL, LOG_DOMAIN, TELEPHONY_LOG_TAG, "[%{public}s-(%{public}s:%{public}d)] " fmt, \
+    __FUNCTION__, DATA_STORAGE_FILENAME, __LINE__, ##__VA_ARGS__)
+#define DATA_STORAGE_LOGD(fmt, ...)                                                                                   \
+    (void)HILOG_IMPL(LOG_CORE, LOG_DEBUG, LOG_DOMAIN, TELEPHONY_LOG_TAG, "[%{public}s-(%{public}s:%{public}d)] " fmt, \
+    __FUNCTION__, DATA_STORAGE_FILENAME, __LINE__, ##__VA_ARGS__)
 #endif
-
-#define DATA_STORAGE_LOGE(fmt, ...) PRINT_DATASTORAGE_LOG(Error, fmt, ##__VA_ARGS__)
-#define DATA_STORAGE_LOGW(fmt, ...) PRINT_DATASTORAGE_LOG(Warn, fmt, ##__VA_ARGS__)
-#define DATA_STORAGE_LOGI(fmt, ...) PRINT_DATASTORAGE_LOG(Info, fmt, ##__VA_ARGS__)
-#define DATA_STORAGE_LOGF(fmt, ...) PRINT_DATASTORAGE_LOG(Fatal, fmt, ##__VA_ARGS__)
-#define DATA_STORAGE_LOGD(fmt, ...) PRINT_DATASTORAGE_LOG(Debug, fmt, ##__VA_ARGS__)
-
 #else
 #endif // CONFIG_HILOG
 } // namespace Telephony
