@@ -49,14 +49,14 @@ public:
     int ResetApn();
 
     /**
-     * init pdp_profile table data form config json file
+     * Init pdp_profile table data form config json file
      *
      * @param slotId slotId
      * @param opkey opkey
-     * @param needCheckFile need Check File
+     * @param isNeedCheckFile is need Check File
      * @return 0 is succeed else failed
      */
-    int initAPNDatabase(int slotId, const std::string &opkey, bool needCheckFile);
+    int InitAPNDatabase(int slotId, const std::string &opkey, bool isNeedCheckFile);
 
 private:
     /**
@@ -85,10 +85,10 @@ private:
     /**
      * Set the Checksum of ApnConf file
      *
-     * @param checksum checksum to set
+     * @param checkSum checksum to set
      * @return 0 is succeed else failed
      */
-    int SetPreferApnConfChecksum(std::string checksum);
+    int SetPreferApnConfChecksum(std::string &checkSum);
 
 private:
     const std::string DB_NAME = "net.db";
