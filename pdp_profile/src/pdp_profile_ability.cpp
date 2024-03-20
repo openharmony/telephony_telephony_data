@@ -469,19 +469,20 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
 int PdpProfileAbility::resetApn(Uri &uri)
 {
     const std::string &simIdStr = GetQueryKey(uri.GetQuery(), "simId=");
-    DATA_STORAGE_LOGI("PdpProfileAbility::resetApn##simId = %{public}s", simIdStr.c_str());
     if (simIdStr.empty()) {
-        return DATA_STORAGE_ERROR;
+        DATA_STORAGE_LOGW("PdpProfileAbility::resetApn simId empty!");
+        return helper_.ResetApn();
     }
-    int simId = std::stoi(simIdStr);
-    SetPreferApn(simId, -1);
     std::string opkey;
+    int simId = std::stoi(simIdStr);
     int32_t slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
     getTargetOpkey(slotId, opkey);
     if (opkey.empty()) {
-        DATA_STORAGE_LOGE("PdpProfileAbility::resetApn opkey empty!");
+        DATA_STORAGE_LOGW("PdpProfileAbility::resetApn opkey empty!");
         return helper_.ResetApn();
     }
+    DATA_STORAGE_LOGI("PdpProfileAbility::resetApn##simId = %{public}d", simId);
+    SetPreferApn(simId, -1);
     NativeRdb::RdbPredicates rdbPredicates(TABLE_PDP_PROFILE);
     rdbPredicates.EqualTo(PdpProfileData::OPKEY, opkey);
     int deletedRows = CHANGED_ROWS;
