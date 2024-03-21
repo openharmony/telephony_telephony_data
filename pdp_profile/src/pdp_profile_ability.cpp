@@ -503,7 +503,7 @@ void PdpProfileAbility::GetTargetOpkey(int slotId, std::string &opkey)
     DelayedRefSingleton<CoreServiceClient>::GetInstance().GetTargetOpkey(slotId, opkeyU16);
     opkey = Str16ToStr8(opkeyU16);
     DATA_STORAGE_LOGI(
-        "PdpProfileAbility::getTargetOpkey##slotId = %{public}d, opkey = %{public}s", slotId, opkey.c_str());
+        "PdpProfileAbility::GetTargetOpkey##slotId = %{public}d, opkey = %{public}s", slotId, opkey.c_str());
 }
 } // namespace Telephony
 } // namespace OHOS
