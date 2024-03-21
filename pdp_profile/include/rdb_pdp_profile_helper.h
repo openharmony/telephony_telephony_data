@@ -77,18 +77,20 @@ private:
     /**
      * Is ApnDb need Update
      *
+     * @param slotId slotId
      * @param checksum checksum to compare
      * @return bool Is ApnDb need Update
      */
-    bool IsApnDbUpdateNeeded(std::string &checksum);
+    bool IsApnDbUpdateNeeded(int slotId, std::string &checksum);
 
     /**
      * Set the Checksum of ApnConf file
      *
+     * @param slotId slotId
      * @param checkSum checksum to set
      * @return 0 is succeed else failed
      */
-    int SetPreferApnConfChecksum(std::string &checkSum);
+    int SetPreferApnConfChecksum(int slotId, std::string &checkSum);
 
 private:
     const std::string DB_NAME = "net.db";
