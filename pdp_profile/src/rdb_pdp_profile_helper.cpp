@@ -172,7 +172,7 @@ int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, b
         DATA_STORAGE_LOGE("InitAPNDatabase fail! checksum is null!");
         return NativeRdb::E_ERROR;
     }
-    if (isNeedCheckFile && !IsApnDbUpdateNeeded(checksum)) {
+    if (isNeedCheckFile && !IsApnDbUpdateNeeded(slotId, checksum)) {
         DATA_STORAGE_LOGI("The file is not changed and does not need to be loaded again.");
         return DATA_STORAGE_SUCCESS;
     }
@@ -198,13 +198,13 @@ int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, b
     }
     result = CommitTransactionAction();
     if (result == NativeRdb::E_OK) {
-        SetPreferApnConfChecksum(checksum);
+        SetPreferApnConfChecksum(slotId, checksum);
     }
     DATA_STORAGE_LOGD("InitAPNDatabase end");
     return result;
 }
 
-bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(std::string &checkSum)
+bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(int slotId, std::string &checkSum)
 {
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
     if (preferencesUtil != nullptr) {
@@ -216,7 +216,7 @@ bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(std::string &checkSum)
     return true;
 }
 
-int RdbPdpProfileHelper::SetPreferApnConfChecksum(std::string &checkSum)
+int RdbPdpProfileHelper::SetPreferApnConfChecksum(int slotId, std::string &checkSum)
 {
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
     if (preferencesUtil == nullptr) {
