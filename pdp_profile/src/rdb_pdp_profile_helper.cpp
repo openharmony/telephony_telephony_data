@@ -208,7 +208,7 @@ bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(int slotId, std::string &checkSum)
 {
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
     if (preferencesUtil != nullptr) {
-        std::string lastCheckSum = preferencesUtil->ObtainString(APN_CONF_CHECKSUM, "");
+        std::string lastCheckSum = preferencesUtil->ObtainString(APN_CONF_CHECKSUM + std::to_string(slotId), "");
         if (checkSum.compare(lastCheckSum) == 0) {
             return false;
         }
@@ -223,7 +223,7 @@ int RdbPdpProfileHelper::SetPreferApnConfChecksum(int slotId, std::string &check
         DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
         return NativePreferences::E_ERROR;
     }
-    return preferencesUtil->SaveString(APN_CONF_CHECKSUM, checkSum);
+    return preferencesUtil->SaveString(APN_CONF_CHECKSUM + std::to_string(slotId), checkSum);
 }
 } // namespace Telephony
 } // namespace OHOS
