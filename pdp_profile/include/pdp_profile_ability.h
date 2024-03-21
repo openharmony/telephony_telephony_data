@@ -105,8 +105,8 @@ private:
     std::mutex lock_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
-    void getTargetOpkey(int slotId, std::string &opkey);
-    int resetApn(Uri &uri);
+    void GetTargetOpkey(int slotId, std::string &opkey);
+    int ResetApn(Uri &uri);
     std::shared_ptr<NativeRdb::ResultSet> QueryPdpProfile(Uri &uri, const std::string &tableName,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
 };
