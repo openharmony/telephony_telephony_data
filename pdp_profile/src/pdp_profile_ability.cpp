@@ -132,7 +132,7 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
         const std::string &slotIdStr = GetQueryKey(tempUri.GetQuery(), "slotId=");
         int slotId = DEFAULT_SIM_ID;
         if (StrToInt(slotIdStr, slotId)) {
-            DATA_STORAGE_LOGI("PdpProfileAbility::BatchInsert INIT, slotIdStr= %{public}d", slotId);
+            DATA_STORAGE_LOGI("PdpProfileAbility::BatchInsert INIT, slotId = %{public}d", slotId);
             std::string opkey;
             GetTargetOpkey(slotId, opkey);
             std::lock_guard<std::mutex> guard(lock_);
@@ -479,7 +479,7 @@ int PdpProfileAbility::ResetApn(Uri &uri)
         slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
         GetTargetOpkey(slotId, opkey);
     }
-    if (opkey.empty() || strcmp(opKey.c_str(), INVALID_OPKEY) == 0) {
+    if (opkey.empty() || strcmp(opkey.c_str(), INVALID_OPKEY) == 0) {
         DATA_STORAGE_LOGW("PdpProfileAbility::ResetApn opkey empty!");
         return helper_.ResetApn();
     }
