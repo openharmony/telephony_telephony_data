@@ -136,9 +136,8 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
             std::string opkey;
             GetTargetOpkey(slotId, opkey);
             std::lock_guard<std::mutex> guard(lock_);
-            helper_.InitAPNDatabase(slotId, opkey, true);
+            return helper_.InitAPNDatabase(slotId, opkey, true);
         }
-        return DATA_STORAGE_SUCCESS;
     }
     return DATA_STORAGE_ERROR;
 }
