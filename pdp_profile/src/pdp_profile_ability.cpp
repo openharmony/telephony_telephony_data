@@ -432,7 +432,7 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
         int32_t slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
         GetTargetOpkey(slotId, opkey);
     }
-    if (opkey.empty()) {
+    if (opkey.empty() || strcmp(opkey.c_str(), INVALID_OPKEY) == 0) {
         return helper_.Query(ConvertPredicates(tableName, predicates), columns);
     }
     constexpr int32_t FIELD_IDX = 0;
@@ -445,7 +445,7 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
             continue;
         }
         std::string filed = static_cast<std::string>(oper.GetSingle(FIELD_IDX));
-        if (filed == PdpProfileData::MCCMNC && oper.operation == DataShare::EQUAL_TO) {
+        if (strcmp(filed.c_str(), PdpProfileData::MCCMNC) == 0 && oper.operation == DataShare::EQUAL_TO) {
             isMccMnc = true;
             operationsRes.push_back({DataShare::EQUAL_TO, {PdpProfileData::OPKEY, opkey}});
             continue;
@@ -479,7 +479,7 @@ int PdpProfileAbility::ResetApn(Uri &uri)
         slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
         GetTargetOpkey(slotId, opkey);
     }
-    if (opkey.empty()) {
+    if (opkey.empty() || strcmp(opKey.c_str(), INVALID_OPKEY) == 0) {
         DATA_STORAGE_LOGW("PdpProfileAbility::ResetApn opkey empty!");
         return helper_.ResetApn();
     }
