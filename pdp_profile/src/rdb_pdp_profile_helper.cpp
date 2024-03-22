@@ -156,7 +156,7 @@ int RdbPdpProfileHelper::CommitTransactionAction()
 
 int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, bool isNeedCheckFile)
 {
-    if (store_ == nullptr || opKey.empty()) {
+    if (store_ == nullptr || opKey.empty() || strcmp(opKey.c_str(), INVALID_OPKEY) == 0) {
         return NativeRdb::E_ERROR;
     }
     DATA_STORAGE_LOGD("InitAPNDatabase start");
