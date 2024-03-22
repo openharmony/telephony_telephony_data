@@ -172,7 +172,7 @@ int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, b
         DATA_STORAGE_LOGE("InitAPNDatabase fail! checksum is null!");
         return NativeRdb::E_ERROR;
     }
-    if (isNeedCheckFile && !IsApnDbUpdateNeeded(slotId, checksum)) {
+    if (isNeedCheckFile && !IsApnDbUpdateNeeded(opKey, checksum)) {
         DATA_STORAGE_LOGI("The file is not changed and does not need to be loaded again.");
         return DATA_STORAGE_SUCCESS;
     }
@@ -198,17 +198,17 @@ int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, b
     }
     result = CommitTransactionAction();
     if (result == NativeRdb::E_OK) {
-        SetPreferApnConfChecksum(slotId, checksum);
+        SetPreferApnConfChecksum(opKey, checksum);
     }
     DATA_STORAGE_LOGD("InitAPNDatabase end");
     return result;
 }
 
-bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(int slotId, std::string &checkSum)
+bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(const std::string &opkey, std::string &checkSum)
 {
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
     if (preferencesUtil != nullptr) {
-        std::string lastCheckSum = preferencesUtil->ObtainString(APN_CONF_CHECKSUM + std::to_string(slotId), "");
+        std::string lastCheckSum = preferencesUtil->ObtainString(APN_CONF_CHECKSUM + opkey, "");
         if (checkSum.compare(lastCheckSum) == 0) {
             return false;
         }
@@ -216,14 +216,14 @@ bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(int slotId, std::string &checkSum)
     return true;
 }
 
-int RdbPdpProfileHelper::SetPreferApnConfChecksum(int slotId, std::string &checkSum)
+int RdbPdpProfileHelper::SetPreferApnConfChecksum(const std::string &opkey, std::string &checkSum)
 {
     auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
     if (preferencesUtil == nullptr) {
         DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
         return NativePreferences::E_ERROR;
     }
-    return preferencesUtil->SaveString(APN_CONF_CHECKSUM + std::to_string(slotId), checkSum);
+    return preferencesUtil->SaveString(APN_CONF_CHECKSUM + opkey, checkSum);
 }
 } // namespace Telephony
 } // namespace OHOS
