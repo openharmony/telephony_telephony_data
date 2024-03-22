@@ -50,7 +50,7 @@ PdpProfileAbility::~PdpProfileAbility() {}
 
 PdpProfileAbility* PdpProfileAbility::Create()
 {
-    DATA_STORAGE_LOGI("PdpProfileAbility::Create begin.");
+    DATA_STORAGE_LOGD("PdpProfileAbility::Create begin.");
     auto self =  new PdpProfileAbility();
     self->DoInit();
     return self;
@@ -70,7 +70,6 @@ void PdpProfileAbility::DoInit()
     // switch database dir to el1 for init before unlock
     abilityContext->SwitchArea(0);
     std::string path = abilityContext->GetDatabaseDir();
-    DATA_STORAGE_LOGI("GetDatabaseDir: %{public}s", path.c_str());
     if (!path.empty()) {
         initDatabaseDir = true;
         path.append("/");
@@ -358,7 +357,7 @@ int PdpProfileAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 PdpProfileUriType PdpProfileAbility::ParseUriType(Uri &uri)
 {
-    DATA_STORAGE_LOGI("PdpProfileAbility::ParseUriType start");
+    DATA_STORAGE_LOGD("PdpProfileAbility::ParseUriType start");
     PdpProfileUriType pdpProfileUriType = PdpProfileUriType::UNKNOW;
     std::string uriPath = uri.ToString();
     if (!uriPath.empty()) {

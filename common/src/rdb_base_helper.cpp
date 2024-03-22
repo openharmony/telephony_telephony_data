@@ -133,7 +133,7 @@ int RdbBaseHelper::IsExistStore()
 void RdbBaseHelper::CreateRdbStore(
     const NativeRdb::RdbStoreConfig &config, int version, NativeRdb::RdbOpenCallback &openCallback, int &errCode)
 {
-    DATA_STORAGE_LOGI("RdbBaseHelper::CreateRdbStore");
+    DATA_STORAGE_LOGD("RdbBaseHelper::CreateRdbStore");
     store_ = NativeRdb::RdbHelper::GetRdbStore(config, version, openCallback, errCode);
 }
 

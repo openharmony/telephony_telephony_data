@@ -56,7 +56,7 @@ void RdbGlobalParamsHelper::UpdateDbPath(const std::string &path)
 
 void RdbGlobalParamsHelper::CreateNumMatchTableStr(std::string &createTableStr)
 {
-    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchTableStr start");
+    DATA_STORAGE_LOGD("RdbGlobalParamsHelper::CreateNumMatchTableStr start");
     createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(TABLE_NUMBER_MATCH).append("(");
     createTableStr.append(NumMatchData::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
     createTableStr.append(NumMatchData::NAME).append(" TEXT DEFAULT '', ");
@@ -67,16 +67,16 @@ void RdbGlobalParamsHelper::CreateNumMatchTableStr(std::string &createTableStr)
     createTableStr.append(NumMatchData::NUM_MATCH_SHORT).append(" INTEGER DEFAULT 0, ");
     createTableStr.append("UNIQUE (").append(NumMatchData::MCCMNC).append(", ");
     createTableStr.append(NumMatchData::NAME).append("))");
-    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchTableStr end: %s", createTableStr.c_str());
+    DATA_STORAGE_LOGD("RdbGlobalParamsHelper::CreateNumMatchTableStr end: %s", createTableStr.c_str());
 }
 
 void RdbGlobalParamsHelper::CreateNumMatchIndexStr(std::string &createIndexStr)
 {
-    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchIndexStr start");
+    DATA_STORAGE_LOGD("RdbGlobalParamsHelper::CreateNumMatchIndexStr start");
     createIndexStr.append("CREATE INDEX IF NOT EXISTS [").append(NUMERIC_INDEX).append("]");
     createIndexStr.append("ON [").append(TABLE_NUMBER_MATCH).append("]");
     createIndexStr.append("([").append(NumMatchData::MCCMNC).append("])");
-    DATA_STORAGE_LOGI("RdbGlobalParamsHelper::CreateNumMatchIndexStr end: %s", createIndexStr.c_str());
+    DATA_STORAGE_LOGD("RdbGlobalParamsHelper::CreateNumMatchIndexStr end: %s", createIndexStr.c_str());
 }
 
 void RdbGlobalParamsHelper::CreateEccDataTableStr(std::string &createTableStr)
