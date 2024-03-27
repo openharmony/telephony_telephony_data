@@ -47,7 +47,8 @@ int RdbPdpProfileCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersi
         rdbStore.ExecuteSql("DELETE FROM " + std::string(TABLE_PDP_PROFILE));
 #endif
         rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
-                            std::string(PdpProfileData::OPKEY) + " TEXT;");
+                            std::string(PdpProfileData::OPKEY) + " TEXT AFTER " +
+                            std::string(PdpProfileData::PROFILE_NAME) + ";");
         oldVersion = VERSION_4;
     }
     if (oldVersion != newVersion) {
