@@ -131,7 +131,9 @@ ohos_shared_library("tel_telephony_data") {
     "TELEPHONY_LOG_TAG = \"DataStorage\"",
     "LOG_DOMAIN = 0xD001F05",
   ]
+
   defines += telephony_extra_defines
+
   part_name = "telephony_data"
   subsystem_name = "telephony"
   innerapi_tags = [ "platformsdk_indirect" ]
