@@ -42,6 +42,11 @@ int RdbPdpProfileCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersi
                             std::string(PdpProfileData::SERVER) + " TEXT;");
         oldVersion = VERSION_3;
     }
+    if (oldVersion < VERSION_4 && newVersion >= VERSION_4) {
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
+                            std::string(PdpProfileData::OPKEY) + " TEXT;");
+        oldVersion = VERSION_4;
+    }
     if (oldVersion != newVersion) {
         DATA_STORAGE_LOGE("upgrade error oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
         return NativeRdb::E_ERROR;
