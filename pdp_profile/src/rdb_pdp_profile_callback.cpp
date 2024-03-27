@@ -43,6 +43,9 @@ int RdbPdpProfileCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersi
         oldVersion = VERSION_3;
     }
     if (oldVersion < VERSION_4 && newVersion >= VERSION_4) {
+#ifdef OHOS_BUILD_ENABLE_TELEPHONY_EXT
+        rdbStore.ExecuteSql("DELETE FROM " + std::string(TABLE_PDP_PROFILE));
+#endif
         rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_PDP_PROFILE) + " ADD COLUMN " +
                             std::string(PdpProfileData::OPKEY) + " TEXT;");
         oldVersion = VERSION_4;
