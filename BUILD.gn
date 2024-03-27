@@ -134,7 +134,8 @@ ohos_shared_library("tel_telephony_data") {
   if (defined(global_parts_info) &&
       defined(global_parts_info.telephony_telephony_cust) &&
       global_parts_info.telephony_telephony_cust) {
-    print("telephony_telephony_cust = ${global_parts_info.telephony_telephony_cust}")
+    print(
+        "telephony_telephony_cust = ${global_parts_info.telephony_telephony_cust}")
     defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_CUST" ]
   }
 
