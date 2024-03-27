@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("signature/pm.gni")
+import("../core_service/telephony_core_service.gni")
 
 ohos_hap("Telephony_Data_Storage") {
   hap_profile = "entry/src/main/module.json"
@@ -130,6 +131,7 @@ ohos_shared_library("tel_telephony_data") {
     "TELEPHONY_LOG_TAG = \"DataStorage\"",
     "LOG_DOMAIN = 0xD001F05",
   ]
+  defines += telephony_extra_defines
   part_name = "telephony_data"
   subsystem_name = "telephony"
   innerapi_tags = [ "platformsdk_indirect" ]
