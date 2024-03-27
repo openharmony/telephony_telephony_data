@@ -13,7 +13,6 @@
 
 import("//build/ohos.gni")
 import("signature/pm.gni")
-import("../core_service/telephony_core_service.gni")
 
 ohos_hap("Telephony_Data_Storage") {
   hap_profile = "entry/src/main/module.json"
@@ -132,7 +131,12 @@ ohos_shared_library("tel_telephony_data") {
     "LOG_DOMAIN = 0xD001F05",
   ]
 
-  defines += telephony_extra_defines
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.telephony_telephony_cust) &&
+      global_parts_info.telephony_telephony_cust) {
+    print("telephony_telephony_cust = ${global_parts_info.telephony_telephony_cust}")
+    defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_CUST" ]
+  }
 
   part_name = "telephony_data"
   subsystem_name = "telephony"
