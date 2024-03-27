@@ -54,7 +54,6 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append("(");
     createTableStr.append(PdpProfileData::PROFILE_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
     createTableStr.append(PdpProfileData::PROFILE_NAME).append(" TEXT DEFAULT '', ");
-    createTableStr.append(PdpProfileData::OPKEY).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MCC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MNC).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::MCCMNC).append(" TEXT DEFAULT '', ");
@@ -74,6 +73,7 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::MVNO_MATCH_DATA).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::EDITED_STATUS).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(PdpProfileData::SERVER).append(" TEXT DEFAULT '', ");
+    createTableStr.append(PdpProfileData::OPKEY).append(" TEXT DEFAULT '', ");
     createTableStr.append("UNIQUE (").append(PdpProfileData::MCC).append(", ");
     createTableStr.append(PdpProfileData::MNC).append(", ");
     createTableStr.append(PdpProfileData::MVNO_TYPE).append(", ");
