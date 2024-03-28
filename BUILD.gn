@@ -114,6 +114,7 @@ ohos_shared_library("tel_telephony_data") {
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "config_policy:configpolicy_util",
+    "core_service:tel_core_service_api",
     "data_share:datashare_common",
     "data_share:datashare_provider",
     "hilog:libhilog",
@@ -123,11 +124,21 @@ ohos_shared_library("tel_telephony_data") {
     "preferences:native_preferences",
     "relational_store:native_rdb",
     "relational_store:rdb_data_share_adapter",
+    "zlib:libz",
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"DataStorage\"",
     "LOG_DOMAIN = 0xD001F05",
   ]
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.telephony_telephony_ext) &&
+      global_parts_info.telephony_telephony_ext) {
+    print(
+        "telephony_telephony_ext = ${global_parts_info.telephony_telephony_ext}")
+    defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_EXT" ]
+  }
+
   part_name = "telephony_data"
   subsystem_name = "telephony"
   innerapi_tags = [ "platformsdk_indirect" ]
