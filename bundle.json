@@ -33,6 +33,7 @@
                 "c_utils",
                 "config_policy",
                 "common_event_service",
+                "core_service",
                 "data_share",
                 "eventhandler",
                 "hilog",
@@ -43,7 +44,8 @@
                 "resource_management",
                 "safwk",
                 "samgr",
-                "relational_store"
+                "relational_store",
+                "zlib"
             ],
             "third_party": [
                 "jsoncpp"

@@ -65,11 +65,11 @@ public:
 public:
     const std::string FOLDER_PATH = "/data/accounts/account_0/appdata/com.ohos.smsmmsability/database/";
 
-private:
-    int IsExistStore();
+protected:
+    std::shared_ptr<NativeRdb::RdbStore> store_;
 
 private:
-    std::shared_ptr<NativeRdb::RdbStore> store_;
+    int IsExistStore();
 };
 } // namespace Telephony
 } // namespace OHOS

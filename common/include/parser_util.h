@@ -37,7 +37,10 @@ struct NumMatch;
 struct EccNum;
 class ParserUtil {
 public:
+    int GetPdpProfilePath(int slotId, std::string &path);
+    int GetFileChecksum(const char *path, std::string &checkSum);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
+    int ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *filePath);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
     bool ParseFromCustomSystem(std::vector<OpKey> &vec);
@@ -52,6 +55,8 @@ public:
     void ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean);
 
 public:
+    inline static const int MODE_SLOT_0 = 11;
+    inline static const int MODE_SLOT_1 = 12;
     enum class RuleID {
         RULE_EMPTY = 0x0,
         RULE_MCCMNC = 0x1,
@@ -68,6 +73,7 @@ private:
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
     std::string GetCustFile(const char *&file, const char *key);
+    bool IsNeedInsertToTable(Json::Value &content);
 };
 } // namespace Telephony
 } // namespace OHOS
