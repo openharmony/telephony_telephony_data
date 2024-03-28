@@ -84,6 +84,18 @@ public:
      * @brief Cellular data card or not
      */
     static constexpr const char *IS_CELLULAR_DATA_CARD = "is_cellular_data_card";
+    /**
+     * @brief The opkey of sim
+     */
+    static constexpr const char *OPKEY = "opkey";
+    /**
+     * @brief The mcc of sim
+     */
+    static constexpr const char *MCC = "mcc";
+    /**
+     * @brief The mnc of sim
+     */
+    static constexpr const char *MNC = "mnc";
 };
 
 constexpr const char *TABLE_SIM_INFO = "sim_info";

@@ -34,7 +34,15 @@ int RdbSimCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int
                             std::string(SimData::IS_ACTIVE) + " INTEGER DEFAULT " + "1;");
         oldVersion = VERSION_2;
     }
-
+    if (oldVersion < VERSION_3 && newVersion >= VERSION_3) {
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                            std::string(SimData::OPKEY) + " TEXT DEFAULT " + " '' ;");
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                            std::string(SimData::MCC) + " TEXT DEFAULT " + " '' ;");
+        rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO)+ " ADD COLUMN " +
+                            std::string(SimData::MNC) + " TEXT DEFAULT " + " '' ;");
+        oldVersion = VERSION_3;
+    }
     if (oldVersion != newVersion) {
         DATA_STORAGE_LOGE("upgrade error oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
         return NativeRdb::E_ERROR;

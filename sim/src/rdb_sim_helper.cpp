@@ -66,6 +66,9 @@ void RdbSimHelper::CreateSimInfoTableStr(std::string &createTableStr)
     createTableStr.append(SimData::CARD_TYPE).append(" INTEGER , ");
     createTableStr.append(SimData::IMS_SWITCH).append(" INTEGER DEFAULT -1, ");
     createTableStr.append(SimData::LANGUAGE).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::OPKEY).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::MCC).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::MNC).append(" TEXT DEFAULT '', ");
     createTableStr.append("UNIQUE (");
     createTableStr.append(SimData::ICC_ID).append(", ");
     createTableStr.append(SimData::CARD_ID).append("))");
