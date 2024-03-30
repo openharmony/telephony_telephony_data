@@ -56,10 +56,10 @@ public:
     int SimSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int SimDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int SmsInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SmsBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int SmsUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int SmsSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int SmsDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
-    int PdpProfileBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PdpProfileUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PdpProfileUpdate2(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
