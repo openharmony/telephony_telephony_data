@@ -33,6 +33,7 @@ const int NUM_MATCH_SHORT_EIGHT = 8;
 const int NUM_MATCH_ELEVEN = 11;
 const int PERMS_NUM = 4;
 const int32_t VOICECALL_CAP_VAL_LEN = 6;
+const std::string CUST_OPKEY0 = "telephony.sim.opkey0";
 const std::string KEY_VOICECALL_CAP = "const.telephony.voice.capable";
 
 bool HasVoiceCapability()
@@ -319,6 +320,14 @@ int DataStorageGtest::SmsDelete(const std::shared_ptr<DataShare::DataShareHelper
     DataShare::DataSharePredicates predicates;
     predicates.EqualTo(SmsMmsInfo::MSG_ID, "1");
     return helper->Delete(uri, predicates);
+}
+
+int DataStorageGtest::PdpProfileBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    SystemSetParameter(CUST_OPKEY0, "46060");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/init?slotId=0");
+    std::vector<DataShare::DataShareValuesBucket> values;
+    return helper->BatchInsert(uri, values);
 }
 
 int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
@@ -832,6 +841,26 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
         return;
     }
     int ret = SmsDelete(helper);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
+}
+
+/**
+ * @tc.number   PdpProfileBatchInsert_001
+ * @tc.name     init apn data for slot
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, PdpProfileBatchInsert_001, Function | MediumTest | Level1)
+{
+    if (!HasVoiceCapability()) {
+        return;
+    }
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    int ret = PdpProfileBatchInsert(helper);
     helper = nullptr;
     EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
