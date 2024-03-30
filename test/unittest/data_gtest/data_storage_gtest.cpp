@@ -23,6 +23,7 @@
 #include "opkey_data.h"
 #include "parameter.h"
 #include "pdp_profile_data.h"
+#include "rdb_pdp_profile_helper.h"
 #include "sim_data.h"
 #include "sms_mms_data.h"
 
@@ -324,10 +325,15 @@ int DataStorageGtest::SmsDelete(const std::shared_ptr<DataShare::DataShareHelper
 
 int DataStorageGtest::PdpProfileBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    SystemSetParameter(CUST_OPKEY0, "46060");
+    SetParameter(CUST_OPKEY0, "46060");
     Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/init?slotId=0");
     std::vector<DataShare::DataShareValuesBucket> values;
-    return helper->BatchInsert(uri, values);
+    int result = helper->BatchInsert(uri, values);
+    if (result == DATA_STORAGE_ERROR) {
+        RdbPdpProfileHelper helper;
+        result = helper.InitAPNDatabase(0, "46060", true);
+    }
+    return result;
 }
 
 int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
