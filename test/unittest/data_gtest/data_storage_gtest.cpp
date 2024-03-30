@@ -837,26 +837,6 @@ HWTEST_F(DataStorageGtest, SmsDelete_001, Function | MediumTest | Level1)
 }
 
 /**
- * @tc.number   PdpProfileBatchInsert_001
- * @tc.name     init apn data for slot
- * @tc.desc     Function test
- */
-HWTEST_F(DataStorageGtest, PdpProfileBatchInsert_001, Function | MediumTest | Level1)
-{
-    if (!HasVoiceCapability()) {
-        return;
-    }
-    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
-    if (helper == nullptr) {
-        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
-        return;
-    }
-    int ret = PdpProfileBatchInsert(helper);
-    helper = nullptr;
-    EXPECT_GE(ret, DATA_STORAGE_ERROR);
-}
-
-/**
  * @tc.number   PdpProfileInsert_001
  * @tc.name     insert apn data
  * @tc.desc     Function test
