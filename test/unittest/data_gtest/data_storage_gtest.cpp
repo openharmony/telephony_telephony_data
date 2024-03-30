@@ -325,7 +325,7 @@ int DataStorageGtest::SmsDelete(const std::shared_ptr<DataShare::DataShareHelper
 
 int DataStorageGtest::PdpProfileBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    SetParameter(CUST_OPKEY0, "46060");
+    SetParameter(CUST_OPKEY0.c_str(), "46060");
     Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/init?slotId=0");
     std::vector<DataShare::DataShareValuesBucket> values;
     int result = helper->BatchInsert(uri, values);
