@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("../core_service/telephony_core_service.gni")
 import("signature/pm.gni")
 
 ohos_hap("Telephony_Data_Storage") {
@@ -132,7 +131,13 @@ ohos_shared_library("tel_telephony_data") {
     "LOG_DOMAIN = 0xD001F05",
   ]
 
-  defines += telephony_extra_defines
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.telephony_telephony_enhanced) &&
+      global_parts_info.telephony_telephony_enhanced) {
+    print(
+        "telephony_telephony_enhanced = ${global_parts_info.telephony_telephony_enhanced}")
+    defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_EXT" ]
+  }
 
   part_name = "telephony_data"
   subsystem_name = "telephony"
