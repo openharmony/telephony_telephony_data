@@ -23,7 +23,6 @@
 #include "opkey_data.h"
 #include "parameter.h"
 #include "pdp_profile_data.h"
-#include "rdb_pdp_profile_helper.h"
 #include "sim_data.h"
 #include "sms_mms_data.h"
 
@@ -34,7 +33,6 @@ const int NUM_MATCH_SHORT_EIGHT = 8;
 const int NUM_MATCH_ELEVEN = 11;
 const int PERMS_NUM = 4;
 const int32_t VOICECALL_CAP_VAL_LEN = 6;
-const std::string CUST_OPKEY0 = "telephony.sim.opkey0";
 const std::string KEY_VOICECALL_CAP = "const.telephony.voice.capable";
 
 bool HasVoiceCapability()
@@ -323,22 +321,9 @@ int DataStorageGtest::SmsDelete(const std::shared_ptr<DataShare::DataShareHelper
     return helper->Delete(uri, predicates);
 }
 
-int DataStorageGtest::PdpProfileBatchInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
-{
-    SetParameter(CUST_OPKEY0.c_str(), "46060");
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/init?slotId=0");
-    std::vector<DataShare::DataShareValuesBucket> values;
-    int result = helper->BatchInsert(uri, values);
-    if (result == DATA_STORAGE_ERROR) {
-        RdbPdpProfileHelper helper;
-        result = helper.InitAPNDatabase(0, "46060", true);
-    }
-    return result;
-}
-
 int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile?simId=0");
     DataShare::DataShareValuesBucket value;
     value.Put(PdpProfileData::PROFILE_NAME, "frist_profile_name");
     value.Put(PdpProfileData::MCC, "460");
@@ -388,7 +373,7 @@ int DataStorageGtest::PdpProfileUpdate3(const std::shared_ptr<DataShare::DataSha
 
 int DataStorageGtest::PdpProfileUpdate4(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/reset");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/reset?simId=0");
     DataShare::DataShareValuesBucket values;
     DataShare::DataSharePredicates predicates;
     return helper->Update(uri, predicates, values);
@@ -396,7 +381,7 @@ int DataStorageGtest::PdpProfileUpdate4(const std::shared_ptr<DataShare::DataSha
 
 int DataStorageGtest::PdpProfileSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile?simId=0");
     std::vector<std::string> columns;
     DataShare::DataSharePredicates predicates;
     std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
