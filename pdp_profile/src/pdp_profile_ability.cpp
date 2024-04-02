@@ -189,7 +189,10 @@ int PdpProfileAbility::GetPreferApn(const std::string &queryString)
         DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
         return NativePreferences::E_ERROR;
     }
-    return preferencesUtil->ObtainInt(PREFER_APN_ID + GetQueryKey(queryString, "simId="), INVALID_PROFILE_ID);
+    int preferApnId = preferencesUtil->ObtainInt(PREFER_APN_ID + GetQueryKey(queryString, "simId="),
+                                                 INVALID_PROFILE_ID);
+    DATA_STORAGE_LOGI("%{public}d.", preferApnId);
+    return preferApnId;
 }
 
 int PdpProfileAbility::SetPreferApn(int simId, int profileId)
@@ -199,6 +202,7 @@ int PdpProfileAbility::SetPreferApn(int simId, int profileId)
         DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
         return NativePreferences::E_ERROR;
     }
+    DATA_STORAGE_LOGI("simId:%{public}d profileId:%{public}d", simId, profileId);
     return preferencesUtil->SaveInt(PREFER_APN_ID + std::to_string(simId), profileId);
 }
 
