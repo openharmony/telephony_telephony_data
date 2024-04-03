@@ -31,11 +31,6 @@ std::shared_ptr<NativePreferences::Preferences> PreferencesUtil::GetProfiles(con
     return NativePreferences::PreferencesHelper::GetPreferences(path, errCode);
 }
 
-void PreferencesUtil::UpdatePath(const std::string &path)
-{
-    path_ = path + path_;
-}
-
 int PreferencesUtil::DeleteProfiles()
 {
     return NativePreferences::PreferencesHelper::DeletePreferences(path_);
