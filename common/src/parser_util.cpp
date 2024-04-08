@@ -652,7 +652,6 @@ void ParserUtil::RefreshDigest(const std::string &key)
         preferencesUtil->SaveString(key, tempHash);
         preferencesUtil->RemoveKey(key + TEMP_SUFFIX);
         preferencesUtil->Refresh();
-        return;
     }
 }
 
