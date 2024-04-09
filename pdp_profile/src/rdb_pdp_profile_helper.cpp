@@ -73,6 +73,7 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::MVNO_MATCH_DATA).append(" TEXT DEFAULT '', ");
     createTableStr.append(PdpProfileData::EDITED_STATUS).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(PdpProfileData::SERVER).append(" TEXT DEFAULT '', ");
+    createTableStr.append(PdpProfileData::OPKEY).append(" TEXT DEFAULT '', ");
     createTableStr.append("UNIQUE (").append(PdpProfileData::MCC).append(", ");
     createTableStr.append(PdpProfileData::MNC).append(", ");
     createTableStr.append(PdpProfileData::MVNO_TYPE).append(", ");
@@ -151,6 +152,78 @@ int RdbPdpProfileHelper::CommitTransactionAction()
         RollBack();
     }
     return result;
+}
+
+int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, bool isNeedCheckFile)
+{
+    if (store_ == nullptr || opKey.empty() || strcmp(opKey.c_str(), INVALID_OPKEY) == 0) {
+        return NativeRdb::E_ERROR;
+    }
+    DATA_STORAGE_LOGD("InitAPNDatabase start");
+    ParserUtil util;
+    std::string path;
+    util.GetPdpProfilePath(slotId, path);
+    if (path.empty()) {
+        return NativeRdb::E_ERROR;
+    }
+    std::string checksum;
+    util.GetFileChecksum(path.c_str(), checksum);
+    if (checksum.empty()) {
+        DATA_STORAGE_LOGE("InitAPNDatabase fail! checksum is null!");
+        return NativeRdb::E_ERROR;
+    }
+    if (isNeedCheckFile && !IsApnDbUpdateNeeded(opKey, checksum)) {
+        DATA_STORAGE_LOGI("The file is not changed and does not need to be loaded again.");
+        return DATA_STORAGE_SUCCESS;
+    }
+    std::vector<PdpProfile> vec;
+    int resultCode = util.ParserPdpProfileJson(vec, path.c_str());
+    if (resultCode != DATA_STORAGE_SUCCESS) {
+        DATA_STORAGE_LOGE("InitAPNDatabase fail");
+        return DATA_STORAGE_ERROR;
+    }
+    int32_t result = store_->BeginTransaction();
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("BeginTransaction error!");
+        return DATA_STORAGE_ERROR;
+    }
+    DATA_STORAGE_LOGD("InitAPNDatabase size = %{public}zu", vec.size());
+    for (size_t i = 0; i < vec.size(); i++) {
+        NativeRdb::ValuesBucket value;
+        util.ParserPdpProfileToValuesBucket(value, vec[i]);
+        value.PutString(PdpProfileData::OPKEY, opKey);
+        int64_t id;
+        store_->InsertWithConflictResolution(
+            id, TABLE_PDP_PROFILE, value, NativeRdb::ConflictResolution::ON_CONFLICT_REPLACE);
+    }
+    result = CommitTransactionAction();
+    if (result == NativeRdb::E_OK) {
+        SetPreferApnConfChecksum(opKey, checksum);
+    }
+    DATA_STORAGE_LOGD("InitAPNDatabase end");
+    return result;
+}
+
+bool RdbPdpProfileHelper::IsApnDbUpdateNeeded(const std::string &opkey, std::string &checkSum)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil != nullptr) {
+        std::string lastCheckSum = preferencesUtil->ObtainString(APN_CONF_CHECKSUM + opkey, "");
+        if (checkSum.compare(lastCheckSum) == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int RdbPdpProfileHelper::SetPreferApnConfChecksum(const std::string &opkey, std::string &checkSum)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
+        return NativePreferences::E_ERROR;
+    }
+    return preferencesUtil->SaveString(APN_CONF_CHECKSUM + opkey, checkSum);
 }
 } // namespace Telephony
 } // namespace OHOS

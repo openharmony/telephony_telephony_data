@@ -49,30 +49,36 @@ int RdbGlobalParamsCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
     DATA_STORAGE_LOGI("RdbGlobalParamsCallback::OnCreate");
     RdbBaseCallBack::OnCreate(rdbStore);
-    InitData(rdbStore, TABLE_NUMBER_MATCH);
-    InitData(rdbStore, TABLE_ECC_DATA);
+    InitData(rdbStore, TABLE_NUMBER_MATCH, false);
+    InitData(rdbStore, TABLE_ECC_DATA, false);
     return NativeRdb::E_OK;
 }
 
 int RdbGlobalParamsCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 {
     DATA_STORAGE_LOGD("RdbGlobalParamsCallback::OnOpen");
+    InitData(rdbStore, TABLE_NUMBER_MATCH, true);
+    InitData(rdbStore, TABLE_ECC_DATA, true);
     return NativeRdb::E_OK;
 }
 
-void RdbGlobalParamsCallback::InitEccData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
+void RdbGlobalParamsCallback::InitEccData(NativeRdb::RdbStore &rdbStore, const std::string &tableName,
+    const bool hashCheck)
 {
     DATA_STORAGE_LOGD("InitData start");
     ParserUtil util;
     std::vector<EccNum> vec;
-    int ret = util.ParserEccDataJson(vec);
+    int ret = util.ParserEccDataJson(vec, hashCheck);
     if (ret != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("ParserEccDataJson fail!");
+        DATA_STORAGE_LOGE("ParserEccDataJson fail ret = %{public}d", ret);
+        util.ClearTempDigest(ECC_DATA_HASH);
         return;
     }
+    ClearData(rdbStore, tableName);
     ret = rdbStore.BeginTransaction();
     if (ret != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("BeginTransaction error!");
+        util.ClearTempDigest(ECC_DATA_HASH);
         return;
     }
     DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
@@ -82,23 +88,31 @@ void RdbGlobalParamsCallback::InitEccData(NativeRdb::RdbStore &rdbStore, const s
         int64_t id;
         rdbStore.Insert(id, tableName, value);
     }
-    rdbStore.Commit();
+    if (rdbStore.Commit() == NativeRdb::E_OK) {
+        util.RefreshDigest(ECC_DATA_HASH);
+    } else {
+        util.ClearTempDigest(ECC_DATA_HASH);
+    }
     DATA_STORAGE_LOGD("InitData end");
 }
 
-void RdbGlobalParamsCallback::InitNumMatchData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
+void RdbGlobalParamsCallback::InitNumMatchData(NativeRdb::RdbStore &rdbStore, const std::string &tableName,
+    const bool hashCheck)
 {
     DATA_STORAGE_LOGD("InitData start");
     ParserUtil util;
     std::vector<NumMatch> vec;
-    int resultCode = util.ParserNumMatchJson(vec);
+    int resultCode = util.ParserNumMatchJson(vec, hashCheck);
     if (resultCode != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("ParserNumMatchJson fail!");
+        DATA_STORAGE_LOGE("ParserNumMatchJson fail resultCode = %{public}d", resultCode);
+        util.ClearTempDigest(NUM_MATCH_HASH);
         return;
     }
+    ClearData(rdbStore, tableName);
     resultCode = rdbStore.BeginTransaction();
     if (resultCode != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("BeginTransaction error!");
+        util.ClearTempDigest(NUM_MATCH_HASH);
         return;
     }
     DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
@@ -108,18 +122,22 @@ void RdbGlobalParamsCallback::InitNumMatchData(NativeRdb::RdbStore &rdbStore, co
         int64_t id;
         rdbStore.Insert(id, tableName, value);
     }
-    rdbStore.Commit();
+    if (rdbStore.Commit() == NativeRdb::E_OK) {
+        util.RefreshDigest(NUM_MATCH_HASH);
+    } else {
+        util.ClearTempDigest(NUM_MATCH_HASH);
+    }
     DATA_STORAGE_LOGD("InitData end");
 }
 
-void RdbGlobalParamsCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
+void RdbGlobalParamsCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName,
+    const bool hashCheck)
 {
     DATA_STORAGE_LOGD("InitData start");
-    ClearData(rdbStore, tableName);
     if (tableName.compare(TABLE_NUMBER_MATCH) == 0) {
-        InitNumMatchData(rdbStore, tableName);
+        InitNumMatchData(rdbStore, tableName, hashCheck);
     } else if (tableName.compare(TABLE_ECC_DATA) == 0) {
-        InitEccData(rdbStore, tableName);
+        InitEccData(rdbStore, tableName, hashCheck);
     } else {
         DATA_STORAGE_LOGE("RdbGlobalParamsCallback::InitData failed: tableName %s invalid\n", tableName.c_str());
     }
@@ -128,7 +146,7 @@ void RdbGlobalParamsCallback::InitData(NativeRdb::RdbStore &rdbStore, const std:
 int RdbGlobalParamsCallback::ClearData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
 {
     std::string sql;
-    sql.append("delete from").append(tableName);
+    sql.append("delete from ").append(tableName);
     return rdbStore.ExecuteSql(sql);
 }
 } // namespace Telephony

@@ -19,6 +19,7 @@
 #include "ability_loader.h"
 #include "abs_rdb_predicates.h"
 #include "abs_shared_result_set.h"
+#include "core_service_client.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "datashare_ext_ability.h"
@@ -29,6 +30,7 @@
 #include "preferences_util.h"
 #include "rdb_errno.h"
 #include "rdb_utils.h"
+#include "string_ex.h"
 #include "telephony_datashare_stub_impl.h"
 #include "uri.h"
 #include "utility"
@@ -40,6 +42,7 @@ namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
 static const std::map<std::string, PdpProfileUriType> pdpProfileUriMap_ = {
     { "/net/pdp_profile", PdpProfileUriType::PDP_PROFILE },
+    { "/net/pdp_profile/init", PdpProfileUriType::INIT},
     { "/net/pdp_profile/reset", PdpProfileUriType::RESET },
     { "/net/pdp_profile/preferapn", PdpProfileUriType::PREFER_APN },
 };
@@ -74,10 +77,6 @@ void PdpProfileAbility::DoInit()
         initDatabaseDir = true;
         path.append("/");
         helper_.UpdateDbPath(path);
-        auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
-        if (preferencesUtil != nullptr) {
-            preferencesUtil->UpdatePath(path);
-        }
         int rdbInitCode = helper_.Init();
         if (rdbInitCode == NativeRdb::E_OK) {
             initRdbStore = true;
@@ -113,6 +112,31 @@ void PdpProfileAbility::OnStart(const AppExecFwk::Want &want)
     DoInit();
 }
 
+int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::DataShareValuesBucket> &values)
+{
+    if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
+    if (!IsInitOk()) {
+        return DATA_STORAGE_ERROR;
+    }
+    Uri tempUri = uri;
+    PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
+    if (pdpProfileUriType == PdpProfileUriType::INIT) {
+        const std::string &slotIdStr = GetQueryKey(tempUri.GetQuery(), "slotId=");
+        int slotId = DEFAULT_SIM_ID;
+        if (StrToInt(slotIdStr, slotId)) {
+            DATA_STORAGE_LOGI("PdpProfileAbility::BatchInsert INIT, slotId = %{public}d", slotId);
+            std::string opkey;
+            GetTargetOpkey(slotId, opkey);
+            std::lock_guard<std::mutex> guard(lock_);
+            return helper_.InitAPNDatabase(slotId, opkey, true);
+        }
+    }
+    return DATA_STORAGE_ERROR;
+}
+
 int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
     if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
@@ -128,6 +152,15 @@ int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBu
     int64_t id = DATA_STORAGE_ERROR;
     if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
         OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+        const std::string &simIdStr = GetQueryKey(tempUri.GetQuery(), "simId=");
+        int simId = DEFAULT_SIM_ID;
+        if (StrToInt(simIdStr, simId)) {
+            DATA_STORAGE_LOGI("PdpProfileAbility::Insert PDP_PROFILE, simId= %{public}d", simId);
+            std::string opkey;
+            int32_t slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
+            GetTargetOpkey(slotId, opkey);
+            values.PutString(PdpProfileData::OPKEY, opkey);
+        }
         helper_.Insert(id, values, TABLE_PDP_PROFILE);
     } else {
         DATA_STORAGE_LOGE("PdpProfileAbility::Insert##uri = %{public}s", uri.ToString().c_str());
@@ -151,7 +184,10 @@ int PdpProfileAbility::GetPreferApn(const std::string &queryString)
         DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
         return NativePreferences::E_ERROR;
     }
-    return preferencesUtil->ObtainInt(PREFER_APN_ID + GetQueryKey(queryString, "simId="), INVALID_PROFILE_ID);
+    int preferApnId = preferencesUtil->ObtainInt(PREFER_APN_ID + GetQueryKey(queryString, "simId="),
+                                                 INVALID_PROFILE_ID);
+    DATA_STORAGE_LOGI("%{public}d.", preferApnId);
+    return preferApnId;
 }
 
 int PdpProfileAbility::SetPreferApn(int simId, int profileId)
@@ -161,6 +197,7 @@ int PdpProfileAbility::SetPreferApn(int simId, int profileId)
         DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
         return NativePreferences::E_ERROR;
     }
+    DATA_STORAGE_LOGI("simId:%{public}d profileId:%{public}d", simId, profileId);
     return preferencesUtil->SaveInt(PREFER_APN_ID + std::to_string(simId), profileId);
 }
 
@@ -184,15 +221,14 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
             DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::AbsRdbPredicates is null!");
             return sharedPtrResult;
         }
-        NativeRdb::RdbPredicates rdbPredicates("");
+        std::shared_ptr<NativeRdb::ResultSet> result = nullptr;
         if (pdpProfileUriType == PdpProfileUriType::PREFER_APN) {
             DataShare::DataSharePredicates preferapnPredicates;
             preferapnPredicates.EqualTo(PdpProfileData::PROFILE_ID, GetPreferApn(tempUri.GetQuery()));
-            rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), preferapnPredicates);
+            result = helper_.Query(ConvertPredicates(absRdbPredicates->GetTableName(), preferapnPredicates), columns);
         } else if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
-            rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
+            result = QueryPdpProfile(tempUri, absRdbPredicates->GetTableName(), predicates, columns);
         }
-        auto result = helper_.Query(rdbPredicates, columns);
         if (result == nullptr) {
             DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::ResultSet is null!");
             delete absRdbPredicates;
@@ -229,7 +265,7 @@ int PdpProfileAbility::Update(
             break;
         }
         case PdpProfileUriType::RESET: {
-            result = helper_.ResetApn();
+            result = ResetApn(tempUri);
             if (result != NativeRdb::E_OK) {
                 DATA_STORAGE_LOGE("PdpProfileAbility::Update  ResetApn fail!");
                 result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
@@ -382,6 +418,90 @@ OHOS::NativeRdb::RdbPredicates PdpProfileAbility::ConvertPredicates(
 {
     OHOS::NativeRdb::RdbPredicates res = RdbDataShareAdapter::RdbUtils::ToPredicates(predicates, tableName);
     return res;
+}
+
+std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &uri, const std::string &tableName,
+    const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns)
+{
+    const std::string &simIdStr = GetQueryKey(uri.GetQuery(), "simId=");
+    std::string opkey;
+    int simId = DEFAULT_SIM_ID;
+    if (StrToInt(simIdStr, simId)) {
+        int32_t slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
+        GetTargetOpkey(slotId, opkey);
+    }
+    if (opkey.empty() || strcmp(opkey.c_str(), INVALID_OPKEY) == 0) {
+        return helper_.Query(ConvertPredicates(tableName, predicates), columns);
+    }
+    constexpr int32_t FIELD_IDX = 0;
+    auto &operations = predicates.GetOperationList();
+    std::vector<DataShare::OperationItem> operationsRes;
+    bool isMccMnc = false;
+    for (const auto &oper : operations) {
+        if (oper.singleParams.empty()) {
+            operationsRes.push_back(oper);
+            continue;
+        }
+        std::string filed = static_cast<std::string>(oper.GetSingle(FIELD_IDX));
+        if (strcmp(filed.c_str(), PdpProfileData::MCCMNC) == 0 && oper.operation == DataShare::EQUAL_TO) {
+            isMccMnc = true;
+            operationsRes.push_back({DataShare::EQUAL_TO, {PdpProfileData::OPKEY, opkey}});
+            continue;
+        }
+        operationsRes.push_back(oper);
+    }
+    DATA_STORAGE_LOGI(
+        "PdpProfileAbility::QueryPdpProfile, simId= %{public}d, isMccMnc= %{public}d", simId, isMccMnc);
+    if (isMccMnc) {
+        const std::shared_ptr<NativeRdb::ResultSet> &result =
+            helper_.Query(ConvertPredicates(tableName, DataShare::DataSharePredicates(move(operationsRes))), columns);
+        if (result != nullptr) {
+            int count = 0;
+            result->GetRowCount(count);
+            DATA_STORAGE_LOGI("PdpProfileAbility::QueryPdpProfile, count= %{public}d", count);
+            if (count > 0) {
+                return result;
+            }
+        }
+    }
+    return helper_.Query(ConvertPredicates(tableName, predicates), columns);
+}
+ 
+int PdpProfileAbility::ResetApn(Uri &uri)
+{
+    std::string opkey;
+    int simId = DEFAULT_SIM_ID;
+    int slotId = DEFAULT_SIM_ID;
+    const std::string &simIdStr = GetQueryKey(uri.GetQuery(), "simId=");
+    if (StrToInt(simIdStr, simId)) {
+        slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
+        GetTargetOpkey(slotId, opkey);
+    }
+    if (opkey.empty() || strcmp(opkey.c_str(), INVALID_OPKEY) == 0) {
+        DATA_STORAGE_LOGW("PdpProfileAbility::ResetApn opkey empty!");
+        return helper_.ResetApn();
+    }
+    DATA_STORAGE_LOGI("PdpProfileAbility::ResetApn##simId = %{public}d", simId);
+    SetPreferApn(simId, -1);
+    NativeRdb::RdbPredicates rdbPredicates(TABLE_PDP_PROFILE);
+    rdbPredicates.EqualTo(PdpProfileData::OPKEY, opkey);
+    int deletedRows = CHANGED_ROWS;
+    helper_.Delete(deletedRows, rdbPredicates);
+    int result = helper_.InitAPNDatabase(slotId, opkey, false);
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("PdpProfileAbility::ResetApn fail!");
+        result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
+    }
+    return result;
+}
+ 
+void PdpProfileAbility::GetTargetOpkey(int slotId, std::string &opkey)
+{
+    std::u16string opkeyU16;
+    DelayedRefSingleton<CoreServiceClient>::GetInstance().GetTargetOpkey(slotId, opkeyU16);
+    opkey = Str16ToStr8(opkeyU16);
+    DATA_STORAGE_LOGI(
+        "PdpProfileAbility::GetTargetOpkey##slotId = %{public}d, opkey = %{public}s", slotId, opkey.c_str());
 }
 } // namespace Telephony
 } // namespace OHOS

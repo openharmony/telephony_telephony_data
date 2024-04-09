@@ -29,6 +29,10 @@ public:
      */
     static constexpr const char *PROFILE_NAME = "profile_name";
     /**
+     * @brief Operator key
+     */
+    static constexpr const char *OPKEY = "opkey";
+    /**
      * @brief Mobile country code
      */
     static constexpr const char *MCC = "mcc";
@@ -177,8 +181,10 @@ enum class BearingSystemType {
 };
 
 inline static const std::string PREFER_APN_ID = "preferapn_id";
+inline static const std::string APN_CONF_CHECKSUM = "apn_conf_checksum";
 constexpr const int32_t DEFAULT_SIM_ID = 0;
 constexpr const int32_t INVALID_PROFILE_ID = -1;
+constexpr const char *INVALID_OPKEY = "-1";
 constexpr const char *TABLE_PDP_PROFILE = "pdp_profile";
 constexpr const char *TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
 constexpr const char *PDP_PROFILE_URI = "datashare:///com.ohos.pdpprofileability";

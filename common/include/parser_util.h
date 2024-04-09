@@ -35,23 +35,32 @@ struct OpKey;
 struct PdpProfile;
 struct NumMatch;
 struct EccNum;
+const std::string ECC_DATA_HASH = "ecc_data_hash";
+const std::string NUM_MATCH_HASH = "num_match_hash";
 class ParserUtil {
 public:
+    int GetPdpProfilePath(int slotId, std::string &path);
+    int GetFileChecksum(const char *path, std::string &checkSum);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
+    int ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *filePath);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
     bool ParseFromCustomSystem(std::vector<OpKey> &vec);
     int ParserOpKeyJson(std::vector<OpKey> &vec, const char *path);
     void ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root);
     void ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const OpKey &bean);
-    int ParserNumMatchJson(std::vector<NumMatch> &vec);
+    int ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCheck);
     void ParserNumMatchInfos(std::vector<NumMatch> &vec, Json::Value &root);
     void ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, const NumMatch &bean);
-    int ParserEccDataJson(std::vector<EccNum> &vec);
+    int ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck);
     void ParserEccDataInfos(std::vector<EccNum> &vec, Json::Value &root);
     void ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean);
+    void RefreshDigest(const std::string &key);
+    void ClearTempDigest(const std::string &key);
 
 public:
+    inline static const int MODE_SLOT_0 = 11;
+    inline static const int MODE_SLOT_1 = 12;
     enum class RuleID {
         RULE_EMPTY = 0x0,
         RULE_MCCMNC = 0x1,
@@ -68,6 +77,8 @@ private:
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
     std::string GetCustFile(const char *&file, const char *key);
+    bool IsNeedInsertToTable(Json::Value &content);
+    bool IsDigestChanged(const char *path, const std::string &key);
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -19,12 +19,16 @@
 #include <securec.h>
 #include <unistd.h>
 
+#include <fstream>
+#include <iostream>
+#include <zlib.h>
 #include "climits"
 #include "config_policy_utils.h"
 #include "cstdint"
 #include "cstdio"
 #include "cstdlib"
 #include "cstring"
+#include "core_service_client.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "global_params_data.h"
@@ -36,8 +40,10 @@
 #include "opkey_data.h"
 #include "parameters.h"
 #include "pdp_profile_data.h"
+#include "telephony_types.h"
 #include "values_bucket.h"
 #include "vector"
+#include "preferences_util.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -85,15 +91,23 @@ const char *ITEM_NUMERIC = "numeric";
 const char *ITEM_ECC_WITH_CARD = "ecc_withcard";
 const char *ITEM_ECC_NO_CARD = "ecc_nocard";
 const char *ITEM_ECC_FAKE = "ecc_fake";
+const int BYTE_LEN = 1024 * 1024;
 const int MAX_BYTE_LEN = 10 * 1024 * 1024;
 static constexpr const char *CUST_RULE_PATH_KEY = "const.telephony.rule_path";
 static constexpr const char *CUST_NETWORK_PATH_KEY = "const.telephony.network_path";
+const std::string DEFAULT_PREFERENCES_STRING_VALUE = "default_value";
+const std::string TEMP_SUFFIX = "_temp";
 
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 {
-    char *content = nullptr;
     char buf[MAX_PATH_LEN];
     char *path = GetOneCfgFile(PATH, buf, MAX_PATH_LEN);
+    return ParserPdpProfileJson(vec, path);
+}
+
+int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *path)
+{
+    char *content = nullptr;
     int ret = DATA_STORAGE_SUCCESS;
     if (path && *path != '\0') {
         ret = LoaderJsonFile(content, path);
@@ -134,6 +148,9 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value
 {
     for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
         Json::Value itemRoot = root[i];
+        if (!IsNeedInsertToTable(itemRoot)) {
+            continue;
+        }
         PdpProfile bean;
         bean.profileName = ParseString(itemRoot[ITEM_OPERATOR_NAME]);
         bean.authUser = ParseString(itemRoot[ITEM_AUTH_USER]);
@@ -330,7 +347,7 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
     value.PutInt(OpKeyData::RULE_ID, bean.ruleId);
 }
 
-int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec)
+int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCheck)
 {
     char *content = nullptr;
     char buf[MAX_PATH_LEN];
@@ -348,6 +365,10 @@ int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec)
     if (content == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
+    if (hashCheck && !IsDigestChanged(path, NUM_MATCH_HASH)) {
+        free(content);
+        return FILE_HASH_NO_CHANGE;
     }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
@@ -398,7 +419,7 @@ void ParserUtil::ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, co
     value.PutInt(NumMatchData::NUM_MATCH_SHORT, bean.numMatchShort);
 }
 
-int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)
+int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck)
 {
     char *content = nullptr;
     char buf[MAX_PATH_LEN];
@@ -415,6 +436,10 @@ int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)
     if (content == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
+    if (hashCheck && !IsDigestChanged(path, ECC_DATA_HASH)) {
+        free(content);
+        return FILE_HASH_NO_CHANGE;
     }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
@@ -541,6 +566,104 @@ std::string ParserUtil::GetCustFile(const char *&file, const char *key)
         custFile = file;
     }
     return custFile;
+}
+
+int ParserUtil::GetPdpProfilePath(int slotId, std::string &path)
+{
+    int mode = MODE_SLOT_0;
+    if (slotId == SimSlotId::SIM_SLOT_1) {
+        mode = MODE_SLOT_1;
+    }
+    char buf[MAX_PATH_LEN];
+    char *ret = GetOneCfgFileEx(PATH, buf, MAX_PATH_LEN, mode, nullptr);
+    if (ret && *ret != '\0') {
+        path = ret;
+        return OPERATION_OK;
+    }
+    DATA_STORAGE_LOGE("ParserUtil::GetPdpProfilePath fail");
+    return OPERATION_ERROR;
+}
+
+int ParserUtil::GetFileChecksum(const char *path, std::string &checkSum)
+{
+    char realPath[PATH_MAX] = {0x00};
+    if (realpath(path, realPath) == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::GetFileChecksum Failed to get realPath!");
+        return OPERATION_ERROR;
+    }
+    std::ifstream file(realPath, std::ios::binary);
+    if (!file.is_open()) {
+        DATA_STORAGE_LOGE("ParserUtil::GetFileChecksum Failed to open file!");
+        return OPERATION_ERROR;
+    }
+    std::vector<char> buffer(BYTE_LEN);
+    uint32_t crc32 = crc32_z(0L, Z_NULL, 0);
+    while (file) {
+        file.read(buffer.data(), buffer.size());
+        auto bytesRead = file.gcount();
+        if (bytesRead > 0) {
+            crc32 = crc32_z(crc32, reinterpret_cast<const Bytef *>(buffer.data()), static_cast<uInt>(bytesRead));
+        }
+    }
+    checkSum = std::to_string(crc32);
+    return OPERATION_OK;
+}
+
+bool ParserUtil::IsNeedInsertToTable(Json::Value &content)
+{
+    if (content.empty()) {
+        return false;
+    }
+    Json::FastWriter fastWriter;
+    const Json::String &string = fastWriter.write(content);
+    std::string res(string.c_str());
+    return DelayedRefSingleton<CoreServiceClient>::GetInstance().IsAllowedInsertApn(res);
+}
+
+bool ParserUtil::IsDigestChanged(const char *path, const std::string &key)
+{
+    std::string newHash;
+    ParserUtil util;
+    util.GetFileChecksum(path, newHash);
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::IsDigestChanged preferencesUtil is nullptr!");
+        return true;
+    }
+    std::string oldHash = preferencesUtil->ObtainString(key, DEFAULT_PREFERENCES_STRING_VALUE);
+    if (oldHash.compare(newHash) == 0) {
+        DATA_STORAGE_LOGI("ParserUtil::IsDigestChanged file not changed");
+        return false;
+    }
+    DATA_STORAGE_LOGI("ParserUtil::IsDigestChanged file is changed");
+    preferencesUtil->SaveString(key + TEMP_SUFFIX, newHash);
+    return true;
+}
+
+void ParserUtil::RefreshDigest(const std::string &key)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::RefreshDigest preferencesUtil is nullptr!");
+        return;
+    }
+    std::string tempHash = preferencesUtil->ObtainString(key + TEMP_SUFFIX, DEFAULT_PREFERENCES_STRING_VALUE);
+    if (tempHash != DEFAULT_PREFERENCES_STRING_VALUE) {
+        preferencesUtil->SaveString(key, tempHash);
+        preferencesUtil->RemoveKey(key + TEMP_SUFFIX);
+        preferencesUtil->Refresh();
+    }
+}
+
+void ParserUtil::ClearTempDigest(const std::string &key)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::ClearTempDigest preferencesUtil is nullptr!");
+        return;
+    }
+    preferencesUtil->RemoveKey(key + TEMP_SUFFIX);
+    preferencesUtil->Refresh();
 }
 } // namespace Telephony
 } // namespace OHOS

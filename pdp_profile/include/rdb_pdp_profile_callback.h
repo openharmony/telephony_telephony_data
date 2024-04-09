@@ -41,6 +41,7 @@ private:
 private:
     const int VERSION_2 = 2;
     const int VERSION_3 = 3;
+    const int VERSION_4 = 4;
 };
 } // namespace Telephony
 } // namespace OHOS

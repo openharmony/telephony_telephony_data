@@ -48,6 +48,16 @@ public:
      */
     int ResetApn();
 
+    /**
+     * Init pdp_profile table data form config json file
+     *
+     * @param slotId slotId
+     * @param opkey opkey
+     * @param isNeedCheckFile is need Check File
+     * @return 0 is succeed else failed
+     */
+    int InitAPNDatabase(int slotId, const std::string &opkey, bool isNeedCheckFile);
+
 private:
     /**
      * Create pdp_profile table
@@ -64,10 +74,28 @@ private:
      */
     int CommitTransactionAction();
 
+    /**
+     * Is ApnDb need Update
+     *
+     * @param opkey opkey
+     * @param checksum checksum to compare
+     * @return bool Is ApnDb need Update
+     */
+    bool IsApnDbUpdateNeeded(const std::string &opkey, std::string &checksum);
+
+    /**
+     * Set the Checksum of ApnConf file
+     *
+     * @param opkey opkey
+     * @param checkSum checksum to set
+     * @return 0 is succeed else failed
+     */
+    int SetPreferApnConfChecksum(const std::string &opkey, std::string &checkSum);
+
 private:
     const std::string DB_NAME = "net.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;
-    const int VERSION = 3;
+    const int VERSION = 4;
 };
 } // namespace Telephony
 } // namespace OHOS

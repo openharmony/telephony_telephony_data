@@ -35,9 +35,9 @@ public:
     int OnCreate(NativeRdb::RdbStore &rdbStore) override;
     int OnOpen(NativeRdb::RdbStore &rdbStore) override;
 private:
-    void InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
-    void InitNumMatchData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
-    void InitEccData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
+    void InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName, const bool hashCheck);
+    void InitNumMatchData(NativeRdb::RdbStore &rdbStore, const std::string &tableName, const bool hashCheck);
+    void InitEccData(NativeRdb::RdbStore &rdbStore, const std::string &tableName, const bool hashCheck);
     int ClearData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
 };
 } // namespace Telephony

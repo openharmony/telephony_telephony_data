@@ -323,7 +323,7 @@ int DataStorageGtest::SmsDelete(const std::shared_ptr<DataShare::DataShareHelper
 
 int DataStorageGtest::PdpProfileInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile?simId=0");
     DataShare::DataShareValuesBucket value;
     value.Put(PdpProfileData::PROFILE_NAME, "frist_profile_name");
     value.Put(PdpProfileData::MCC, "460");
@@ -373,7 +373,7 @@ int DataStorageGtest::PdpProfileUpdate3(const std::shared_ptr<DataShare::DataSha
 
 int DataStorageGtest::PdpProfileUpdate4(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/reset");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile/reset?simId=0");
     DataShare::DataShareValuesBucket values;
     DataShare::DataSharePredicates predicates;
     return helper->Update(uri, predicates, values);
@@ -381,7 +381,7 @@ int DataStorageGtest::PdpProfileUpdate4(const std::shared_ptr<DataShare::DataSha
 
 int DataStorageGtest::PdpProfileSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile");
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pdp_profile?simId=0");
     std::vector<std::string> columns;
     DataShare::DataSharePredicates predicates;
     std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
