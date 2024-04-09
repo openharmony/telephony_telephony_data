@@ -29,7 +29,6 @@ class PreferencesUtil : public DelayedSingleton<PreferencesUtil> {
     DECLARE_DELAYED_SINGLETON(PreferencesUtil);
 
 public:
-    void UpdatePath(const std::string &path);
     int SaveString(const std::string &key, const std::string &value);
     std::string ObtainString(const std::string &key, const std::string &defValue);
     int SaveInt(const std::string &key, int value);
@@ -51,7 +50,7 @@ private:
     std::shared_ptr<NativePreferences::Preferences> GetProfiles(const std::string &path, int &errCode);
 
 private:
-    std::string path_ = "telephony_data_preferences.xml";
+    std::string path_ = "/data/storage/el1/database/telephony_data_preferences.xml";
     int errCode_ = NativePreferences::E_OK;
     const std::string error_ = "error";
 };

@@ -32,6 +32,7 @@ constexpr ErrCode CORE_DATA_STORAGE_ERR_OFFSET = ErrCodeOffset(SUBSYS_TELEPONY, 
 const int VERSION_NO_CHANGE = -2;
 const int DATA_STORAGE_ERROR = -1;
 const int DATA_STORAGE_ERR_PERMISSION_ERR = -3;
+const int FILE_HASH_NO_CHANGE = -4;
 const int DATA_STORAGE_SUCCESS = 0;
 enum class LoadProFileErrorType {
     OPEN_FILE_ERROR = CORE_DATA_STORAGE_ERR_OFFSET,

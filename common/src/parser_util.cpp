@@ -43,6 +43,7 @@
 #include "telephony_types.h"
 #include "values_bucket.h"
 #include "vector"
+#include "preferences_util.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -94,6 +95,8 @@ const int BYTE_LEN = 1024 * 1024;
 const int MAX_BYTE_LEN = 10 * 1024 * 1024;
 static constexpr const char *CUST_RULE_PATH_KEY = "const.telephony.rule_path";
 static constexpr const char *CUST_NETWORK_PATH_KEY = "const.telephony.network_path";
+const std::string DEFAULT_PREFERENCES_STRING_VALUE = "default_value";
+const std::string TEMP_SUFFIX = "_temp";
 
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 {
@@ -344,7 +347,7 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
     value.PutInt(OpKeyData::RULE_ID, bean.ruleId);
 }
 
-int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec)
+int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCheck)
 {
     char *content = nullptr;
     char buf[MAX_PATH_LEN];
@@ -362,6 +365,10 @@ int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec)
     if (content == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
+    if (hashCheck && !IsDigestChanged(path, NUM_MATCH_HASH)) {
+        free(content);
+        return FILE_HASH_NO_CHANGE;
     }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
@@ -412,7 +419,7 @@ void ParserUtil::ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, co
     value.PutInt(NumMatchData::NUM_MATCH_SHORT, bean.numMatchShort);
 }
 
-int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)
+int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck)
 {
     char *content = nullptr;
     char buf[MAX_PATH_LEN];
@@ -429,6 +436,10 @@ int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec)
     if (content == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
+    }
+    if (hashCheck && !IsDigestChanged(path, ECC_DATA_HASH)) {
+        free(content);
+        return FILE_HASH_NO_CHANGE;
     }
     const int contentLength = strlen(content);
     const std::string rawJson(content);
@@ -607,6 +618,52 @@ bool ParserUtil::IsNeedInsertToTable(Json::Value &content)
     const Json::String &string = fastWriter.write(content);
     std::string res(string.c_str());
     return DelayedRefSingleton<CoreServiceClient>::GetInstance().IsAllowedInsertApn(res);
+}
+
+bool ParserUtil::IsDigestChanged(const char *path, const std::string &key)
+{
+    std::string newHash;
+    ParserUtil util;
+    util.GetFileChecksum(path, newHash);
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::IsDigestChanged preferencesUtil is nullptr!");
+        return true;
+    }
+    std::string oldHash = preferencesUtil->ObtainString(key, DEFAULT_PREFERENCES_STRING_VALUE);
+    if (oldHash.compare(newHash) == 0) {
+        DATA_STORAGE_LOGI("ParserUtil::IsDigestChanged file not changed");
+        return false;
+    }
+    DATA_STORAGE_LOGI("ParserUtil::IsDigestChanged file is changed");
+    preferencesUtil->SaveString(key + TEMP_SUFFIX, newHash);
+    return true;
+}
+
+void ParserUtil::RefreshDigest(const std::string &key)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::RefreshDigest preferencesUtil is nullptr!");
+        return;
+    }
+    std::string tempHash = preferencesUtil->ObtainString(key + TEMP_SUFFIX, DEFAULT_PREFERENCES_STRING_VALUE);
+    if (tempHash != DEFAULT_PREFERENCES_STRING_VALUE) {
+        preferencesUtil->SaveString(key, tempHash);
+        preferencesUtil->RemoveKey(key + TEMP_SUFFIX);
+        preferencesUtil->Refresh();
+    }
+}
+
+void ParserUtil::ClearTempDigest(const std::string &key)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::ClearTempDigest preferencesUtil is nullptr!");
+        return;
+    }
+    preferencesUtil->RemoveKey(key + TEMP_SUFFIX);
+    preferencesUtil->Refresh();
 }
 } // namespace Telephony
 } // namespace OHOS

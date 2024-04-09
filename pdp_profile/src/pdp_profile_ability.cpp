@@ -78,10 +78,6 @@ void PdpProfileAbility::DoInit()
         initDatabaseDir = true;
         path.append("/");
         helper_.UpdateDbPath(path);
-        auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
-        if (preferencesUtil != nullptr) {
-            preferencesUtil->UpdatePath(path);
-        }
         int rdbInitCode = helper_.Init();
         if (rdbInitCode == NativeRdb::E_OK) {
             initRdbStore = true;
