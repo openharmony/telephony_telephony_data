@@ -155,7 +155,7 @@ int TelephonyDataShareStubImpl::Insert(const Uri &uri, const DataShareValuesBuck
 int TelephonyDataShareStubImpl::Update(const Uri &uri, const DataSharePredicates &predicates,
     const DataShareValuesBucket &value)
 {
-    DATA_STORAGE_LOGI("Update begin.");
+    DATA_STORAGE_LOGD("Update begin.");
     int ret = 0;
     auto extension = GetOwner(uri);
     if (extension == nullptr) {
@@ -163,7 +163,9 @@ int TelephonyDataShareStubImpl::Update(const Uri &uri, const DataSharePredicates
         return ret;
     }
     ret = extension->Update(uri, predicates, value);
-    DATA_STORAGE_LOGI("Update end successfully. ret: %{public}d", ret);
+    if (ret != Telephony::OPERATION_OK) {
+        DATA_STORAGE_LOGE("Update end failed. ret: %{public}d", ret);
+    }
     if (ret != Telephony::OPERATION_ERROR) {
         NotifyChange(uri);
     }

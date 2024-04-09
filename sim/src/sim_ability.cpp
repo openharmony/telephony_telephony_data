@@ -51,7 +51,7 @@ SimAbility::~SimAbility() {}
 
 SimAbility* SimAbility::Create()
 {
-    DATA_STORAGE_LOGI("SimAbility::Create begin.");
+    DATA_STORAGE_LOGD("SimAbility::Create begin.");
     auto self =  new SimAbility();
     self->DoInit();
     return self;
@@ -59,20 +59,20 @@ SimAbility* SimAbility::Create()
 
 static DataShare::DataShareExtAbility *TelephonyDataShareCreator(const std::unique_ptr<Runtime> &runtime)
 {
-    DATA_STORAGE_LOGI("sim TelephonyDataCreator::%{public}s begin.", __func__);
+    DATA_STORAGE_LOGD("sim TelephonyDataCreator::%{public}s begin.", __func__);
     return SimAbility::Create();
 }
 
 __attribute__((constructor)) void RegisterDataShareCreator()
 {
-    DATA_STORAGE_LOGI("TelephonyDataCreator::%{public}s", __func__);
+    DATA_STORAGE_LOGD("TelephonyDataCreator::%{public}s", __func__);
     DataShare::DataShareExtAbility::SetCreator(TelephonyDataShareCreator);
 }
 
 void SimAbility::DoInit()
 {
     if (initDatabaseDir && initRdbStore) {
-        DATA_STORAGE_LOGI("DoInit has done");
+        DATA_STORAGE_LOGD("DoInit has done");
         return;
     }
     auto abilityContext = AbilityRuntime::Context::GetApplicationContext();
@@ -83,7 +83,6 @@ void SimAbility::DoInit()
     // switch database dir to el1 for init before unlock
     abilityContext->SwitchArea(0);
     std::string path = abilityContext->GetDatabaseDir();
-    DATA_STORAGE_LOGI("GetDatabaseDir: %{public}s", path.c_str());
     if (!path.empty()) {
         initDatabaseDir = true;
         path.append("/");
@@ -102,7 +101,7 @@ void SimAbility::DoInit()
 
 sptr<IRemoteObject> SimAbility::OnConnect(const AAFwk::Want &want)
 {
-    DATA_STORAGE_LOGI("SimAbility %{public}s begin.", __func__);
+    DATA_STORAGE_LOGD("SimAbility %{public}s begin.", __func__);
     Extension::OnConnect(want);
     sptr<DataShare::TelephonyDataShareStubImpl> remoteObject =
         new (std::nothrow) DataShare::TelephonyDataShareStubImpl();
@@ -111,13 +110,13 @@ sptr<IRemoteObject> SimAbility::OnConnect(const AAFwk::Want &want)
         return nullptr;
     }
     remoteObject->SetSimAbility(std::static_pointer_cast<SimAbility>(shared_from_this()));
-    DATA_STORAGE_LOGI("SimAbility %{public}s end.", __func__);
+    DATA_STORAGE_LOGD("SimAbility %{public}s end.", __func__);
     return remoteObject->AsObject();
 }
 
 void SimAbility::OnStart(const AppExecFwk::Want &want)
 {
-    DATA_STORAGE_LOGI("SimAbility::OnStart");
+    DATA_STORAGE_LOGD("SimAbility::OnStart");
     Extension::OnStart(want);
     DoInit();
 }

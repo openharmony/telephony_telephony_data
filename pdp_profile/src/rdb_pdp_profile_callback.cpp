@@ -76,7 +76,7 @@ int RdbPdpProfileCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 
 int RdbPdpProfileCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 {
-    DATA_STORAGE_LOGI("RdbPdpProfileCallback::OnOpen");
+    DATA_STORAGE_LOGD("RdbPdpProfileCallback::OnOpen");
     return NativeRdb::E_OK;
 }
 

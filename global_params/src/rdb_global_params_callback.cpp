@@ -56,7 +56,7 @@ int RdbGlobalParamsCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 
 int RdbGlobalParamsCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 {
-    DATA_STORAGE_LOGI("RdbGlobalParamsCallback::OnOpen");
+    DATA_STORAGE_LOGD("RdbGlobalParamsCallback::OnOpen");
     InitData(rdbStore, TABLE_NUMBER_MATCH, true);
     InitData(rdbStore, TABLE_ECC_DATA, true);
     return NativeRdb::E_OK;

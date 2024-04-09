@@ -47,7 +47,7 @@ GlobalParamsAbility::~GlobalParamsAbility() {}
 
 GlobalParamsAbility* GlobalParamsAbility::Create()
 {
-    DATA_STORAGE_LOGI("GlobalParamsAbility::Create begin.");
+    DATA_STORAGE_LOGD("GlobalParamsAbility::Create begin.");
     auto self = new GlobalParamsAbility();
     self->DoInit();
     return self;
@@ -225,7 +225,7 @@ int GlobalParamsAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 GlobalParamsUriType GlobalParamsAbility::ParseUriType(Uri &uri)
 {
-    DATA_STORAGE_LOGI("GlobalParamsAbility::ParseUriType start");
+    DATA_STORAGE_LOGD("GlobalParamsAbility::ParseUriType start");
     GlobalParamsUriType globalParamsUriType = GlobalParamsUriType::UNKNOW;
     std::string uriPath = uri.ToString();
     if (!uriPath.empty()) {
@@ -236,8 +236,8 @@ GlobalParamsUriType GlobalParamsAbility::ParseUriType(Uri &uri)
             auto it = g_globalParamsTypeMap.find(path);
             if (it != g_globalParamsTypeMap.end()) {
                 globalParamsUriType = it->second;
-                DATA_STORAGE_LOGI("GlobalParamsAbility::ParseUriType##globalParamsUriType = %{public}d",
-                    globalParamsUriType);
+                DATA_STORAGE_LOGD(
+                    "GlobalParamsAbility::ParseUriType##globalParamsUriType = %{public}d", globalParamsUriType);
             }
         }
     }
