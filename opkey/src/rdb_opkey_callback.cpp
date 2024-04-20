@@ -107,7 +107,7 @@ int64_t RdbOpKeyCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::str
         return DATA_STORAGE_ERROR;
     }
     SetPreferOpKeyConfChecksum(checksum);
-    DATA_STORAGE_LOGI("InitData::end insert data: %{public}zu", outInsertNum);
+    DATA_STORAGE_LOGI("InitData::end insert data: %{public}s", std::to_string(outInsertNum).c_str());
     return outInsertNum;
 }
 
