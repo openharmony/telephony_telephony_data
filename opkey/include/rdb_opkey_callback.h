@@ -30,14 +30,16 @@ public:
     explicit RdbOpKeyCallback(const std::vector<std::string> &createTableVec) : RdbBaseCallBack(createTableVec) {}
     ~RdbOpKeyCallback() = default;
 
+    static int64_t InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
     int OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion) override;
     int OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVersion, int targetVersion) override;
     int OnCreate(NativeRdb::RdbStore &rdbStore) override;
     int OnOpen(NativeRdb::RdbStore &rdbStore) override;
 
 private:
-    void InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName);
-    int ClearData(NativeRdb::RdbStore &rdbStore);
+    static int ClearData(NativeRdb::RdbStore &rdbStore);
+    static bool IsOpKeyDbUpdateNeeded(std::string &checkSum);
+    static int SetPreferOpKeyConfChecksum(std::string &checkSum);
 };
 } // namespace Telephony
 } // namespace OHOS
