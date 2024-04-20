@@ -48,13 +48,13 @@ int RdbOpKeyCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
     DATA_STORAGE_LOGI("RdbOpKeyCallback::OnCreate");
     RdbBaseCallBack::OnCreate(rdbStore);
+    InitData(rdbStore, TABLE_OPKEY_INFO);
     return NativeRdb::E_OK;
 }
 
 int RdbOpKeyCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
 {
     DATA_STORAGE_LOGI("RdbOpKeyCallback::OnOpen");
-    InitData(rdbStore, TABLE_OPKEY_INFO);
     return NativeRdb::E_OK;
 }
 
