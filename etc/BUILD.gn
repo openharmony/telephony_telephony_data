@@ -14,14 +14,14 @@ import("//build/ohos.gni")
 
 ## Install pdp_profile.json to /system/etc/telephony/pdp_profile.json
 if (!(defined(global_parts_info) &&
-    defined(global_parts_info.telephony_telephony_enhanced) &&
-    global_parts_info.telephony_telephony_enhanced)) {
-    ohos_prebuilt_etc("pdp_profile_default") {
-      source = "pdp_profile.json"
-      relative_install_dir = "./telephony"
-      part_name = "telephony_data"
-      subsystem_name = "telephony"
-    }
+      defined(global_parts_info.telephony_telephony_enhanced) &&
+      global_parts_info.telephony_telephony_enhanced)) {
+  ohos_prebuilt_etc("pdp_profile_default") {
+    source = "pdp_profile.json"
+    relative_install_dir = "./telephony"
+    part_name = "telephony_data"
+    subsystem_name = "telephony"
+  }
 }
 
 ohos_prebuilt_etc("ecc_data_default") {
@@ -47,8 +47,8 @@ ohos_prebuilt_etc("opkey_info_default") {
 
 group("pdp_profile") {
   if (!(defined(global_parts_info) &&
-    defined(global_parts_info.telephony_telephony_enhanced) &&
-    global_parts_info.telephony_telephony_enhanced)) {
+        defined(global_parts_info.telephony_telephony_enhanced) &&
+        global_parts_info.telephony_telephony_enhanced)) {
     deps = [ ":pdp_profile_default" ]
   }
 }
