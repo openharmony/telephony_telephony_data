@@ -40,7 +40,8 @@ public:
     RdbBaseHelper() {};
     ~RdbBaseHelper() = default;
     int Insert(int64_t &id, const NativeRdb::ValuesBucket &initialValues, const std::string &table);
-    int BatchInsert(int64_t &id, const NativeRdb::ValuesBucket &initialValues, const std::string &table);
+    int BatchInsert(int64_t &outInsertNum, const std::vector<NativeRdb::ValuesBucket> &initialBatchValues,
+        const std::string &table);
     int Update(int &changedRows, const std::string &table, const NativeRdb::ValuesBucket &values,
         const std::string &whereClause = "",
         const std::vector<std::string> &whereArgs = std::vector<std::string>());
