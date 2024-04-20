@@ -19,6 +19,7 @@
 #include "data_storage_log_wrapper.h"
 #include "opkey_data.h"
 #include "parser_util.h"
+#include "preferences_util.h"
 #include "rdb_errno.h"
 #include "rdb_store.h"
 #include "string"
@@ -58,30 +59,56 @@ int RdbOpKeyCallback::OnOpen(NativeRdb::RdbStore &rdbStore)
     return NativeRdb::E_OK;
 }
 
-void RdbOpKeyCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
+int64_t RdbOpKeyCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::string &tableName)
 {
     DATA_STORAGE_LOGI("InitData::start");
     ParserUtil util;
     std::vector<OpKey> vec;
-    if (!util.ParseFromCustomSystem(vec)) {
+    std::string path;
+    util.GetOpKeyFilePath(path);
+    if (path.empty()) {
+        DATA_STORAGE_LOGE("InitData fail! path empty!");
+        return DATA_STORAGE_ERROR;
+    }
+    std::string checksum;
+    util.GetFileChecksum(path.c_str(), checksum);
+    if (checksum.empty()) {
+        DATA_STORAGE_LOGE("InitData fail! checksum is null!");
+        return DATA_STORAGE_ERROR;
+    }
+    if (!IsOpKeyDbUpdateNeeded(checksum)) {
+        return VERSION_NO_CHANGE;
+    }
+
+    if (util.ParserOpKeyJson(vec, path.c_str()) != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("Parse OpKey info fail");
-        return;
+        return DATA_STORAGE_ERROR;
     }
     ClearData(rdbStore);
-    int32_t result = rdbStore.BeginTransaction();
+    int result = rdbStore.BeginTransaction();
     if (result != NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("BeginTransaction error!");
-        return;
+        return DATA_STORAGE_ERROR;
     }
     DATA_STORAGE_LOGD("InitData size = %{public}zu", vec.size());
+    std::vector<NativeRdb::ValuesBucket> valuesBuckets;
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
         util.ParserOpKeyToValuesBucket(value, vec[i]);
-        int64_t id;
-        rdbStore.Insert(id, tableName, value);
+        valuesBuckets.push_back(value);
     }
-    rdbStore.Commit();
-    DATA_STORAGE_LOGI("InitData::end");
+    int64_t outInsertNum;
+    rdbStore.BatchInsert(outInsertNum, tableName, valuesBuckets);
+    if (outInsertNum > 0) {
+        result = rdbStore.Commit();
+    }
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("Commit error!");
+        return DATA_STORAGE_ERROR;
+    }
+    SetPreferOpKeyConfChecksum(checksum);
+    DATA_STORAGE_LOGI("InitData::end insert data: %{public}zu", outInsertNum);
+    return outInsertNum;
 }
 
 int RdbOpKeyCallback::ClearData(NativeRdb::RdbStore &rdbStore)
@@ -89,6 +116,28 @@ int RdbOpKeyCallback::ClearData(NativeRdb::RdbStore &rdbStore)
     std::string sql;
     sql.append("delete from ").append(TABLE_OPKEY_INFO);
     return rdbStore.ExecuteSql(sql);
+}
+
+bool RdbOpKeyCallback::IsOpKeyDbUpdateNeeded(std::string &checkSum)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil != nullptr) {
+        std::string lastCheckSum = preferencesUtil->ObtainString(OPKEY_CONF_CHECKSUM, "");
+        if (checkSum.compare(lastCheckSum) == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int RdbOpKeyCallback::SetPreferOpKeyConfChecksum(std::string &checkSum)
+{
+    auto preferencesUtil = DelayedSingleton<PreferencesUtil>::GetInstance();
+    if (preferencesUtil == nullptr) {
+        DATA_STORAGE_LOGE("preferencesUtil is nullptr!");
+        return NativePreferences::E_ERROR;
+    }
+    return preferencesUtil->SaveString(OPKEY_CONF_CHECKSUM, checkSum);
 }
 } // namespace Telephony
 } // namespace OHOS
