@@ -42,7 +42,11 @@ ohos_prebuilt_etc("opkey_info_default") {
 }
 
 group("pdp_profile") {
-  deps = [ ":pdp_profile_default" ]
+  if (!(defined(global_parts_info) &&
+        defined(global_parts_info.telephony_telephony_enhanced) &&
+        global_parts_info.telephony_telephony_enhanced)) {
+    deps = [ ":pdp_profile_default" ]
+  }
 }
 
 group("global_params_config") {
