@@ -137,7 +137,7 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOwner(const 
 
 int TelephonyDataShareStubImpl::Insert(const Uri &uri, const DataShareValuesBucket &value)
 {
-    DATA_STORAGE_LOGI("Insert begin.");
+    DATA_STORAGE_LOGD("Insert begin.");
     int ret = 0;
     auto extension = GetOwner(uri);
     if (extension == nullptr) {
