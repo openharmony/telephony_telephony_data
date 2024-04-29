@@ -16,15 +16,10 @@
 #ifndef DATA_STORAGE_PDP_OPERATOR_PARSER_UTIL_H
 #define DATA_STORAGE_PDP_OPERATOR_PARSER_UTIL_H
 
-#include <json/json.h>
-
+#include "cJSON.h"
 #include "iosfwd"
 #include "rdb_store.h"
 #include "string"
-
-namespace Json {
-class Value;
-}
 
 namespace OHOS {
 namespace NativeRdb {
@@ -43,17 +38,17 @@ public:
     int GetFileChecksum(const char *path, std::string &checkSum);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec);
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *filePath);
-    void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root);
+    void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, cJSON *itemRoots);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
     int GetOpKeyFilePath(std::string &path);
     int ParserOpKeyJson(std::vector<OpKey> &vec, const char *path);
-    void ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root);
+    void ParserOpKeyInfos(std::vector<OpKey> &vec, cJSON *itemRoots);
     void ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const OpKey &bean);
     int ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCheck);
-    void ParserNumMatchInfos(std::vector<NumMatch> &vec, Json::Value &root);
+    void ParserNumMatchInfos(std::vector<NumMatch> &vec, cJSON *itemRoots);
     void ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, const NumMatch &bean);
     int ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck);
-    void ParserEccDataInfos(std::vector<EccNum> &vec, Json::Value &root);
+    void ParserEccDataInfos(std::vector<EccNum> &vec, cJSON *itemRoots);
     void ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean);
     void RefreshDigest(const std::string &key);
     void ClearTempDigest(const std::string &key);
@@ -72,12 +67,14 @@ public:
     };
 
 private:
-    std::string ParseString(const Json::Value &value);
+    int32_t ParseInt(const cJSON *value);
+    std::string ParseString(const cJSON *value);
+    std::string ParseAsString(const cJSON *value);
     int LoaderJsonFile(char *&content, const char *path) const;
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
     std::string GetCustFile(const char *&file, const char *key);
-    bool IsNeedInsertToTable(Json::Value &content);
+    bool IsNeedInsertToTable(cJSON *value);
     bool IsDigestChanged(const char *path, const std::string &key);
 };
 } // namespace Telephony

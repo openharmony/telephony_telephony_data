@@ -32,9 +32,6 @@
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "global_params_data.h"
-#include "json/config.h"
-#include "json/reader.h"
-#include "json/value.h"
 #include "memory"
 #include "new"
 #include "opkey_data.h"
@@ -120,70 +117,75 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *p
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
-    const int contentLength = strlen(content);
-    const std::string rawJson(content);
+
+    cJSON *root = cJSON_Parse(content);
     free(content);
     content = nullptr;
-    JSONCPP_STRING err;
-    Json::Value root;
-    Json::CharReaderBuilder builder;
-    Json::CharReader *reader(builder.newCharReader());
-    if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson reader is error!");
-        delete reader;
+    if (root == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson root is error!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
-    delete reader;
-    reader = nullptr;
-    Json::Value itemRoots = root[ITEM_OPERATOR_INFOS];
-    if (itemRoots.size() == 0) {
+
+    cJSON *itemRoots = cJSON_GetObjectItem(root, ITEM_OPERATOR_INFOS);
+    if (itemRoots == nullptr || !cJSON_IsArray(itemRoots) || cJSON_GetArraySize(itemRoots) <= 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson itemRoots size == 0!");
+        cJSON_Delete(root);
+        itemRoots = nullptr;
+        root = nullptr;
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserPdpProfileInfos(vec, itemRoots);
+    cJSON_Delete(root);
+    itemRoots = nullptr;
+    root = nullptr;
     return DATA_STORAGE_SUCCESS;
 }
 
-void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, Json::Value &root)
+void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, cJSON *itemRoots)
 {
-    for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
-        Json::Value itemRoot = root[i];
-        if (!IsNeedInsertToTable(itemRoot)) {
+    cJSON *itemRoot = nullptr;
+    for (int32_t i = 0; i < cJSON_GetArraySize(itemRoots); i++) {
+        itemRoot = cJSON_GetArrayItem(itemRoots, i);
+        if (itemRoot == nullptr || !IsNeedInsertToTable(itemRoot)) {
             continue;
         }
         PdpProfile bean;
-        bean.profileName = ParseString(itemRoot[ITEM_OPERATOR_NAME]);
-        bean.authUser = ParseString(itemRoot[ITEM_AUTH_USER]);
-        bean.authPwd = ParseString(itemRoot[ITEM_AUTH_PWD]);
-        std::string authTypeStr = ParseString(itemRoot[ITEM_AUTH_TYPE]);
+        bean.profileName = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_OPERATOR_NAME));
+        bean.authUser = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_USER));
+        bean.authPwd = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_PWD));
+        std::string authTypeStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_TYPE));
         bean.authType = authTypeStr.empty() ? 0 : atoi(authTypeStr.c_str());
-        bean.mcc = ParseString(itemRoot[ITEM_MCC]);
-        bean.mnc = ParseString(itemRoot[ITEM_MNC]);
-        bean.apn = ParseString(itemRoot[ITEM_APN]);
-        bean.apnTypes = ParseString(itemRoot[ITEM_APN_TYPES]);
-        bean.mmsIpAddress = ParseString(itemRoot[ITEM_MMS_IP_ADDRESS]);
-        bean.proxyIpAddress = ParseString(itemRoot[ITEM_IP_ADDRESS]);
-        bean.homeUrl = ParseString(itemRoot[ITEM_HOME_URL]);
-        bean.mvnoType = ParseString(itemRoot[ITEM_MVNO_TYPE]);
-        bean.mvnoMatchData = ParseString(itemRoot[ITEM_MVNO_MATCH_DATA]);
-        bean.server = ParseString(itemRoot[ITEM_SERVER]);
-        std::string editedStr = ParseString(itemRoot[ITEM_EDITED_STATUS]);
+        bean.mcc = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MCC));
+        bean.mnc = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MNC));
+        bean.apn = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_APN));
+        bean.apnTypes = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_APN_TYPES));
+        bean.mmsIpAddress = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MMS_IP_ADDRESS));
+        bean.proxyIpAddress = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_IP_ADDRESS));
+        bean.homeUrl = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_HOME_URL));
+        bean.mvnoType = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MVNO_TYPE));
+        bean.mvnoMatchData = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MVNO_MATCH_DATA));
+        bean.server = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_SERVER));
+        std::string editedStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_EDITED_STATUS));
         bean.edited = editedStr.empty() ? 0 : atoi(editedStr.c_str());
-        std::string bearingStr = ParseString(itemRoot[ITEM_BEARER]);
+        std::string bearingStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_BEARER));
         bean.bearingSystemType = bearingStr.empty() ? 0 : atoi(bearingStr.c_str());
-        std::string isRoamingApnStr = ParseString(itemRoot[ITEM_IS_ROAMING_APN]);
+        std::string isRoamingApnStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_IS_ROAMING_APN));
         bean.isRoamingApn = isRoamingApnStr.empty() ? 0 : atoi(isRoamingApnStr.c_str());
-        std::string pdpProtocolStr = ParseString(itemRoot[ITEM_APN_PROTOCOL]);
+        std::string pdpProtocolStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_APN_PROTOCOL));
         bean.pdpProtocol = pdpProtocolStr.empty() ? "IP" : pdpProtocolStr;
-        std::string roamPdpProtocolStr = ParseString(itemRoot[ITEM_ROAMING_PROTOCOL]);
+        std::string roamPdpProtocolStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_ROAMING_PROTOCOL));
         bean.roamPdpProtocol = roamPdpProtocolStr.empty() ? "IP" : roamPdpProtocolStr;
         vec.push_back(bean);
     }
+    itemRoot = nullptr;
 }
 
-std::string ParserUtil::ParseString(const Json::Value &value)
+std::string ParserUtil::ParseString(const cJSON *value)
 {
-    return value.isString() ? value.asString() : "";
+    if (value != nullptr && value->type == cJSON_String && value->valuestring != nullptr) {
+        return value->valuestring;
+    }
+    return "";
 }
 
 void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean)
@@ -237,69 +239,59 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
-    const int contentLength = strlen(content);
-    const std::string rawJson(content);
+
+    cJSON *root = cJSON_Parse(content);
     free(content);
     content = nullptr;
-    JSONCPP_STRING err;
-    Json::Value root;
-    Json::CharReaderBuilder builder;
-    Json::CharReader *reader(builder.newCharReader());
-    if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos reader is error!");
-        delete reader;
+    if (root == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos root is error!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
-    delete reader;
-    reader = nullptr;
-    Json::Value itemRoots = root[ITEM_OPERATOR_ID];
-    if (itemRoots.size() == 0) {
+    cJSON *itemRoots = cJSON_GetObjectItem(root, ITEM_OPERATOR_ID);
+    if (itemRoots == nullptr || !cJSON_IsArray(itemRoots) || cJSON_GetArraySize(itemRoots) <= 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos itemRoots size == 0!");
+        cJSON_Delete(root);
+        itemRoots = nullptr;
+        root = nullptr;
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserOpKeyInfos(vec, itemRoots);
+    cJSON_Delete(root);
+    itemRoots = nullptr;
+    root = nullptr;
     return DATA_STORAGE_SUCCESS;
 }
 
-void ParserUtil::ParserOpKeyInfos(std::vector<OpKey> &vec, Json::Value &root)
+void ParserUtil::ParserOpKeyInfos(std::vector<OpKey> &vec, cJSON *itemRoots)
 {
-    for (int i = 0; i < (int)root.size(); i++) {
-        Json::Value itemRoot = root[i];
+    cJSON *itemRoot = nullptr;
+    cJSON *ruleRoot = nullptr;
+    for (int i = 0; i < cJSON_GetArraySize(itemRoots); i++) {
+        itemRoot = cJSON_GetArrayItem(itemRoots, i);
+        if (itemRoot == nullptr) {
+            continue;
+        }
         OpKey bean;
-        Json::Value ruleRoot = itemRoot[ITEM_RULE];
-        if (ruleRoot[ITEM_MCCMNC].isString()) {
-            bean.mccmnc = ruleRoot[ITEM_MCCMNC].asString();
+        ruleRoot = cJSON_GetObjectItem(itemRoot, ITEM_RULE);
+        if (ruleRoot != nullptr) {
+            bean.mccmnc = ParseString(cJSON_GetObjectItem(ruleRoot, ITEM_MCCMNC));
+            bean.gid1 = ParseString(cJSON_GetObjectItem(ruleRoot, ITEM_GID_ONE));
+            bean.gid2 = ParseString(cJSON_GetObjectItem(ruleRoot, ITEM_GID_TWO));
+            bean.imsi = ParseString(cJSON_GetObjectItem(ruleRoot, ITEM_IMSI));
+            bean.spn = ParseString(cJSON_GetObjectItem(ruleRoot, ITEM_SPN));
+            bean.iccid = ParseString(cJSON_GetObjectItem(ruleRoot, ITEM_ICCID));
         }
-        if (ruleRoot[ITEM_GID_ONE].isString()) {
-            bean.gid1 = ruleRoot[ITEM_GID_ONE].asString();
-        }
-        if (ruleRoot[ITEM_GID_TWO].isString()) {
-            bean.gid2 = ruleRoot[ITEM_GID_TWO].asString();
-        }
-        if (ruleRoot[ITEM_IMSI].isString()) {
-            bean.imsi = ruleRoot[ITEM_IMSI].asString();
-        }
-        if (ruleRoot[ITEM_SPN].isString()) {
-            bean.spn = ruleRoot[ITEM_SPN].asString();
-        }
-        if (ruleRoot[ITEM_ICCID].isString()) {
-            bean.iccid = ruleRoot[ITEM_ICCID].asString();
-        }
-        if (itemRoot[ITEM_OPERATOR_NAME_OPKEY].isString()) {
-            bean.operatorName = itemRoot[ITEM_OPERATOR_NAME_OPKEY].asString();
-        }
+        bean.operatorName = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_OPERATOR_NAME_OPKEY));
         if (bean.operatorName.empty()) {
             bean.operatorName = "COMMON";
         }
-        if (itemRoot[ITEM_OPERATOR_KEY].isString()) {
-            bean.operatorKey = itemRoot[ITEM_OPERATOR_KEY].asString();
-        }
-        if (itemRoot[ITEM_OPERATOR_KEY_EXT].isString()) {
-            bean.operatorKeyExt = itemRoot[ITEM_OPERATOR_KEY_EXT].asString();
-        }
+        bean.operatorKey = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_OPERATOR_KEY));
+        bean.operatorKeyExt = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_OPERATOR_KEY_EXT));
         bean.ruleId = GetRuleId(bean);
         vec.push_back(bean);
     }
+    itemRoot = nullptr;
+    ruleRoot = nullptr;
 }
 
 int ParserUtil::GetRuleId(OpKey &bean)
@@ -363,41 +355,63 @@ int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCh
         free(content);
         return FILE_HASH_NO_CHANGE;
     }
-    const int contentLength = strlen(content);
-    const std::string rawJson(content);
+    cJSON *root = cJSON_Parse(content);
     free(content);
     content = nullptr;
-    JSONCPP_STRING err;
-    Json::Value root;
-    Json::CharReaderBuilder builder;
-    Json::CharReader *reader(builder.newCharReader());
-    if (!reader->parse(rawJson.c_str(), rawJson.c_str() +contentLength, &root, &err)) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson reader is error!\n");
+    if (root == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson root is error!\n");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
-    delete reader;
-    reader = nullptr;
-    Json::Value itemRoots = root[ITEM_NUM_MATCH_INFOS];
-    if (itemRoots.size() == 0) {
+    cJSON *itemRoots = cJSON_GetObjectItem(root, ITEM_NUM_MATCH_INFOS);
+    if (itemRoots == nullptr || !cJSON_IsArray(itemRoots) || cJSON_GetArraySize(itemRoots) <= 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson itemRoots size == 0!\n");
+        cJSON_Delete(root);
+        itemRoots = nullptr;
+        root = nullptr;
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserNumMatchInfos(vec, itemRoots);
+    cJSON_Delete(root);
+    itemRoots = nullptr;
+    root = nullptr;
     return DATA_STORAGE_SUCCESS;
 }
 
-void ParserUtil::ParserNumMatchInfos(std::vector<NumMatch> &vec, Json::Value &root)
+void ParserUtil::ParserNumMatchInfos(std::vector<NumMatch> &vec, cJSON *itemRoots)
 {
-    for (int32_t i = 0; i < static_cast<int32_t>(root.size()); i++) {
-        Json::Value itemRoot = root[i];
+    cJSON *itemRoot = nullptr;
+    for (int32_t i = 0; i < cJSON_GetArraySize(itemRoots); i++) {
+        itemRoot = cJSON_GetArrayItem(itemRoots, i);
+        if (itemRoot == nullptr) {
+            continue;
+        }
         NumMatch bean;
-        bean.name = itemRoot[ITEM_NAME].asString();
-        bean.mcc = itemRoot[ITEM_MCC].asString();
-        bean.mnc = itemRoot[ITEM_MNC].asString();
-        bean.numMatch = itemRoot[ITEM_NUM_MATCH].asInt();
-        bean.numMatchShort = itemRoot[ITEM_NUM_MATCH_SHORT].asInt();
+        bean.name = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_NAME));
+        bean.mcc = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_MCC));
+        bean.mnc = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_MNC));
+        bean.numMatch = ParseInt(cJSON_GetObjectItem(itemRoot, ITEM_NUM_MATCH));
+        bean.numMatchShort = ParseInt(cJSON_GetObjectItem(itemRoot, ITEM_NUM_MATCH_SHORT));
         vec.push_back(bean);
     }
+    itemRoot = nullptr;
+}
+
+std::string ParserUtil::ParseAsString(const cJSON *value)
+{
+    if (value != nullptr && value->type == cJSON_String && value->valuestring != nullptr) {
+        return value->valuestring;
+    } else if (value != nullptr && value->type == cJSON_Number) {
+        return std::to_string(static_cast<int64_t>(cJSON_GetNumberValue(value)));
+    }
+    return "";
+}
+
+int32_t ParserUtil::ParseInt(const cJSON *value)
+{
+    if (value != nullptr && value->type == cJSON_Number) {
+        return value->valueint;
+    }
+    return 0;
 }
 
 void ParserUtil::ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, const NumMatch &bean)
@@ -434,44 +448,48 @@ int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck
         free(content);
         return FILE_HASH_NO_CHANGE;
     }
-    const int contentLength = strlen(content);
-    const std::string rawJson(content);
+    cJSON *root = cJSON_Parse(content);
     free(content);
     content = nullptr;
-    JSONCPP_STRING err;
-    Json::Value root;
-    Json::CharReaderBuilder builder;
-    Json::CharReader *reader(builder.newCharReader());
-    if (!reader->parse(rawJson.c_str(), rawJson.c_str() + contentLength, &root, &err)) {
-        DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson reader is error!");
-        delete reader;
+    if (root == nullptr) {
+        DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson root is error!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
-    delete reader;
-    reader = nullptr;
-    Json::Value itemRoots = root[ITEM_OPERATOR_INFOS];
-    if (itemRoots.size() == 0) {
+
+    cJSON *itemRoots = cJSON_GetObjectItem(root, ITEM_OPERATOR_INFOS);
+    if (itemRoots == nullptr || !cJSON_IsArray(itemRoots) || cJSON_GetArraySize(itemRoots) <= 0) {
         DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson itemRoots size == 0!");
+        cJSON_Delete(root);
+        itemRoots = nullptr;
+        root = nullptr;
         return static_cast<int>(LoadProFileErrorType::ITEM_SIZE_IS_NULL);
     }
     ParserEccDataInfos(vec, itemRoots);
+    cJSON_Delete(root);
+    itemRoots = nullptr;
+    root = nullptr;
     return DATA_STORAGE_SUCCESS;
 }
 
-void ParserUtil::ParserEccDataInfos(std::vector<EccNum> &vec, Json::Value &roots)
+void ParserUtil::ParserEccDataInfos(std::vector<EccNum> &vec, cJSON *itemRoots)
 {
-    for (int i = 0; i < static_cast<int>(roots.size()); i++) {
-        Json::Value itemRoot = roots[i];
+    cJSON *itemRoot = nullptr;
+    for (int i = 0; i < cJSON_GetArraySize(itemRoots); i++) {
+        cJSON *itemRoot = cJSON_GetArrayItem(itemRoots, i);
+        if (itemRoot == nullptr) {
+            continue;
+        }
         EccNum bean;
-        bean.name = itemRoot[ITEM_NAME].asString();
-        bean.mcc = itemRoot[ITEM_MCC].asString();
-        bean.mnc = itemRoot[ITEM_MNC].asString();
-        bean.numeric = itemRoot[ITEM_NUMERIC].asString();
-        bean.ecc_withcard = itemRoot[ITEM_ECC_WITH_CARD].asString();
-        bean.ecc_nocard = itemRoot[ITEM_ECC_NO_CARD].asString();
-        bean.ecc_fake = itemRoot[ITEM_ECC_FAKE].asString();
+        bean.name = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_NAME));
+        bean.mcc = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_MCC));
+        bean.mnc = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_MNC));
+        bean.numeric = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_NUMERIC));
+        bean.ecc_withcard = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_ECC_WITH_CARD));
+        bean.ecc_nocard = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_ECC_NO_CARD));
+        bean.ecc_fake = ParseAsString(cJSON_GetObjectItem(itemRoot, ITEM_ECC_FAKE));
         vec.push_back(bean);
     }
+    itemRoot = nullptr;
 }
 
 void ParserUtil::ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean)
@@ -602,14 +620,18 @@ int ParserUtil::GetFileChecksum(const char *path, std::string &checkSum)
     return OPERATION_OK;
 }
 
-bool ParserUtil::IsNeedInsertToTable(Json::Value &content)
+bool ParserUtil::IsNeedInsertToTable(cJSON *value)
 {
-    if (content.empty()) {
+    if (value == nullptr || cJSON_GetObjectItem(value, ITEM_APN) == nullptr) {
         return false;
     }
-    Json::FastWriter fastWriter;
-    const Json::String &string = fastWriter.write(content);
-    std::string res(string.c_str());
+    char *tempChar = cJSON_PrintUnformatted(value);
+    if (tempChar == nullptr) {
+        return false;
+    }
+    std::string res = tempChar;
+    free(tempChar);
+    tempChar = nullptr;
     return DelayedRefSingleton<CoreServiceClient>::GetInstance().IsAllowedInsertApn(res);
 }
 
