@@ -98,8 +98,8 @@ int64_t RdbOpKeyCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::str
         valuesBuckets.push_back(value);
     }
     int64_t outInsertNum;
-    rdbStore.BatchInsert(outInsertNum, tableName, valuesBuckets);
-    if (outInsertNum > 0) {
+    result = rdbStore.BatchInsert(outInsertNum, tableName, valuesBuckets);
+    if (result == NativeRdb::E_OK) {
         result = rdbStore.Commit();
     }
     if (result != NativeRdb::E_OK) {
