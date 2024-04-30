@@ -58,6 +58,7 @@ config("telephony_data_config") {
   include_dirs = [
     "common/include",
     "opkey/include",
+    "opkey_version/include",
     "pdp_profile/include",
     "sim/include",
     "sms_mms/include",
@@ -86,6 +87,8 @@ ohos_shared_library("tel_telephony_data") {
     "opkey/src/opkey_ability.cpp",
     "opkey/src/rdb_opkey_callback.cpp",
     "opkey/src/rdb_opkey_helper.cpp",
+    "opkey_version/src/opkey_version_ability.cpp",
+    "opkey_version/src/opkey_version_result_set_bridge.cpp",
     "pdp_profile/src/pdp_profile_ability.cpp",
     "pdp_profile/src/rdb_pdp_profile_callback.cpp",
     "pdp_profile/src/rdb_pdp_profile_helper.cpp",

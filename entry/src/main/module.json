@@ -69,6 +69,17 @@
         "uri": "datashare://com.ohos.globalparamsability",
         "visible": true,
         "srcLanguage": "c++"
+      },
+      {
+        "name": "OpkeyVersionAbility",
+        "srcEntrance": "./ets/DataShareExtAbility/DataShareExtAbility.ts",
+        "description": "dataability_description",
+        "readPermission": "ohos.permission.GET_TELEPHONY_STATE",
+        "writePermission": "ohos.permission.SET_TELEPHONY_STATE",
+        "type": "dataShare",
+        "uri": "datashare://com.ohos.opkeyversionability",
+        "visible": true,
+        "srcLanguage": "c++"
       }
     ]
   }

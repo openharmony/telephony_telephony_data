@@ -58,6 +58,7 @@ private:
     std::shared_ptr<DataShareExtAbility> GetSimAbility();
     std::shared_ptr<DataShareExtAbility> GetSmsMmsAbility();
     std::shared_ptr<DataShareExtAbility> GetGlobalParamsAbility();
+    std::shared_ptr<DataShareExtAbility> GetOpkeyVersionAbility();
 
 private:
     std::shared_ptr<DataShareExtAbility> telephonyDataAbility_ = nullptr;
@@ -66,6 +67,7 @@ private:
     std::shared_ptr<DataShareExtAbility> simAbility_ = nullptr;
     std::shared_ptr<DataShareExtAbility> smsMmsAbility_ = nullptr;
     std::shared_ptr<DataShareExtAbility> globalParamsAbility_ = nullptr;
+    std::shared_ptr<DataShareExtAbility> opkeyVersionAbility_ = nullptr;
     std::mutex opKeyMutex_;
     std::mutex pdpProfileMutex_;
     std::mutex simMutex_;

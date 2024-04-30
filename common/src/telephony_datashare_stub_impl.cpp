@@ -22,7 +22,9 @@
 #include "sim_ability.h"
 #include "sms_mms_ability.h"
 #include "global_params_ability.h"
+#include "opkey_version_ability.h"
 #include "telephony_datashare_stub_impl.h"
+
 
 namespace OHOS {
 namespace DataShare {
@@ -109,6 +111,14 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetGlobalParams
     return globalParamsAbility_;
 }
 
+std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOpkeyVersionAbility()
+{
+    if (opkeyVersionAbility_ == nullptr) {
+        opkeyVersionAbility_.reset(OpkeyVersionAbility::Create());
+    }
+    return opkeyVersionAbility_;
+}
+
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOwner(const Uri &uri)
 {
     OHOS::Uri uriTemp = uri;
@@ -132,6 +142,11 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOwner(const 
     if (path.find("com.ohos.globalparamsability") != std::string::npos) {
         return GetGlobalParamsAbility();
     }
+#ifdef OHOS_BUILD_ENABLE_TELEPHONY_EXT
+    if (path.find("com.ohos.opkeyversionability") != std::string::npos) {
+        return GetOpkeyVersionAbility();
+    }
+#endif
     return nullptr;
 }
 
