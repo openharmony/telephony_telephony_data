@@ -33,7 +33,6 @@ OpkeyVersionAbility::~OpkeyVersionAbility() {}
 
 OpkeyVersionAbility* OpkeyVersionAbility::Create()
 {
-    DATA_STORAGE_LOGI("start");
     auto self = new OpkeyVersionAbility();
     return self;
 }
@@ -42,7 +41,7 @@ std::shared_ptr<DataShare::DataShareResultSet> OpkeyVersionAbility::Query(const 
     const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
-    DATA_STORAGE_LOGI("start");
+    DATA_STORAGE_LOGD("start");
     std::string versionInfo;
     int32_t ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpkeyVersion(versionInfo);
     if (ret != TELEPHONY_ERR_SUCCESS) {
@@ -53,7 +52,6 @@ std::shared_ptr<DataShare::DataShareResultSet> OpkeyVersionAbility::Query(const 
              std::make_shared<OpkeyVersionResultSetBridge>(versionInfo);
     std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult =
         std::make_shared<DataShare::DataShareResultSet>(resultSet);
-    DATA_STORAGE_LOGI("end ret=%{public}d", ret);
     return sharedPtrResult;
 }
 } // Telephony

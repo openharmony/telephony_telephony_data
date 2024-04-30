@@ -23,21 +23,18 @@ OpkeyVersionResultSetBridge::OpkeyVersionResultSetBridge(const std::string &info
 
 int OpkeyVersionResultSetBridge::GetRowCount(int32_t &count)
 {
-    DATA_STORAGE_LOGI("start");
     count = ROW_COUNT;
     return NativeRdb::E_OK;
 }
 
 int OpkeyVersionResultSetBridge::GetAllColumnNames(std::vector<std::string> &columnsName)
 {
-    DATA_STORAGE_LOGI("start");
     columnsName = {"key", "value"};
     return NativeRdb::E_OK;
 }
 
 bool OpkeyVersionResultSetBridge::FillBlock(DataShare::ResultSetBridge::Writer &writer)
 {
-    DATA_STORAGE_LOGI("start");
     int statusAlloc = writer.AllocRow();
     if (statusAlloc != NativeRdb::E_OK) {
         return false;
@@ -55,7 +52,7 @@ bool OpkeyVersionResultSetBridge::FillBlock(DataShare::ResultSetBridge::Writer &
 
 int OpkeyVersionResultSetBridge::OnGo(int32_t start, int32_t target, DataShare::ResultSetBridge::Writer &writer)
 {
-    DATA_STORAGE_LOGI("start");
+    DATA_STORAGE_LOGD("start");
     if ((start < 0) || (target < 0) || (start > target)) {
         return INVALID_POSITION;
     }
