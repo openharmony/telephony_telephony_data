@@ -77,7 +77,8 @@ int64_t RdbOpKeyCallback::InitData(NativeRdb::RdbStore &rdbStore, const std::str
         return DATA_STORAGE_ERROR;
     }
     if (!IsOpKeyDbUpdateNeeded(checksum)) {
-        return VERSION_NO_CHANGE;
+        DATA_STORAGE_LOGI("InitData::opkey data has not change.");
+        return DATA_STORAGE_SUCCESS;
     }
 
     if (util.ParserOpKeyJson(vec, path.c_str()) != DATA_STORAGE_SUCCESS) {
