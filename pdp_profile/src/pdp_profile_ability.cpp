@@ -462,7 +462,7 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
     return helper_.Query(ConvertPredicates(tableName, predicates), columns);
 }
  
-int PdpProfileAbility::ResetApn(Uri &uri)
+int PdpProfileAbility::ResetApn(const DataShare::DataShareValuesBucket &valuesBucket)
 {
     OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(valuesBucket);
     int simId = DEFAULT_SIM_ID;
