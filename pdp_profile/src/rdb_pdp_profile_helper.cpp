@@ -76,6 +76,7 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::OPKEY).append(" TEXT DEFAULT '', ");
     createTableStr.append("UNIQUE (").append(PdpProfileData::MCC).append(", ");
     createTableStr.append(PdpProfileData::MNC).append(", ");
+    createTableStr.append(PdpProfileData::OPKEY).append(", ");
     createTableStr.append(PdpProfileData::MVNO_TYPE).append(", ");
     createTableStr.append(PdpProfileData::MVNO_MATCH_DATA).append(", ");
     createTableStr.append(PdpProfileData::APN).append(", ");

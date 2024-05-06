@@ -106,7 +106,8 @@ private:
     bool initDatabaseDir = false;
     bool initRdbStore = false;
     void GetTargetOpkey(int slotId, std::string &opkey);
-    int ResetApn(Uri &uri);
+    int ResetApn(const DataShare::DataShareValuesBucket &bucket);
+    int GetIntFromValuesBucket(OHOS::NativeRdb::ValuesBucket &bucket, const char *key, int &value);
     std::shared_ptr<NativeRdb::ResultSet> QueryPdpProfile(Uri &uri, const std::string &tableName,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
 };
