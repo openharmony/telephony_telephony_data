@@ -164,14 +164,9 @@ int RdbBaseHelper::Commit()
     return ret;
 }
 
-int RdbBaseHelper::BatchInsert(int64_t &outInsertNum, const std::vector<NativeRdb::ValuesBucket> &initialBatchValues,
-    const std::string &table)
+int RdbBaseHelper::BatchInsert(int64_t &id, const NativeRdb::ValuesBucket &initialValues, const std::string &table)
 {
-    int ret = IsExistStore();
-    if (ret == NativeRdb::E_OK) {
-        ret = store_->BatchInsert(outInsertNum, table, initialBatchValues);
-    }
-    return ret;
+    return NativeRdb::E_OK;
 }
 
 void RdbBaseHelper::ReplaceAllStr(std::string &path, const std::string &oldStr, const std::string &newStr)
