@@ -82,6 +82,7 @@ struct OpKey {
 
 constexpr const char *MCCMNC_INDEX = "mccmncIndex";
 constexpr const char *TABLE_OPKEY_INFO = "opkey_info";
+constexpr const char *OPKEY_CONF_CHECKSUM = "opkey_conf_checksum";
 constexpr const char *OPKEY_URI = "datashare:///com.ohos.opkeyability";
 } // namespace Telephony
 } // namespace OHOS

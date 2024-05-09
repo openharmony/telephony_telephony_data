@@ -87,5 +87,10 @@ int RdbOpKeyHelper::CommitTransactionAction()
     }
     return result;
 }
+
+int64_t RdbOpKeyHelper::InitOpKeyDatabase()
+{
+    return RdbOpKeyCallback::InitData(*store_, TABLE_OPKEY_INFO);
+}
 } // namespace Telephony
 } // namespace OHOS

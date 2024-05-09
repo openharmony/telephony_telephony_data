@@ -39,6 +39,7 @@ namespace Telephony {
 const int32_t CHANGED_ROWS = 0;
 static const std::map<std::string, OpKeyUriType> opKeyUriMap_ = {
     { "/opkey/opkey_info", OpKeyUriType::OPKEY_INFO },
+    {"/opkey/opkey_init", OpKeyUriType::OPKEY_INIT},
 };
 
 OpKeyAbility::OpKeyAbility() : DataShareExtAbility() {}
@@ -105,6 +106,24 @@ void OpKeyAbility::OnStart(const AppExecFwk::Want &want)
     DATA_STORAGE_LOGI("OpKeyAbility::OnStart");
     Extension::OnStart(want);
     DoInit();
+}
+
+int OpKeyAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::DataShareValuesBucket> &values)
+{
+    if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        DATA_STORAGE_LOGE("Permission denied!");
+        return DATA_STORAGE_ERR_PERMISSION_ERR;
+    }
+    if (!IsInitOk()) {
+        return DATA_STORAGE_ERROR;
+    }
+    std::lock_guard<std::mutex> guard(lock_);
+    Uri tempUri = uri;
+    OpKeyUriType opKeyUriType = ParseUriType(tempUri);
+    if (opKeyUriType == OpKeyUriType::OPKEY_INIT) {
+        return helper_.InitOpKeyDatabase();
+    }
+    return DATA_STORAGE_ERROR;
 }
 
 int OpKeyAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)

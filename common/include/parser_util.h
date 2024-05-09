@@ -40,7 +40,7 @@ public:
     int ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *filePath);
     void ParserPdpProfileInfos(std::vector<PdpProfile> &vec, cJSON *itemRoots);
     void ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, const PdpProfile &bean);
-    bool ParseFromCustomSystem(std::vector<OpKey> &vec);
+    int GetOpKeyFilePath(std::string &path);
     int ParserOpKeyJson(std::vector<OpKey> &vec, const char *path);
     void ParserOpKeyInfos(std::vector<OpKey> &vec, cJSON *itemRoots);
     void ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const OpKey &bean);

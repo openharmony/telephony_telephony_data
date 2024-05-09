@@ -123,18 +123,22 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
     }
     Uri tempUri = uri;
     PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
-    if (pdpProfileUriType == PdpProfileUriType::INIT) {
-        const std::string &slotIdStr = GetQueryKey(tempUri.GetQuery(), "slotId=");
-        int slotId = DEFAULT_SIM_ID;
-        if (StrToInt(slotIdStr, slotId)) {
-            DATA_STORAGE_LOGI("PdpProfileAbility::BatchInsert INIT, slotId = %{public}d", slotId);
+    int result = DATA_STORAGE_ERROR;
+    if (pdpProfileUriType == PdpProfileUriType::INIT && !values.empty()) {
+        for (const auto &item : values) {
+            OHOS::NativeRdb::ValuesBucket valuesBucket = RdbDataShareAdapter::RdbUtils::ToValuesBucket(item);
+            int slotId = 0;
+            if (GetIntFromValuesBucket(valuesBucket, "slotId", slotId) != NativeRdb::E_OK) {
+                continue;
+            }
             std::string opkey;
             GetTargetOpkey(slotId, opkey);
-            std::lock_guard<std::mutex> guard(lock_);
-            return helper_.InitAPNDatabase(slotId, opkey, true);
+            result = helper_.InitAPNDatabase(slotId, opkey, true);
+            DATA_STORAGE_LOGI(
+                "PdpProfileAbility::BatchInsert INIT, slotId = %{public}d, result = %{public}d", slotId, result);
         }
     }
-    return DATA_STORAGE_ERROR;
+    return result;
 }
 
 int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
@@ -152,15 +156,6 @@ int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBu
     int64_t id = DATA_STORAGE_ERROR;
     if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
         OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
-        const std::string &simIdStr = GetQueryKey(tempUri.GetQuery(), "simId=");
-        int simId = DEFAULT_SIM_ID;
-        if (StrToInt(simIdStr, simId)) {
-            DATA_STORAGE_LOGI("PdpProfileAbility::Insert PDP_PROFILE, simId= %{public}d", simId);
-            std::string opkey;
-            int32_t slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
-            GetTargetOpkey(slotId, opkey);
-            values.PutString(PdpProfileData::OPKEY, opkey);
-        }
         helper_.Insert(id, values, TABLE_PDP_PROFILE);
     } else {
         DATA_STORAGE_LOGE("PdpProfileAbility::Insert##uri = %{public}s", uri.ToString().c_str());
@@ -265,7 +260,7 @@ int PdpProfileAbility::Update(
             break;
         }
         case PdpProfileUriType::RESET: {
-            result = ResetApn(tempUri);
+            result = ResetApn(value);
             if (result != NativeRdb::E_OK) {
                 DATA_STORAGE_LOGE("PdpProfileAbility::Update  ResetApn fail!");
                 result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
@@ -467,16 +462,17 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
     return helper_.Query(ConvertPredicates(tableName, predicates), columns);
 }
  
-int PdpProfileAbility::ResetApn(Uri &uri)
+int PdpProfileAbility::ResetApn(const DataShare::DataShareValuesBucket &valuesBucket)
 {
-    std::string opkey;
+    OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(valuesBucket);
     int simId = DEFAULT_SIM_ID;
-    int slotId = DEFAULT_SIM_ID;
-    const std::string &simIdStr = GetQueryKey(uri.GetQuery(), "simId=");
-    if (StrToInt(simIdStr, simId)) {
-        slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
-        GetTargetOpkey(slotId, opkey);
+    if (GetIntFromValuesBucket(values, "simId", simId) != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("PdpProfileAbility::ResetApn no simId!");
+        return helper_.ResetApn();
     }
+    int32_t slotId = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetSlotId(simId);
+    std::string opkey;
+    GetTargetOpkey(slotId, opkey);
     if (opkey.empty() || strcmp(opkey.c_str(), INVALID_OPKEY) == 0) {
         DATA_STORAGE_LOGW("PdpProfileAbility::ResetApn opkey empty!");
         return helper_.ResetApn();
@@ -493,6 +489,25 @@ int PdpProfileAbility::ResetApn(Uri &uri)
         result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
     }
     return result;
+}
+
+int PdpProfileAbility::GetIntFromValuesBucket(OHOS::NativeRdb::ValuesBucket &bucket, const char *key, int &value)
+{
+    NativeRdb::ValueObject valueObject;
+    if (!HasColumnValue(bucket, key, valueObject)) {
+        return OPERATION_ERROR;
+    }
+    if (valueObject.GetType() == NativeRdb::ValueObject::TYPE_INT) {
+        return valueObject.GetInt(value);
+    }
+    if (valueObject.GetType() == NativeRdb::ValueObject::TYPE_DOUBLE) {
+        double temp = 0;
+        if (valueObject.GetDouble(temp) == NativeRdb::E_OK) {
+            value = ceil(temp);
+            return NativeRdb::E_OK;
+        }
+    }
+    return OPERATION_ERROR;
 }
  
 void PdpProfileAbility::GetTargetOpkey(int slotId, std::string &opkey)

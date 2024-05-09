@@ -41,6 +41,13 @@ public:
      */
     int Init();
 
+    /**
+     * Init InitOpKeyDatabase
+     *
+     * @return Greater than 0 is succeed else failed
+     */
+    int64_t InitOpKeyDatabase();
+
 private:
     /**
      * Create OpKeyInfo table

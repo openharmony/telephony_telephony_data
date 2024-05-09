@@ -214,27 +214,17 @@ void ParserUtil::ParserPdpProfileToValuesBucket(NativeRdb::ValuesBucket &value, 
     value.PutInt(PdpProfileData::BEARING_SYSTEM_TYPE, bean.bearingSystemType);
 }
 
-bool ParserUtil::ParseFromCustomSystem(std::vector<OpKey> &vec)
+int ParserUtil::GetOpKeyFilePath(std::string &path)
 {
-    DATA_STORAGE_LOGI("ParserUtil ParseFromCustomSystem");
+    char buf[MAX_PATH_LEN];
     std::string file = GetCustFile(OPKEY_INFO_PATH, CUST_RULE_PATH_KEY);
-    CfgFiles *cfgFiles = GetCfgFiles(file.c_str());
-    if (cfgFiles == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil ParseFromCustomSystem cfgFiles is null");
-        return false;
+    char *ret = GetOneCfgFile(file.c_str(), buf, MAX_PATH_LEN);
+    if (ret && *ret != '\0') {
+        path = ret;
+        return OPERATION_OK;
     }
-    char *filePath = nullptr;
-    int result = DATA_STORAGE_ERROR;
-    for (int32_t i = MAX_CFG_POLICY_DIRS_CNT - 1; i >= 0; i--) {
-        filePath = cfgFiles->paths[i];
-        if (filePath && *filePath != '\0') {
-            if (ParserOpKeyJson(vec, filePath) == DATA_STORAGE_SUCCESS) {
-                result = DATA_STORAGE_SUCCESS;
-            }
-        }
-    }
-    FreeCfgFiles(cfgFiles);
-    return result == DATA_STORAGE_SUCCESS;
+    DATA_STORAGE_LOGE("ParserUtil::GetOpKeyFilePath fail");
+    return OPERATION_ERROR;
 }
 
 int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
@@ -292,6 +282,9 @@ void ParserUtil::ParserOpKeyInfos(std::vector<OpKey> &vec, cJSON *itemRoots)
             bean.iccid = ParseString(cJSON_GetObjectItem(ruleRoot, ITEM_ICCID));
         }
         bean.operatorName = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_OPERATOR_NAME_OPKEY));
+        if (bean.operatorName.empty()) {
+            bean.operatorName = "COMMON";
+        }
         bean.operatorKey = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_OPERATOR_KEY));
         bean.operatorKeyExt = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_OPERATOR_KEY_EXT));
         bean.ruleId = GetRuleId(bean);

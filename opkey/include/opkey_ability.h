@@ -43,7 +43,7 @@ class ValuesBucket;
 }
 namespace Telephony {
 enum class OpKeyUriType {
-    UNKNOW, OPKEY_INFO
+    UNKNOW, OPKEY_INFO, OPKEY_INIT
 };
 class OpKeyAbility : public DataShare::DataShareExtAbility {
 public:
@@ -53,6 +53,7 @@ public:
     void DoInit();
     sptr<IRemoteObject> OnConnect(const AAFwk::Want &want) override;
     virtual void OnStart(const AppExecFwk::Want &want) override;
+    virtual int BatchInsert(const Uri &uri, const std::vector<DataShare::DataShareValuesBucket> &values) override;
     virtual int Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value) override;
     virtual std::shared_ptr<DataShare::DataShareResultSet> Query(const Uri &uri,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
