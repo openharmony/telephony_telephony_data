@@ -92,6 +92,13 @@ private:
      */
     int SetPreferApnConfChecksum(const std::string &opkey, std::string &checkSum);
 
+    /**
+     * Clear old pdp profile Data
+     *
+     * @return 0 is succeed else failed
+     */
+    int ClearData(const std::string &opKey);
+
 private:
     const std::string DB_NAME = "net.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;

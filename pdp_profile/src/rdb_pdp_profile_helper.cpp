@@ -188,6 +188,7 @@ int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, b
         DATA_STORAGE_LOGE("BeginTransaction error!");
         return DATA_STORAGE_ERROR;
     }
+    ClearData(opKey);
     DATA_STORAGE_LOGD("InitAPNDatabase size = %{public}zu", vec.size());
     for (size_t i = 0; i < vec.size(); i++) {
         NativeRdb::ValuesBucket value;
@@ -202,6 +203,18 @@ int RdbPdpProfileHelper::InitAPNDatabase(int slotId, const std::string &opKey, b
         SetPreferApnConfChecksum(opKey, checksum);
     }
     DATA_STORAGE_LOGD("InitAPNDatabase end");
+    return result;
+}
+
+int RdbPdpProfileHelper::ClearData(const std::string &opKey)
+{
+    int delRows = 0;
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = (new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE))
+                                                        ->EqualTo(PdpProfileData::OPKEY, opKey)
+                                                        ->And()
+                                                        ->EqualTo(PdpProfileData::EDITED_STATUS, 0);
+    int result = Delete(delRows, *absRdbPredicates);
+    delete absRdbPredicates;
     return result;
 }
 
