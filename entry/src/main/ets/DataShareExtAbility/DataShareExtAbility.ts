@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@ export default class DataShareExtAbility extends Extension {
     private rdbStore_;
 
     onCreate(want) {
-        console.log('[ttt] [TelephonyDataShare] <<Provider>> DataShareExtAbility onCreate');
+        console.log('[ttt] [TelephonyDataShare] DataShareExtAbility onCreate');
     }
 
     getFileTypes(uri: string, mimeTypeFilter: string) {
