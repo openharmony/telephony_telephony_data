@@ -19,7 +19,7 @@ export default class DataShareExtAbility extends Extension {
     private rdbStore_;
 
     onCreate(want) {
-        console.log('[ttt] [TelephonyDataShare] <<Provider>> DataShareExtAbility onCreate, want:' + want.abilityName);
+        console.log('[ttt] [TelephonyDataShare] <<Provider>> DataShareExtAbility onCreate');
     }
 
     getFileTypes(uri: string, mimeTypeFilter: string) {
