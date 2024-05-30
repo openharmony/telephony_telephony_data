@@ -70,7 +70,7 @@ void RdbGlobalParamsCallback::InitEccData(NativeRdb::RdbStore &rdbStore, const s
     std::vector<EccNum> vec;
     int ret = util.ParserEccDataJson(vec, hashCheck);
     if (ret != DATA_STORAGE_SUCCESS) {
-        if(ret != FILE_HASH_NO_CHANGE ) {
+        if (ret != FILE_HASH_NO_CHANGE) {
             DATA_STORAGE_LOGE("ParserEccDataJson fail ret = %{public}d", ret);
         }
         util.ClearTempDigest(ECC_DATA_HASH);
@@ -106,7 +106,7 @@ void RdbGlobalParamsCallback::InitNumMatchData(NativeRdb::RdbStore &rdbStore, co
     std::vector<NumMatch> vec;
     int resultCode = util.ParserNumMatchJson(vec, hashCheck);
     if (resultCode != DATA_STORAGE_SUCCESS) {
-        if(resultCode != FILE_HASH_NO_CHANGE ) {
+        if (resultCode != FILE_HASH_NO_CHANGE) {
             DATA_STORAGE_LOGE("ParserNumMatchJson fail resultCode = %{public}d", resultCode);
         }
         util.ClearTempDigest(NUM_MATCH_HASH);
