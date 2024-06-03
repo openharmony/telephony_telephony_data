@@ -647,7 +647,7 @@ bool ParserUtil::IsDigestChanged(const char *path, const std::string &key)
     }
     std::string oldHash = preferencesUtil->ObtainString(key, DEFAULT_PREFERENCES_STRING_VALUE);
     if (oldHash.compare(newHash) == 0) {
-        DATA_STORAGE_LOGI("ParserUtil::IsDigestChanged file not changed");
+        DATA_STORAGE_LOGD("ParserUtil::IsDigestChanged file not changed");
         return false;
     }
     DATA_STORAGE_LOGI("ParserUtil::IsDigestChanged file is changed");
