@@ -111,6 +111,7 @@ ohos_shared_library("tel_telephony_data") {
     "ability_runtime:abilitykit_native",
     "ability_runtime:app_context",
     "ability_runtime:dataobs_manager",
+    "ability_runtime:extensionkit_native",
     "access_token:libaccesstoken_sdk",
     "cJSON:cjson",
     "c_utils:utils",
