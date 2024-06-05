@@ -475,7 +475,7 @@ void ParserUtil::ParserEccDataInfos(std::vector<EccNum> &vec, cJSON *itemRoots)
 {
     cJSON *itemRoot = nullptr;
     for (int i = 0; i < cJSON_GetArraySize(itemRoots); i++) {
-        cJSON *itemRoot = cJSON_GetArrayItem(itemRoots, i);
+        itemRoot = cJSON_GetArrayItem(itemRoots, i);
         if (itemRoot == nullptr) {
             continue;
         }
