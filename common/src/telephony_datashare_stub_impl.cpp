@@ -262,7 +262,7 @@ std::string TelephonyDataShareStubImpl::GetType(const Uri &uri)
 
 bool TelephonyDataShareStubImpl::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver)
 {
-    DATA_STORAGE_LOGI("%{public}s begin.", __func__);
+    DATA_STORAGE_LOGD("%{public}s begin.", __func__);
     auto obsMgrClient = DataObsMgrClient::GetInstance();
     if (obsMgrClient == nullptr) {
         DATA_STORAGE_LOGE("%{public}s obsMgrClient is nullptr", __func__);

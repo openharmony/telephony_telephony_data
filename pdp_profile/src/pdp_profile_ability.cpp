@@ -396,11 +396,10 @@ PdpProfileUriType PdpProfileAbility::ParseUriType(Uri &uri)
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
         if (!path.empty() && !pdpProfileUriMap_.empty()) {
-            DATA_STORAGE_LOGI("PdpProfileAbility::ParseUriType##path = %{public}s", path.c_str());
             auto it = pdpProfileUriMap_.find(path);
             if (it != pdpProfileUriMap_.end()) {
                 pdpProfileUriType = it->second;
-                DATA_STORAGE_LOGI("PdpProfileAbility::ParseUriType##pdpProfileUriType = %{public}d",
+                DATA_STORAGE_LOGD("PdpProfileAbility::ParseUriType##pdpProfileUriType = %{public}d",
                     pdpProfileUriType);
             }
         }
