@@ -320,7 +320,7 @@ int SimAbility::OpenFile(const Uri &uri, const std::string &mode)
 
 SimUriType SimAbility::ParseUriType(Uri &uri)
 {
-    DATA_STORAGE_LOGI("SimAbility::ParseUriType start");
+    DATA_STORAGE_LOGD("SimAbility::ParseUriType start");
     SimUriType simUriType = SimUriType::UNKNOW;
     std::string uriPath = uri.ToString();
     if (!uriPath.empty()) {
@@ -328,11 +328,10 @@ SimUriType SimAbility::ParseUriType(Uri &uri)
         Uri tempUri(uriPath);
         std::string path = tempUri.GetPath();
         if (!path.empty() && !simUriMap_.empty()) {
-            DATA_STORAGE_LOGI("SimAbility::ParseUriType##path = %{public}s", path.c_str());
             auto it = simUriMap_.find(path);
             if (it != simUriMap_.end()) {
                 simUriType = it->second;
-                DATA_STORAGE_LOGI("SimAbility::ParseUriType##simUriType = %{public}d", simUriType);
+                DATA_STORAGE_LOGD("SimAbility::ParseUriType##simUriType = %{public}d", simUriType);
             }
         }
     }
