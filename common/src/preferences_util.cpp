@@ -22,7 +22,6 @@
 #include "preferences_helper.h"
 #include "preferences_observer.h"
 
-
 namespace OHOS {
 namespace Telephony {
 PreferencesUtil::PreferencesUtil() {}
