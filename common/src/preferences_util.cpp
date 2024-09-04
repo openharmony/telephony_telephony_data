@@ -15,11 +15,13 @@
 
 #include "preferences_util.h"
 
+#include <string>
+
 #include "data_storage_log_wrapper.h"
 #include "preferences.h"
 #include "preferences_helper.h"
 #include "preferences_observer.h"
-#include "string"
+
 
 namespace OHOS {
 namespace Telephony {

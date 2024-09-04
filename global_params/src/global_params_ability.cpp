@@ -30,7 +30,6 @@
 #include "rdb_utils.h"
 #include "telephony_datashare_stub_impl.h"
 #include "uri.h"
-#include "utility"
 
 namespace OHOS {
 using AppExecFwk::AbilityLoader;

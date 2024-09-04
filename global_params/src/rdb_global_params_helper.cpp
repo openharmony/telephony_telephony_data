@@ -15,6 +15,8 @@
 
 #include "rdb_global_params_helper.h"
 
+#include <vector>
+
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "parser_util.h"
@@ -23,7 +25,6 @@
 #include "rdb_global_params_callback.h"
 #include "rdb_store_config.h"
 #include "values_bucket.h"
-#include "vector"
 
 namespace OHOS {
 namespace Telephony {
