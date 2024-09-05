@@ -15,13 +15,14 @@
 
 #include "rdb_global_params_callback.h"
 
+#include <string>
+
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "parser_util.h"
 #include "global_params_data.h"
 #include "rdb_errno.h"
 #include "rdb_store.h"
-#include "string"
 #include "values_bucket.h"
 
 namespace OHOS {

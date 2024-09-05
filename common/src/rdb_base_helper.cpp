@@ -18,7 +18,6 @@
 #include <regex>
 
 #include "abs_shared_result_set.h"
-#include "algorithm"
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "rdb_errno.h"
