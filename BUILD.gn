@@ -130,6 +130,18 @@ ohos_shared_library("tel_telephony_data") {
     "relational_store:rdb_data_share_adapter",
     "zlib:libz",
   ]
+
+  cflags_cc = [
+    "-Wunused",
+    "-Wunreachable-code",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-fstack-protector-all",
+    "-Os",
+    "-D_FORTIFY_SOURCE=2",
+    "-flto",
+  ]
+
   defines = [
     "TELEPHONY_LOG_TAG = \"DataStorage\"",
     "LOG_DOMAIN = 0xD001F05",
