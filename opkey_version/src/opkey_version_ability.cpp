@@ -16,12 +16,11 @@
 #include "opkey_version_ability.h"
 
 #include "core_service_client.h"
+#include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "opkey_version_result_set_bridge.h"
-#include "rdb_errno.h"
 #include "telephony_datashare_stub_impl.h"
-#include "telephony_errors.h"
 #include "uri.h"
 #include "utility"
 
@@ -41,11 +40,17 @@ std::shared_ptr<DataShare::DataShareResultSet> OpkeyVersionAbility::Query(const 
     const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
-    DATA_STORAGE_LOGD("start");
+    DATA_STORAGE_LOGD("start uri=%{public}s", uri.ToString().c_str());
     std::string versionInfo;
-    int32_t ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpkeyVersion(versionInfo);
-    if (ret != TELEPHONY_ERR_SUCCESS) {
-        DATA_STORAGE_LOGE("get versionInfo failed!");
+    int32_t ret = DATA_STORAGE_ERROR;
+    if (uri.ToString() == "datashare:///com.ohos.opkeyversionability/cust_param") {
+        ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpkeyVersion(versionInfo);
+    }
+    if (uri.ToString() == "datashare:///com.ohos.opkeyversionability/chip_param") {
+        ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpnameVersion(versionInfo);
+    }
+    if (ret != DATA_STORAGE_SUCCESS) {
+        DATA_STORAGE_LOGE("uri=%{public}s get versionInfo failed!", uri.ToString().c_str());
         return nullptr;
     }
     std::shared_ptr<DataShare::ResultSetBridge> resultSet =
