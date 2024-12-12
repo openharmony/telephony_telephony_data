@@ -26,7 +26,12 @@
 
 namespace OHOS {
 namespace Telephony {
-OpkeyVersionAbility::OpkeyVersionAbility() : DataShareExtAbility() {}
+OpkeyVersionAbility::OpkeyVersionAbility() : DataShareExtAbility()
+{
+    ParserUtil util;
+    util.GetJsonItemStringVaule(PARAM_CONFIG_PATH, "CARRIER_CONFIG", "cfgInfoUri", custParam_);
+    util.GetJsonItemStringVaule(PARAM_CONFIG_PATH, "CHIP_CONFIG", "cfgInfoUri", chipParam_);
+}
 
 OpkeyVersionAbility::~OpkeyVersionAbility() {}
 
@@ -43,11 +48,13 @@ std::shared_ptr<DataShare::DataShareResultSet> OpkeyVersionAbility::Query(const 
     DATA_STORAGE_LOGD("start uri=%{public}s", uri.ToString().c_str());
     std::string versionInfo;
     int32_t ret = DATA_STORAGE_ERROR;
-    if (uri.ToString() == "datashare:///com.ohos.opkeyversionability/cust_param") {
+    if (uri.ToString() == custParam_) {
         ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpkeyVersion(versionInfo);
-    }
-    if (uri.ToString() == "datashare:///com.ohos.opkeyversionability/chip_param") {
+    } else if (uri.ToString() == chipParam_) {
         ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpnameVersion(versionInfo);
+    } else {
+        DATA_STORAGE_LOGE("uri=%{public}s not match", uri.ToString().c_str());
+        return nullptr;
     }
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("uri=%{public}s get versionInfo failed!", uri.ToString().c_str());
