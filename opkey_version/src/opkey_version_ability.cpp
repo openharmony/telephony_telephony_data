@@ -20,6 +20,7 @@
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "opkey_version_result_set_bridge.h"
+#include "parser_util.h"
 #include "telephony_datashare_stub_impl.h"
 #include "uri.h"
 #include "utility"
