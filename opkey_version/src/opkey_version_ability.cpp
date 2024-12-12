@@ -30,7 +30,7 @@ OpkeyVersionAbility::OpkeyVersionAbility() : DataShareExtAbility()
 {
     ParserUtil util;
     util.GetJsonItemStringVaule(PARAM_CONFIG_PATH, "CARRIER_CONFIG", "cfgInfoUri", custParam_);
-    util.GetJsonItemStringVaule(PARAM_CONFIG_PATH, "CHIP_CONFIG", "cfgInfoUri", chipParam_);
+    util.GetJsonItemStringVaule(PARAM_CONFIG_PATH, "NCFG_DEF_CONFIG", "cfgInfoUri", chipParam_);
 }
 
 OpkeyVersionAbility::~OpkeyVersionAbility() {}
