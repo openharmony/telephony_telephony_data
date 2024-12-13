@@ -38,8 +38,8 @@ public:
 private:
     const std::string PARAM_CONFIG_PATH =
         "/system/variant/phone/base/etc/param_service/param_config.json";
-    std::string custParam_;
-    std::string chipParam_;
+    std::string custParam_ = "datashare:///com.ohos.opkeyversionability/cust_param";
+    std::string chipParam_ = "datashare:///com.ohos.opkeyversionability/chip_param";
 };
 } // namespace Telephony
 } // namespace OHOS
