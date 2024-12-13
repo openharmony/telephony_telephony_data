@@ -54,11 +54,10 @@ std::shared_ptr<DataShare::DataShareResultSet> OpkeyVersionAbility::Query(const 
     } else if (uri.ToString() == chipParam_) {
         ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpnameVersion(versionInfo);
     } else {
-        DATA_STORAGE_LOGE("uri=%{public}s not match", uri.ToString().c_str());
-        return nullptr;
+        DATA_STORAGE_LOGW("uri not match");
     }
     if (ret != DATA_STORAGE_SUCCESS) {
-        DATA_STORAGE_LOGE("uri=%{public}s get versionInfo failed!", uri.ToString().c_str());
+        DATA_STORAGE_LOGE("get versionInfo failed!");
         return nullptr;
     }
     std::shared_ptr<DataShare::ResultSetBridge> resultSet =
