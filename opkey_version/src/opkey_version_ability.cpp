@@ -16,18 +16,23 @@
 #include "opkey_version_ability.h"
 
 #include "core_service_client.h"
+#include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "new"
 #include "opkey_version_result_set_bridge.h"
-#include "rdb_errno.h"
+#include "parser_util.h"
 #include "telephony_datashare_stub_impl.h"
-#include "telephony_errors.h"
 #include "uri.h"
 #include "utility"
 
 namespace OHOS {
 namespace Telephony {
-OpkeyVersionAbility::OpkeyVersionAbility() : DataShareExtAbility() {}
+OpkeyVersionAbility::OpkeyVersionAbility() : DataShareExtAbility()
+{
+    ParserUtil util;
+    util.GetJsonItemStringVaule(PARAM_CONFIG_PATH, "CARRIER_CONFIG", "cfgInfoUri", custParam_);
+    util.GetJsonItemStringVaule(PARAM_CONFIG_PATH, "NCFG_DEF_CONFIG", "cfgInfoUri", chipParam_);
+}
 
 OpkeyVersionAbility::~OpkeyVersionAbility() {}
 
@@ -41,10 +46,17 @@ std::shared_ptr<DataShare::DataShareResultSet> OpkeyVersionAbility::Query(const 
     const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns,
     DataShare::DatashareBusinessError &businessError)
 {
-    DATA_STORAGE_LOGD("start");
+    DATA_STORAGE_LOGD("start uri=%{public}s", uri.ToString().c_str());
     std::string versionInfo;
-    int32_t ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpkeyVersion(versionInfo);
-    if (ret != TELEPHONY_ERR_SUCCESS) {
+    int32_t ret = DATA_STORAGE_ERROR;
+    if (uri.ToString() == custParam_) {
+        ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpkeyVersion(versionInfo);
+    } else if (uri.ToString() == chipParam_) {
+        ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOpnameVersion(versionInfo);
+    } else {
+        DATA_STORAGE_LOGW("uri not match");
+    }
+    if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("get versionInfo failed!");
         return nullptr;
     }
