@@ -1154,6 +1154,42 @@ HWTEST_F(DataStorageGtest, GlobalEccDelete_004, Function | MediumTest | Level1)
     helper = nullptr;
     EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
+
+/**
+ * @tc.number   OpkeyVersion_001
+ * @tc.name     Query cust param version
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, OpkeyVersion_001, Function | MediumTest | Level1)
+{
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyVersionCustHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    Uri uri("datashare:///com.ohos.opkeyversionability/cust_param");
+    bool ret = OpKeyVersionQuery(helper, uri);
+    helper = nullptr;
+    EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.number   OpkeyVersion_002
+ * @tc.name     Query chip param version
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, OpkeyVersion_002, Function | MediumTest | Level1)
+{
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyVersionChipHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    Uri uri("datashare:///com.ohos.opkeyversionability/chip_param");
+    bool ret = OpKeyVersionQuery(helper, uri);
+    helper = nullptr;
+    EXPECT_TRUE(ret);
+}
 #else // TEL_TEST_UNSUPPORT
 /**
  * @tc.number   TelMockTest_001
