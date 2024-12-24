@@ -52,6 +52,8 @@ public:
     void ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, const EccNum &bean);
     void RefreshDigest(const std::string &key);
     void ClearTempDigest(const std::string &key);
+    bool GetJsonItemStringVaule(const std::string &path, const std::string &rootName, const std::string &key,
+        std::string &resultValue);
 
 public:
     inline static const int MODE_SLOT_0 = 11;

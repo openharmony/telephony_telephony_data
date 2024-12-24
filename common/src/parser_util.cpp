@@ -680,5 +680,54 @@ void ParserUtil::ClearTempDigest(const std::string &key)
     preferencesUtil->RemoveKey(key + TEMP_SUFFIX);
     preferencesUtil->Refresh();
 }
+
+bool ParserUtil::GetJsonItemStringVaule(const std::string &path, const std::string &rootName,
+    const std::string &key, std::string &resultValue)
+{
+    char realPath[PATH_MAX] = {0};
+    if (realpath(path.c_str(), realPath) == nullptr) {
+        DATA_STORAGE_LOGE("realpath is fail!");
+        return false;
+    }
+    char* content = nullptr;
+    if (LoaderJsonFile(content, realPath) != DATA_STORAGE_SUCCESS) {
+        DATA_STORAGE_LOGE("LoaderJsonFile is fail!");
+        return false;
+    }
+    if (content == nullptr) {
+        DATA_STORAGE_LOGE("content is nullptr!");
+        return false;
+    }
+    cJSON *root = cJSON_Parse(content);
+    free(content);
+    content = nullptr;
+    if (root == nullptr) {
+        DATA_STORAGE_LOGE("root is error!");
+        return false;
+    }
+    cJSON *itemRoots = cJSON_GetObjectItem(root, rootName.c_str());
+    if (itemRoots == nullptr || cJSON_IsArray(itemRoots)) {
+        DATA_STORAGE_LOGE("itemRoots size == 0!");
+        cJSON_Delete(root);
+        itemRoots = nullptr;
+        root = nullptr;
+        return false;
+    }
+    cJSON *value = cJSON_GetObjectItem(itemRoots, key.c_str());
+    if (value == nullptr || value->type != cJSON_String) {
+        DATA_STORAGE_LOGE("value is error!");
+        cJSON_Delete(root);
+        value = nullptr;
+        itemRoots = nullptr;
+        root = nullptr;
+        return false;
+    }
+    resultValue = value->valuestring;
+    cJSON_Delete(root);
+    value = nullptr;
+    itemRoots = nullptr;
+    root = nullptr;
+    return true;
+}
 } // namespace Telephony
 } // namespace OHOS
