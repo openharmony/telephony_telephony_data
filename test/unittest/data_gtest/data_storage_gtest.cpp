@@ -547,6 +547,39 @@ int DataStorageGtest::GlobalEccDelete(const std::shared_ptr<DataShare::DataShare
     return helper->Delete(uri, predicates);
 }
 
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateOpKeyVersionCustHelper()
+{
+    if (opKeyVersionCustHelper == nullptr) {
+        std::string uri("datashare:///com.ohos.opkeyversionability/cust_param");
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("opKeyVersionCustHelper uri is nullptr");
+            return nullptr;
+        }
+        opKeyVersionCustHelper = CreateDataShareHelper(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID, uri);
+    }
+    return opKeyVersionCustHelper;
+}
+
+std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateOpKeyVersionChipHelper()
+{
+    if (opKeyVersionChipHelper == nullptr) {
+        std::string uri("datashare:///com.ohos.opkeyversionability/chip_param");
+        if (uri.data() == nullptr) {
+            DATA_STORAGE_LOGE("opKeyVersionCustHelper uri is nullptr");
+            return nullptr;
+        }
+        opKeyVersionChipHelper = CreateDataShareHelper(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID, uri);
+    }
+    return opKeyVersionChipHelper;
+}
+
+int DataStorageGtest::OpKeyVersionQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper, Uri uri) const
+{
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+    return resultSet != nullptr;
+}
 #ifndef TEL_TEST_UNSUPPORT
 /**
  * @tc.number   DataStorage_001
@@ -1153,6 +1186,42 @@ HWTEST_F(DataStorageGtest, GlobalEccDelete_004, Function | MediumTest | Level1)
     int ret = GlobalEccDelete(helper);
     helper = nullptr;
     EXPECT_GE(ret, DATA_STORAGE_ERROR);
+}
+
+/**
+ * @tc.number   OpkeyVersion_001
+ * @tc.name     Query cust param version
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, OpkeyVersion_001, Function | MediumTest | Level1)
+{
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyVersionCustHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    Uri uri("datashare:///com.ohos.opkeyversionability/cust_param");
+    bool ret = OpKeyVersionQuery(helper, uri);
+    helper = nullptr;
+    EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.number   OpkeyVersion_002
+ * @tc.name     Query chip param version
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, OpkeyVersion_002, Function | MediumTest | Level1)
+{
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateOpKeyVersionChipHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    Uri uri("datashare:///com.ohos.opkeyversionability/chip_param");
+    bool ret = OpKeyVersionQuery(helper, uri);
+    helper = nullptr;
+    EXPECT_TRUE(ret);
 }
 #else // TEL_TEST_UNSUPPORT
 /**

@@ -50,6 +50,8 @@ public:
     std::shared_ptr<DataShare::DataShareHelper> CreatePdpProfileHelper();
     std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyHelper();
     std::shared_ptr<DataShare::DataShareHelper> CreateGlobalParamsHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyVersionCustHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreateOpKeyVersionChipHelper();
 
     int SimInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int SimUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
@@ -80,6 +82,7 @@ public:
     int GlobalEccUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int OpKeyVersionQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper, Uri uri) const;
 
 private:
     std::shared_ptr<DataShare::DataShareHelper> simDataHelper = nullptr;
@@ -87,6 +90,8 @@ private:
     std::shared_ptr<DataShare::DataShareHelper> pdpProfileDataHelper = nullptr;
     std::shared_ptr<DataShare::DataShareHelper> opKeyDataHelper = nullptr;
     std::shared_ptr<DataShare::DataShareHelper> globalParamsDataHelper = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> opKeyVersionCustHelper = nullptr;
+    std::shared_ptr<DataShare::DataShareHelper> opKeyVersionChipHelper = nullptr;
 };
 } // namespace Telephony
 } // namespace OHOS

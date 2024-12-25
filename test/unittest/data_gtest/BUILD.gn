@@ -30,6 +30,7 @@ ohos_unittest("tel_telephony_data_gtest") {
     "$SOURCE_DIR/sim/include",
     "$SOURCE_DIR/sms_mms/include",
     "$SOURCE_DIR/global_params/include",
+    "$SOURCE_DIR/opkey_version/include",
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"TelephonyDataGtest\"",
