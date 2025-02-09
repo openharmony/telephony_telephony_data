@@ -99,6 +99,22 @@ private:
      */
     int ClearData(const std::string &opKey);
 
+    /**
+     * Create pse_base_station table
+     *
+     * @param createTableStr Create table statement
+     * @param tableName tableName
+     */
+    void CreatePseBaseStationTableStr(std::string &createTableStr, const std::string &tableName);
+
+    /**
+     * Create pse_base_station trigger
+     *
+     * @param createTableStr Create table statement
+     * @param tableName tableName
+     */
+    void CreatePseBaseStationTriggerStr(std::string &createTableStr, const std::string &tableName);
+
 private:
     const std::string DB_NAME = "net.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;

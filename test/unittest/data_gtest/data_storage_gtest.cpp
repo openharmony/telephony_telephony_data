@@ -1234,5 +1234,86 @@ HWTEST_F(DataStorageGtest, TelMockTest_001, Function | MediumTest | Level1)
     EXPECT_TRUE(true);
 }
 #endif // TEL_TEST_UNSUPPORT
+
+/**
+ * @tc.number   PseBaseStationInsert_001
+ * @tc.name     insert pse base station data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, PseBaseStationInsert_001, Function | MediumTest | Level1)
+{
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    int ret = PseBaseStationInsert(helper);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
+}
+
+/**
+ * @tc.number   PseBaseStationUpdate_001
+ * @tc.name     update pse base station data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, PseBaseStationUpdate_001, Function | MediumTest | Level2)
+{
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    int ret = PseBaseStationUpdate(helper);
+    helper = nullptr;
+    EXPECT_GE(ret, DATA_STORAGE_ERROR);
+}
+
+/**
+ * @tc.number   PseBaseStationQuery_001
+ * @tc.name     query pse base station data
+ * @tc.desc     Function test
+ */
+HWTEST_F(DataStorageGtest, PseBaseStationQuery_001, Function | MediumTest | Level2)
+{
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
+    if (helper == nullptr) {
+        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
+        return;
+    }
+    bool ret = PseBaseStationQuery(helper);
+    EXPECT_TRUE(ret);
+    helper = nullptr;
+}
+
+int DataStorageGtest::PseBaseStationInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pse_base_station");
+    DataShare::DataShareValuesBucket value;
+    value.Put(PseBaseStationData::DATE, "01234567");
+    value.Put(PseBaseStationData::COUNT, 1);
+    return helper->Insert(uri, value);
+}
+
+int DataStorageGtest::PseBaseStationUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pse_base_station");
+    DataShare::DataShareValuesBucket value;
+    int32_t count = 10;
+    value.Put(PseBaseStationData::COUNT, count);
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(PseBaseStationData::DATE, "01234567");
+    return helper->Update(uri, predicates, value);
+}
+
+bool DataStorageGtest::PseBaseStationQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.pdpprofileability/net/pse_base_station");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo(PseBaseStationData::DATE, "01234567");
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+    return resultSet != nullptr;
+}
 } // namespace Telephony
 } // namespace OHOS

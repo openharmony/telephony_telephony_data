@@ -37,8 +37,14 @@ int RdbPdpProfileHelper::Init()
     config.SetJournalMode(NativeRdb::JournalMode::MODE_TRUNCATE);
     std::string pdpProfileStr;
     CreatePdpProfileTableStr(pdpProfileStr, TABLE_PDP_PROFILE);
+    std::string pseBaseStationStr;
+    CreatePseBaseStationTableStr(pseBaseStationStr, TABLE_PSE_BASE_STATION);
+    std::string pseBaseStationTriggerStr;
+    CreatePseBaseStationTriggerStr(pseBaseStationTriggerStr, TABLE_PSE_BASE_STATION);
     std::vector<std::string> createTableVec;
     createTableVec.push_back(pdpProfileStr);
+    createTableVec.push_back(pseBaseStationStr);
+    createTableVec.push_back(pseBaseStationTriggerStr);
     RdbPdpProfileCallback callback(createTableVec);
     CreateRdbStore(config, VERSION, callback, errCode);
     return errCode;
@@ -92,6 +98,25 @@ void RdbPdpProfileHelper::CreatePdpProfileTableStr(std::string &createTableStr, 
     createTableStr.append(PdpProfileData::AUTH_PWD).append(", ");
     createTableStr.append(PdpProfileData::EDITED_STATUS).append(", ");
     createTableStr.append(PdpProfileData::PROXY_IP_ADDRESS).append("))");
+}
+
+void RdbPdpProfileHelper::CreatePseBaseStationTableStr(std::string &createTableStr, const std::string &tableName)
+{
+    createTableStr.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append("( ");
+    createTableStr.append(PseBaseStationData::ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT, ");
+    createTableStr.append(PseBaseStationData::DATE).append(" TEXT NOT NULL, ");
+    createTableStr.append(PseBaseStationData::COUNT).append(" INTEGER NOT NULL, ");
+    createTableStr.append("UNIQUE (").append(PseBaseStationData::DATE).append("));");
+}
+
+void RdbPdpProfileHelper::CreatePseBaseStationTriggerStr(std::string &createTableStr, const std::string &tableName)
+{
+    createTableStr.append("CREATE TRIGGER IF NOT EXISTS pse_trigger BEFORE INSERT ON ").append(tableName);
+    createTableStr.append(" WHEN (SELECT COUNT (*) FROM ").append(tableName);
+    createTableStr.append(") >= 90 BEGIN DELETE FROM ").append(tableName);
+    createTableStr.append(" WHERE ").append(PseBaseStationData::ID);
+    createTableStr.append(" = (SELECT MIN(").append(PseBaseStationData::ID);
+    createTableStr.append(") FROM ").append(tableName).append("); END;");
 }
 
 int RdbPdpProfileHelper::ResetApn()

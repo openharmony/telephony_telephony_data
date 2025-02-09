@@ -83,6 +83,9 @@ public:
     int GlobalEccSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int OpKeyVersionQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper, Uri uri) const;
+    int PseBaseStationInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int PseBaseStationUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    bool PseBaseStationQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
 
 private:
     std::shared_ptr<DataShare::DataShareHelper> simDataHelper = nullptr;

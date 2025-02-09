@@ -118,6 +118,22 @@ public:
     static constexpr const char *SIM_ID = "sim_id";
 };
 
+class PseBaseStationData {
+public:
+    /**
+    * @brief Operator id
+    */
+    static constexpr const char *ID = "id";
+    /**
+     * @brief Date
+     */
+    static constexpr const char *DATE = "date";
+    /**
+     * @brief Count
+     */
+    static constexpr const char *COUNT = "count";
+};
+
 struct PdpProfile {
     int profileId = 0;
     std::string profileName = "";
@@ -186,8 +202,10 @@ constexpr const int32_t DEFAULT_SIM_ID = 0;
 constexpr const int32_t INVALID_PROFILE_ID = -1;
 constexpr const char *INVALID_OPKEY = "-1";
 constexpr const char *TABLE_PDP_PROFILE = "pdp_profile";
+constexpr const char *TABLE_PSE_BASE_STATION = "pse_base_station";
 constexpr const char *TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
 constexpr const char *PDP_PROFILE_URI = "datashare:///com.ohos.pdpprofileability";
+constexpr const char *PSE_BASE_STATION_URI = "datashare:///com.ohos.pdpprofileability/net/pse_base_station";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_PDP_PROFILE_DATA_H
