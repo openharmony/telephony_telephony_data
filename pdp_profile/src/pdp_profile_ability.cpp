@@ -45,6 +45,7 @@ static const std::map<std::string, PdpProfileUriType> pdpProfileUriMap_ = {
     { "/net/pdp_profile/init", PdpProfileUriType::INIT},
     { "/net/pdp_profile/reset", PdpProfileUriType::RESET },
     { "/net/pdp_profile/preferapn", PdpProfileUriType::PREFER_APN },
+    { "/net/pse_base_station", PdpProfileUriType::PSE_BASE_STATION },
 };
 
 PdpProfileAbility::PdpProfileAbility() : DataShareExtAbility() {}
@@ -157,6 +158,9 @@ int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBu
     if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
         OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
         helper_.Insert(id, values, TABLE_PDP_PROFILE);
+    } else if (pdpProfileUriType == PdpProfileUriType::PSE_BASE_STATION) {
+        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+        helper_.Insert(id, values, TABLE_PSE_BASE_STATION);
     } else {
         DATA_STORAGE_LOGE("PdpProfileAbility::Insert##uri = %{public}s", uri.ToString().c_str());
     }
@@ -233,6 +237,8 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
         sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
         delete absRdbPredicates;
         return sharedPtrResult;
+    } else if (pdpProfileUriType == PdpProfileUriType::PSE_BASE_STATION) {
+        return QueryPseBaseStation(uri, predicates, columns);
     }
     DATA_STORAGE_LOGE("PdpProfileAbility::Query##uri = %{public}s", uri.ToString().c_str());
     return sharedPtrResult;
@@ -253,12 +259,11 @@ int PdpProfileAbility::Update(
     std::lock_guard<std::mutex> guard(lock_);
     Uri tempUri = uri;
     PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
-    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = CreateAbsRdbPredicates(pdpProfileUriType);
     switch (pdpProfileUriType) {
-        case PdpProfileUriType::PDP_PROFILE: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
+        case PdpProfileUriType::PDP_PROFILE:
+        case PdpProfileUriType::PSE_BASE_STATION:
             break;
-        }
         case PdpProfileUriType::RESET: {
             result = ResetApn(value);
             if (result != NativeRdb::E_OK) {
@@ -516,6 +521,44 @@ void PdpProfileAbility::GetTargetOpkey(int slotId, std::string &opkey)
     opkey = Str16ToStr8(opkeyU16);
     DATA_STORAGE_LOGI(
         "PdpProfileAbility::GetTargetOpkey##slotId = %{public}d, opkey = %{public}s", slotId, opkey.c_str());
+}
+
+std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::QueryPseBaseStation(const Uri &uri,
+    const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns)
+{
+    DATA_STORAGE_LOGI("query PSE_BASE_STATION");
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PSE_BASE_STATION);
+    if (absRdbPredicates == nullptr) {
+        DATA_STORAGE_LOGE("PdpProfileAbility::Query NativeRdb::AbsRdbPredicates is null!");
+        return nullptr;
+    }
+    std::shared_ptr<NativeRdb::ResultSet> result = nullptr;
+    result = helper_.Query(ConvertPredicates(absRdbPredicates->GetTableName(), predicates), columns);
+    if (result == nullptr) {
+        DATA_STORAGE_LOGE("PdpProfileAbility::Query  NativeRdb::ResultSet is null!");
+        delete absRdbPredicates;
+        return nullptr;
+    }
+    auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
+    auto sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
+    delete absRdbPredicates;
+    return sharedPtrResult;
+}
+
+NativeRdb::AbsRdbPredicates* PdpProfileAbility::CreateAbsRdbPredicates(PdpProfileUriType type)
+{
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
+    switch (type) {
+        case PdpProfileUriType::PDP_PROFILE:
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PDP_PROFILE);
+            break;
+        case PdpProfileUriType::PSE_BASE_STATION:
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PSE_BASE_STATION);
+            break;
+        default:
+            break;
+    }
+    return absRdbPredicates;
 }
 } // namespace Telephony
 } // namespace OHOS

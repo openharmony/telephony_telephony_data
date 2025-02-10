@@ -49,6 +49,7 @@ enum class PdpProfileUriType {
     INIT,
     RESET,
     PREFER_APN,
+    PSE_BASE_STATION,
 };
 class PdpProfileAbility : public DataShare::DataShareExtAbility {
 public:
@@ -109,6 +110,9 @@ private:
     int ResetApn(const DataShare::DataShareValuesBucket &bucket);
     int GetIntFromValuesBucket(OHOS::NativeRdb::ValuesBucket &bucket, const char *key, int &value);
     std::shared_ptr<NativeRdb::ResultSet> QueryPdpProfile(Uri &uri, const std::string &tableName,
+        const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
+    NativeRdb::AbsRdbPredicates* CreateAbsRdbPredicates(PdpProfileUriType type);
+    std::shared_ptr<DataShare::DataShareResultSet> QueryPseBaseStation(const Uri &uri,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
 };
 } // namespace Telephony
