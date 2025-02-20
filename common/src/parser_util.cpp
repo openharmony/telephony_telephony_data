@@ -555,7 +555,12 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    return CloseFile(f);
+    auto ret = CloseFile(f);
+    if (ret != DATA_STORAGE_SUCCESS) {
+        free(f);
+        return ret;
+    }
+    return ret;
 }
 
 int ParserUtil::CloseFile(FILE *f) const
