@@ -557,7 +557,7 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
     }
     auto ret = CloseFile(f);
     if (ret != DATA_STORAGE_SUCCESS) {
-        free(f);
+        free(content);
         return ret;
     }
     return ret;
