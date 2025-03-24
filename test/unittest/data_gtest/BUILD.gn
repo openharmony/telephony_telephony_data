@@ -18,7 +18,7 @@ ohos_unittest("tel_telephony_data_gtest") {
   part_name = "telephony_data"
   subsystem_name = "telephony"
   test_module = "telephony_data"
-  module_out_path = part_name + "/" + test_module
+  module_out_path = part_name + "/" + test_module + "/" + "tel_telephony_data_gtest"
 
   sources = [ "$SOURCE_DIR/test/unittest/data_gtest/data_storage_gtest.cpp" ]
 
