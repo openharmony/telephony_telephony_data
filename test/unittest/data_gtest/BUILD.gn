@@ -17,8 +17,9 @@ SOURCE_DIR = "../../../"
 ohos_unittest("tel_telephony_data_gtest") {
   part_name = "telephony_data"
   subsystem_name = "telephony"
-  test_module = "tel_telephony_data_gtest"
-  module_out_path = part_name + "/" + test_module
+  test_module = "telephony_data"
+  test_suite = "tel_telephony_data_gtest"
+  module_out_path = part_name + "/" + test_module + "/" + test_suite
 
   sources = [ "$SOURCE_DIR/test/unittest/data_gtest/data_storage_gtest.cpp" ]
 
