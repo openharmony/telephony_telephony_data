@@ -74,6 +74,14 @@ ohos_unittest("tel_telephony_data_gtest") {
     "-fsanitize=cfi",
     "-fsanitize-cfi-cross-dso",
   ]
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.telephony_telephony_enhanced) &&
+      global_parts_info.telephony_telephony_enhanced) {
+    print(
+        "telephony_telephony_enhanced = ${global_parts_info.telephony_telephony_enhanced}")
+    defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_EXT" ]
+  }
 }
 
 group("unittest") {
