@@ -578,7 +578,11 @@ int DataStorageGtest::OpKeyVersionQuery(const std::shared_ptr<DataShare::DataSha
     std::vector<std::string> columns;
     DataShare::DataSharePredicates predicates;
     std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+#ifdef OHOS_BUILD_ENABLE_TELEPHONY_EXT
     return resultSet != nullptr;
+#else
+    return resultSet == nullptr;
+#endif
 }
 #ifndef TEL_TEST_UNSUPPORT
 /**
