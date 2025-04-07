@@ -19,12 +19,15 @@
 #include "ability_loader.h"
 #include "abs_rdb_predicates.h"
 #include "abs_shared_result_set.h"
+#include "apn_encryption_util.h"
 #include "core_service_client.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
 #include "datashare_ext_ability.h"
 #include "datashare_predicates.h"
 #include "new"
+#include "shared_block.h"
+#include "pdp_result_set_bridge.h"
 #include "pdp_profile_data.h"
 #include "permission_util.h"
 #include "preferences_util.h"
@@ -142,6 +145,188 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
     return result;
 }
 
+int GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet, int columnIndex, NativeData &data)
+{
+    int64_t value1;
+    double_t value2;
+    std::string value3;
+    std::vector<uint8_t> blob;
+    DataShare::DataType dataType;
+    int errCode = resultSet->GetDataType(columnIndex, dataType);
+    DATA_STORAGE_LOGI("dataType %{public}d.", dataType);
+    if (errCode != 0) {
+        DATA_STORAGE_LOGE("GetDataType fail");
+        return errCode;
+    }
+    switch (dataType) {
+        case DataShare::DataType::TYPE_INTEGER:
+             errCode = resultSet->GetLong(columnIndex, value1);
+             if (errCode != 0) {
+                  return errCode;
+             }
+             data = value1;
+             break;
+        case DataShare::DataType::TYPE_FLOAT:
+             errCode = resultSet->GetDouble(columnIndex, value2);
+             if (errCode != 0) {
+                  return errCode;
+             }
+             data = value2;
+             break;
+        case DataShare::DataType::TYPE_STRING:
+             errCode = resultSet->GetString(columnIndex, value3);
+             if (errCode != 0) {
+                  return errCode;
+             }
+             data = value3;
+             break;
+        case DataShare::DataType::TYPE_BLOB:
+             errCode = resultSet->GetBlob(columnIndex, blob);
+             if (errCode != 0) {
+                  return errCode;
+             }
+             data = blob;
+             break;
+        case DataShare::DataType::TYPE_NULL:
+        default:
+            data = monostate{};
+            break;
+    }
+    return errCode;
+}
+
+int ToNativeDataSet(std::shared_ptr<DataShare::DataShareResultSet> resultSet, NativeDataSet &dataSet)
+{
+    int errCode = 0;
+    int rowCount = 0;
+    errCode = resultSet->GetAllColumnNames(dataSet.columnNames);
+    const auto &columnNames = dataSet.columnNames;
+    if (errCode != 0) {
+        DATA_STORAGE_LOGE("GetAllColumnNames fail");
+        return errCode;
+    }
+    vector<int> columnIndexes(columnNames.size());
+    int columnIndex;
+    for (size_t i = 0; i < columnNames.size(); ++i) {
+        errCode = resultSet->GetColumnIndex(columnNames[i], columnIndex);
+        if (errCode != 0) {
+            DATA_STORAGE_LOGE("GetColumnIndex fail");
+            return errCode;
+        }
+        columnIndexes[i] = columnIndex; // Assert the comlun index will not change.
+    }
+    errCode = resultSet->GetRowCount(rowCount);
+    if (errCode != 0) {
+        DATA_STORAGE_LOGE("GetRowCount fail");
+        return errCode;
+    }
+    dataSet.records = {};
+    dataSet.records.resize(rowCount);
+    for (int i = 0; i < rowCount; ++i) {
+        auto &record = dataSet.records[i];
+        record.resize(columnNames.size());
+        errCode = resultSet->GoToRow(i);
+        if (errCode != 0) {
+            DATA_STORAGE_LOGE("GoToRow fail");
+            return errCode;
+        }
+        for (size_t j = 0; j < columnNames.size(); ++j) {
+            columnIndex = columnIndexes[j];
+            NativeData data;
+            errCode = GetNativeData(resultSet, columnIndex, data);
+            if (errCode != 0) {
+                DATA_STORAGE_LOGE("GetNativeData fail");
+                return errCode;
+            }
+            record[columnIndex] = data;
+        }
+    }
+    return errCode;
+}
+
+std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpSharedPtrResult(
+    std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult, bool &isNeedUpdate)
+{
+    if (sharedPtrResult == nullptr) {
+        isNeedUpdate = false;
+        return nullptr;
+    }
+    vector<string> columnNames;
+    int errCode = sharedPtrResult->GetAllColumnNames(columnNames);
+    if (errCode != 0) {
+        isNeedUpdate = false;
+        return nullptr;
+    }
+    auto editedIter = std::find(columnNames.cbegin(), columnNames.cend(), "edited");
+    auto iter = std::find(columnNames.cbegin(), columnNames.cend(), "auth_pwd");
+    if (iter == columnNames.cend() || editedIter == columnNames.cend()) {
+        isNeedUpdate = false;
+        return nullptr;
+    }
+    auto editedIndex = editedIter - columnNames.cbegin();
+    auto replaceIndex = iter - columnNames.cbegin();
+    NativeDataSet dataSet;
+    errCode = ToNativeDataSet(sharedPtrResult, dataSet);
+    if (errCode != 0) {
+        isNeedUpdate = false;
+        return nullptr;
+    }
+    NativeDataSet resultDataSet;
+    resultDataSet.columnNames = columnNames;
+    for (auto &record : dataSet.records) {
+        NativeData *stringData = &record[replaceIndex];
+        std::string pwdStr;
+        if (auto ptr = std::get_if<string>(stringData); ptr != nullptr) {
+            pwdStr = *ptr;
+        }
+        NativeData *editedStatus = &record[editedIndex];
+        int64_t edited = 0;
+        if (auto ptr = std::get_if<int64_t>(editedStatus); ptr != nullptr) {
+             edited =  *ptr;
+        }
+        if (edited != 0 && !pwdStr.empty()) {
+            isNeedUpdate = true;
+            std::string dePwd = DecryptData(pwdStr);
+            NativeData dePwdNativeData = dePwd;
+            record[replaceIndex] = dePwdNativeData;
+        }
+        resultDataSet.records.emplace_back(record);
+    }
+    std::shared_ptr<DataShare::ResultSetBridge> resultSetNew =  std::make_shared<PdpResultSetBridge>(resultDataSet);
+    return std::make_shared<DataShare::DataShareResultSet>(resultSetNew);
+}
+
+bool PdpProfileAbility::NeedUpdateValuesBucket(const DataShare::DataShareValuesBucket &valuesBucket,
+    DataShare::DataShareValuesBucket &newValuesBucket)
+{
+    bool isValid = false;
+    std::map<std::string, DataShare::DataShareValueObject::Type> valuesMapNew;
+    std::string ahtuPwdKey(PdpProfileData::AUTH_PWD);
+    DataShare::DataShareValueObject authPwdKeyObject = valuesBucket.Get(ahtuPwdKey, isValid);
+    if (!isValid) {
+        DATA_STORAGE_LOGE("NeedUpdateValuesBucket not find AUTH_PWD");
+        return false;
+    }
+    std::string pwdStr = authPwdKeyObject;
+    std::string encryptData;
+    if (pwdStr.empty()) {
+        return false;
+    } else {
+        DATA_STORAGE_LOGI("NeedUpdateValuesBucket AUTH_PWD is not empty");
+        encryptData = EncryptData(pwdStr);
+    }
+
+    for (auto &[k, v] : valuesBucket.valuesMap) {
+        if (strcmp(k.c_str(), PdpProfileData::AUTH_PWD) == 0) {
+            valuesMapNew.insert(std::make_pair(k, encryptData));
+        } else {
+            valuesMapNew.insert(std::make_pair(k, v));
+        }
+    }
+    newValuesBucket = DataShare::DataShareValuesBucket(valuesMapNew);
+    return true;
+}
+
 int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value)
 {
     if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
@@ -156,7 +341,10 @@ int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBu
     PdpProfileUriType pdpProfileUriType = ParseUriType(tempUri);
     int64_t id = DATA_STORAGE_ERROR;
     if (pdpProfileUriType == PdpProfileUriType::PDP_PROFILE) {
-        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+        DataShare::DataShareValuesBucket newValue;
+        bool useNewBucket = NeedUpdateValuesBucket(value, newValue);
+        OHOS::NativeRdb::ValuesBucket values = useNewBucket ? RdbDataShareAdapter::RdbUtils::ToValuesBucket(newValue)
+            : RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
         helper_.Insert(id, values, TABLE_PDP_PROFILE);
     } else if (pdpProfileUriType == PdpProfileUriType::PSE_BASE_STATION) {
         OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
@@ -236,7 +424,10 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
         auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
         sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
         delete absRdbPredicates;
-        return sharedPtrResult;
+        bool needUpdate = false;
+        std::shared_ptr<DataShare::DataShareResultSet> newSharedPtrResult =
+            NeedUpdatePdpSharedPtrResult(sharedPtrResult, needUpdate);
+        return needUpdate ? newSharedPtrResult : sharedPtrResult;
     } else if (pdpProfileUriType == PdpProfileUriType::PSE_BASE_STATION) {
         return QueryPseBaseStation(uri, predicates, columns);
     }
@@ -244,8 +435,7 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
     return sharedPtrResult;
 }
 
-int PdpProfileAbility::Update(
-    const Uri &uri, const DataShare::DataSharePredicates &predicates,
+int PdpProfileAbility::Update(const Uri &uri, const DataShare::DataSharePredicates &predicates,
     const DataShare::DataShareValuesBucket &value)
 {
     if (!PermissionUtil::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
@@ -273,8 +463,7 @@ int PdpProfileAbility::Update(
             break;
         }
         case PdpProfileUriType::PREFER_APN: {
-            result = (UpdatePreferApn(value) == NativeRdb::E_OK)
-                         ? NativeRdb::E_OK
+            result = (UpdatePreferApn(value) == NativeRdb::E_OK) ? NativeRdb::E_OK
                          : static_cast<int>(LoadProFileErrorType::PREFER_APN_FAIL);
             break;
         }
@@ -285,7 +474,10 @@ int PdpProfileAbility::Update(
     if (absRdbPredicates != nullptr) {
         int changedRows = CHANGED_ROWS;
         NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
-        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+        DataShare::DataShareValuesBucket newValue;
+        bool useNewBucket = NeedUpdateValuesBucket(value, newValue);
+        OHOS::NativeRdb::ValuesBucket values = useNewBucket ? RdbDataShareAdapter::RdbUtils::ToValuesBucket(newValue)
+            : RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
         result = helper_.Update(changedRows, values, rdbPredicates);
         delete absRdbPredicates;
         absRdbPredicates = nullptr;
@@ -430,6 +622,11 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
         GetTargetOpkey(slotId, opkey);
     }
     if (opkey.empty() || strcmp(opkey.c_str(), INVALID_OPKEY) == 0) {
+        DataShare::DataShareValuesBucket newValue;
+        bool useNewBucket = NeedUpdateValuesBucket(value, newValue);
+        OHOS::NativeRdb::ValuesBucket values = useNewBucket ? RdbDataShareAdapter::RdbUtils::ToValuesBucket(newValue)
+            : RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+
         return helper_.Query(ConvertPredicates(tableName, predicates), columns);
     }
     constexpr int32_t FIELD_IDX = 0;

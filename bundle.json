@@ -45,6 +45,8 @@
                 "resource_management",
                 "safwk",
                 "samgr",
+                "huks",
+                "kv_store",
                 "relational_store",
                 "zlib"
             ]

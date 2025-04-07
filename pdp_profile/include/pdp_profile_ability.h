@@ -100,6 +100,10 @@ private:
     std::string GetQueryKey(const std::string &queryString, const std::string &key);
     bool HasColumnValue(
         const OHOS::NativeRdb::ValuesBucket &value, const char *columnName, NativeRdb::ValueObject &valueObject);
+    bool NeedUpdateValuesBucket(const DataShare::DataShareValuesBucket &valuesBucket,
+        DataShare::DataShareValuesBucket &newValuesBucket);
+    std::shared_ptr<DataShare::DataShareResultSet> NeedUpdatePdpSharedPtrResult(
+        std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult, bool &isNeedUpdate);
 
 private:
     RdbPdpProfileHelper helper_;
