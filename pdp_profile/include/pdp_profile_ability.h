@@ -28,6 +28,7 @@
 #include "iosfwd"
 #include "map"
 #include "memory"
+#include "pdp_result_set_bridge.h"
 #include "rdb_pdp_profile_helper.h"
 #include "rdb_predicates.h"
 #include "string"
@@ -118,8 +119,10 @@ private:
     NativeRdb::AbsRdbPredicates* CreateAbsRdbPredicates(PdpProfileUriType type);
     std::shared_ptr<DataShare::DataShareResultSet> QueryPseBaseStation(const Uri &uri,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
-    int PdpProfileAbility::GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet,
-        int columnIndex, NativeData &data)
+    int GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet,
+        int columnIndex, NativeData &data);
+    int ToNativeDataSet(
+        std::shared_ptr<DataShare::DataShareResultSet> resultSet, NativeDataSet &dataSet);
 };
 } // namespace Telephony
 } // namespace OHOS
