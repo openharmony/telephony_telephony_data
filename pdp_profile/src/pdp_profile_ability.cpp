@@ -147,9 +147,9 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
 
 int GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet, int columnIndex, NativeData &data)
 {
-    int64_t value1;
-    double_t value2;
-    std::string value3;
+    int64_t valueInt;
+    double_t valueDouble;
+    std::string valueStr;
     std::vector<uint8_t> blob;
     DataShare::DataType dataType;
     int errCode = resultSet->GetDataType(columnIndex, dataType);
@@ -160,33 +160,33 @@ int GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet, int 
     }
     switch (dataType) {
         case DataShare::DataType::TYPE_INTEGER:
-             errCode = resultSet->GetLong(columnIndex, value1);
-             if (errCode != 0) {
-                  return errCode;
-             }
-             data = value1;
-             break;
+            errCode = resultSet->GetLong(columnIndex, valueInt);
+            if (errCode != 0) {
+                return errCode;
+            }
+            data = valueInt;
+            break;
         case DataShare::DataType::TYPE_FLOAT:
-             errCode = resultSet->GetDouble(columnIndex, value2);
-             if (errCode != 0) {
-                  return errCode;
-             }
-             data = value2;
-             break;
+            errCode = resultSet->GetDouble(columnIndex, valueDouble);
+            if (errCode != 0) {
+                return errCode;
+            }
+            data = valueDouble;
+            break;
         case DataShare::DataType::TYPE_STRING:
-             errCode = resultSet->GetString(columnIndex, value3);
-             if (errCode != 0) {
-                  return errCode;
-             }
-             data = value3;
-             break;
+            errCode = resultSet->GetString(columnIndex, valueStr);
+            if (errCode != 0) {
+                return errCode;
+            }
+            data = valueStr;
+            break;
         case DataShare::DataType::TYPE_BLOB:
-             errCode = resultSet->GetBlob(columnIndex, blob);
-             if (errCode != 0) {
-                  return errCode;
-             }
-             data = blob;
-             break;
+            errCode = resultSet->GetBlob(columnIndex, blob);
+            if (errCode != 0) {
+                return errCode;
+            }
+            data = blob;
+            break;
         case DataShare::DataType::TYPE_NULL:
         default:
             data = monostate{};
@@ -282,10 +282,11 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
         NativeData *editedStatus = &record[editedIndex];
         int64_t edited = 0;
         if (auto ptr = std::get_if<int64_t>(editedStatus); ptr != nullptr) {
-             edited =  *ptr;
+            edited =  *ptr;
         }
         if (edited != 0 && !pwdStr.empty()) {
             isNeedUpdate = true;
+            DATA_STORAGE_LOGI("NeedUpdatePdpSharedPtrResult isNeedUpdate is true");
             std::string dePwd = DecryptData(pwdStr);
             NativeData dePwdNativeData = dePwd;
             record[replaceIndex] = dePwdNativeData;
@@ -622,11 +623,6 @@ std::shared_ptr<NativeRdb::ResultSet> PdpProfileAbility::QueryPdpProfile(Uri &ur
         GetTargetOpkey(slotId, opkey);
     }
     if (opkey.empty() || strcmp(opkey.c_str(), INVALID_OPKEY) == 0) {
-        DataShare::DataShareValuesBucket newValue;
-        bool useNewBucket = NeedUpdateValuesBucket(value, newValue);
-        OHOS::NativeRdb::ValuesBucket values = useNewBucket ? RdbDataShareAdapter::RdbUtils::ToValuesBucket(newValue)
-            : RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
-
         return helper_.Query(ConvertPredicates(tableName, predicates), columns);
     }
     constexpr int32_t FIELD_IDX = 0;
