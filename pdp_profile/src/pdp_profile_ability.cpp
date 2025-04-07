@@ -27,7 +27,6 @@
 #include "datashare_predicates.h"
 #include "new"
 #include "shared_block.h"
-#include "pdp_result_set_bridge.h"
 #include "pdp_profile_data.h"
 #include "permission_util.h"
 #include "preferences_util.h"
@@ -196,7 +195,8 @@ int PdpProfileAbility::GetNativeData(std::shared_ptr<DataShare::DataShareResultS
     return errCode;
 }
 
-int ToNativeDataSet(std::shared_ptr<DataShare::DataShareResultSet> resultSet, NativeDataSet &dataSet)
+int PdpProfileAbility::ToNativeDataSet(
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet, NativeDataSet &dataSet)
 {
     int errCode = 0;
     int rowCount = 0;
