@@ -118,6 +118,8 @@ private:
     NativeRdb::AbsRdbPredicates* CreateAbsRdbPredicates(PdpProfileUriType type);
     std::shared_ptr<DataShare::DataShareResultSet> QueryPseBaseStation(const Uri &uri,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
+    int PdpProfileAbility::GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet,
+        int columnIndex, NativeData &data)
 };
 } // namespace Telephony
 } // namespace OHOS
