@@ -154,7 +154,12 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, cJSON *item
         bean.authUser = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_USER));
         bean.authPwd = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_PWD));
         std::string authTypeStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_TYPE));
-        bean.authType = authTypeStr.empty() ? 0 : atoi(authTypeStr.c_str());
+        int authType = authTypeStr.empty() ? static_cast<int>(ApnAuthType::INIT) : atoi(authTypeStr.c_str());
+        if (authType == static_cast<int>(ApnAuthType::INIT)) {
+            authType = bean.authUser.empty() ?
+                static_cast<int>(ApnAuthType::NONE) : static_cast<int>(ApnAuthType::PAP_OR_CHAP);
+        }
+        bean.authType = authType;
         bean.mcc = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MCC));
         bean.mnc = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MNC));
         bean.apn = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_APN));
