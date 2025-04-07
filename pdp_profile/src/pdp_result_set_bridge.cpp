@@ -87,13 +87,13 @@ inline int WriteBlob(ResultSetBridge::Writer &writer, uint32_t columnIndex, cons
 
 int PdpResultSetBridge::GetAllColumnNames(vector<string> &columnNames)
 {
-   columnNames = columnsNames_;
-   return 0;
+    columnNames = columnsNames_;
+    return 0;
 }
 
 int PdpResultSetBridge::OnGo(int32_t startRowIndex, int32_t targetRowIndex, DataShare::ResultSetBridge::Writer &writer)
 {
-    DATA_STORAGE_LOGE("PdpProfileAbility::OnGo startRowIndex = %{public}d targetRowIndex = %{public}d",
+    DATA_STORAGE_LOGI("PdpProfileAbility::OnGo startRowIndex = %{public}d targetRowIndex = %{public}d",
         startRowIndex, targetRowIndex);
     if ((startRowIndex < 0) || (targetRowIndex < 0) || (startRowIndex > targetRowIndex) ||
         (targetRowIndex >= static_cast<int32_t>(count_))) {
@@ -114,7 +114,7 @@ int PdpResultSetBridge::FillBlocks(int32_t startRowIndex, int32_t targetRowIndex
     for (int32_t rowIndex = startRowIndex; rowIndex <= targetRowIndex; ++rowIndex) {
         auto errCode = writer.AllocRow();
         if (errCode != 0) {
-            DATA_STORAGE_LOGE("PdpProfileAbility::FillBlock. ERROR 22");
+            DATA_STORAGE_LOGE("PdpProfileAbility::FillBlock. AllocRow fail");
             return rowIndex - 1;
         }
         ++allocatedRows;
