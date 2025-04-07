@@ -145,7 +145,8 @@ int PdpProfileAbility::BatchInsert(const Uri &uri, const std::vector<DataShare::
     return result;
 }
 
-int GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet, int columnIndex, NativeData &data)
+int PdpProfileAbility::GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet,
+    int columnIndex, NativeData &data)
 {
     int64_t valueInt;
     double_t valueDouble;
