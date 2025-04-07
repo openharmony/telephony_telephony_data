@@ -24,8 +24,8 @@
 namespace OHOS {
 namespace Telephony {
 
-static const uint32_t IV_SIZE = 16;
-struct HksParam g_genEncDecParams[] = {
+constexpr uint32_t IV_SIZE = 16;
+const struct HksParam g_genEncDecParams[] = {
     {
         .tag = HKS_TAG_ALGORITHM,
         .uint32Param = HKS_ALG_AES
