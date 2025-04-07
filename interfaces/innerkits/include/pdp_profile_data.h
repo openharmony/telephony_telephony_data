@@ -170,7 +170,11 @@ enum class ApnType {
 };
 
 enum class ApnAuthType {
-    None = 0, PAP, CHAP, PAP_OR_CHAP
+    INIT = -1,
+    NONE = 0,
+    PAP,
+    CHAP,
+    PAP_OR_CHAP
 };
 
 enum class PdpProtocol {
