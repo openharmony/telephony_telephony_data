@@ -28,6 +28,7 @@
 #include "iosfwd"
 #include "map"
 #include "memory"
+#include "pdp_result_set_bridge.h"
 #include "rdb_pdp_profile_helper.h"
 #include "rdb_predicates.h"
 #include "string"
@@ -100,6 +101,10 @@ private:
     std::string GetQueryKey(const std::string &queryString, const std::string &key);
     bool HasColumnValue(
         const OHOS::NativeRdb::ValuesBucket &value, const char *columnName, NativeRdb::ValueObject &valueObject);
+    bool NeedUpdateValuesBucket(const DataShare::DataShareValuesBucket &valuesBucket,
+        DataShare::DataShareValuesBucket &newValuesBucket);
+    std::shared_ptr<DataShare::DataShareResultSet> NeedUpdatePdpSharedPtrResult(
+        std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult, bool &isNeedUpdate);
 
 private:
     RdbPdpProfileHelper helper_;
@@ -114,6 +119,10 @@ private:
     NativeRdb::AbsRdbPredicates* CreateAbsRdbPredicates(PdpProfileUriType type);
     std::shared_ptr<DataShare::DataShareResultSet> QueryPseBaseStation(const Uri &uri,
         const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns);
+    int GetNativeData(std::shared_ptr<DataShare::DataShareResultSet> resultSet,
+        int columnIndex, NativeData &data);
+    int ToNativeDataSet(
+        std::shared_ptr<DataShare::DataShareResultSet> resultSet, NativeDataSet &dataSet);
 };
 } // namespace Telephony
 } // namespace OHOS
