@@ -28,23 +28,18 @@
 
 namespace OHOS {
 namespace Telephony {
-using std::variant;
-using std::monostate;
-using std::vector;
-using std::string;
-using std::function;
-using NativeData = variant<monostate, int64_t, double_t, std::string, std::vector<uint8_t>>;
-using NativeRecord = vector<NativeData>;
+using NativeData = std::variant<std::monostate, int64_t, double_t, std::string, std::vector<uint8_t>>;
+using NativeRecord = std::vector<NativeData>;
 struct NativeDataSet {
-    vector<string> columnNames;
-    vector<NativeRecord> records;
+    std::vector<std::string> columnNames;
+    std::vector<NativeRecord> records;
 };
 
 class PdpResultSetBridge : public DataShare::ResultSetBridge {
 public:
-    using WriteFunc = function<int(Writer &, const NativeRecord &record, uint32_t)>;
+    using WriteFunc = std::function<int(Writer &, const NativeRecord &record, uint32_t)>;
     struct ColumnDefinition {
-        string name;
+        std::string name;
         WriteFunc write;
     };
     PdpResultSetBridge(const NativeDataSet &dataSet);

@@ -21,6 +21,8 @@
 
 namespace OHOS {
 namespace Telephony {
+using std::vector;
+using std::string;
 using namespace DataShare;
 using namespace DistributedKv;
 

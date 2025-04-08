@@ -189,7 +189,7 @@ int PdpProfileAbility::GetNativeData(std::shared_ptr<DataShare::DataShareResultS
             break;
         case DataShare::DataType::TYPE_NULL:
         default:
-            data = monostate{};
+            data = std::monostate{};
             break;
     }
     return errCode;
@@ -206,7 +206,7 @@ int PdpProfileAbility::ToNativeDataSet(
         DATA_STORAGE_LOGE("GetAllColumnNames fail");
         return errCode;
     }
-    vector<int> columnIndexes(columnNames.size());
+    std::vector<int> columnIndexes(columnNames.size());
     int columnIndex;
     for (size_t i = 0; i < columnNames.size(); ++i) {
         errCode = resultSet->GetColumnIndex(columnNames[i], columnIndex);
@@ -248,20 +248,18 @@ int PdpProfileAbility::ToNativeDataSet(
 std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpSharedPtrResult(
     std::shared_ptr<DataShare::DataShareResultSet> sharedPtrResult, bool &isNeedUpdate)
 {
+    isNeedUpdate = false;
     if (sharedPtrResult == nullptr) {
-        isNeedUpdate = false;
         return nullptr;
     }
-    vector<string> columnNames;
+    std::vector<std::string> columnNames;
     int errCode = sharedPtrResult->GetAllColumnNames(columnNames);
     if (errCode != 0) {
-        isNeedUpdate = false;
         return nullptr;
     }
     auto editedIter = std::find(columnNames.cbegin(), columnNames.cend(), "edited");
     auto iter = std::find(columnNames.cbegin(), columnNames.cend(), "auth_pwd");
     if (iter == columnNames.cend() || editedIter == columnNames.cend()) {
-        isNeedUpdate = false;
         return nullptr;
     }
     auto editedIndex = editedIter - columnNames.cbegin();
@@ -269,7 +267,6 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
     NativeDataSet dataSet;
     errCode = ToNativeDataSet(sharedPtrResult, dataSet);
     if (errCode != 0) {
-        isNeedUpdate = false;
         return nullptr;
     }
     NativeDataSet resultDataSet;
@@ -277,7 +274,7 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
     for (auto &record : dataSet.records) {
         NativeData *stringData = &record[replaceIndex];
         std::string pwdStr;
-        if (auto ptr = std::get_if<string>(stringData); ptr != nullptr) {
+        if (auto ptr = std::get_if<std::string>(stringData); ptr != nullptr) {
             pwdStr = *ptr;
         }
         NativeData *editedStatus = &record[editedIndex];
@@ -288,8 +285,7 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
         if (edited != 0 && !pwdStr.empty()) {
             isNeedUpdate = true;
             DATA_STORAGE_LOGI("NeedUpdatePdpSharedPtrResult isNeedUpdate is true");
-            std::string dePwd = DecryptData(pwdStr);
-            NativeData dePwdNativeData = dePwd;
+            NativeData dePwdNativeData = DecryptData(pwdStr);
             record[replaceIndex] = dePwdNativeData;
         }
         resultDataSet.records.emplace_back(record);
