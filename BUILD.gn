@@ -93,6 +93,8 @@ ohos_shared_library("tel_telephony_data") {
     "pdp_profile/src/pdp_profile_ability.cpp",
     "pdp_profile/src/rdb_pdp_profile_callback.cpp",
     "pdp_profile/src/rdb_pdp_profile_helper.cpp",
+    "pdp_profile/src/apn_encryption_util.cpp",
+    "pdp_profile/src/pdp_result_set_bridge.cpp",
     "sim/src/rdb_sim_callback.cpp",
     "sim/src/rdb_sim_helper.cpp",
     "sim/src/sim_ability.cpp",
@@ -129,6 +131,8 @@ ohos_shared_library("tel_telephony_data") {
     "relational_store:native_rdb",
     "relational_store:rdb_data_share_adapter",
     "zlib:libz",
+    "huks:libhukssdk",
+    "kv_store:distributeddata_inner",
   ]
 
   cflags_cc = [
