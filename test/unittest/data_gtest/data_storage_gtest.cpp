@@ -590,7 +590,7 @@ int DataStorageGtest::OpKeyVersionQuery(const std::shared_ptr<DataShare::DataSha
  * @tc.name     create sim and sms DataAbilityHelper
  * @tc.desc     Function test
  */
-HWTEST_F(DataStorageGtest, DataStorage_001, Function | MediumTest | Level0)
+HWTEST_F(DataStorageGtest, DataStorage_001, TestSize.Level0)
 {
     ASSERT_TRUE(HasVoiceCapability());
     std::shared_ptr<DataShare::DataShareHelper> smsHelper = CreateSmsHelper();
