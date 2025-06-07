@@ -204,7 +204,7 @@ std::vector<uint8_t> EncryptData(std::string encryptData)
     }
     for (size_t i = 0; i < outDataBlob.size; i++) {
         result.emplace_back(outDataBlob.data[i]);
-     }
+    }
     return result;
 }
 
@@ -243,5 +243,6 @@ std::string DecryptVecData(std::vector<uint8_t> decryptVecData)
     std::string result(reinterpret_cast<const char*>(outDataBlob.data), outDataBlob.size);
     return result;
 }
+
 }  // namespace Telephony
 }  // namespace OHOS

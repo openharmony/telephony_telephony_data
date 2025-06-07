@@ -253,8 +253,7 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
         return nullptr;
     }
     std::vector<std::string> columnNames;
-    int errCode = sharedPtrResult->GetAllColumnNames(columnNames);
-    if (errCode != 0) {
+    if (sharedPtrResult->GetAllColumnNames(columnNames) != 0) {
         return nullptr;
     }
     auto editedIter = std::find(columnNames.cbegin(), columnNames.cend(), "edited");
@@ -265,8 +264,7 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
     auto editedIndex = editedIter - columnNames.cbegin();
     auto replaceIndex = iter - columnNames.cbegin();
     NativeDataSet dataSet;
-    errCode = ToNativeDataSet(sharedPtrResult, dataSet);
-    if (errCode != 0) {
+    if (ToNativeDataSet(sharedPtrResult, dataSet) != 0) {
         return nullptr;
     }
     NativeDataSet resultDataSet;
