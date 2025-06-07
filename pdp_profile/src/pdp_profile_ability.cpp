@@ -274,8 +274,11 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
     for (auto &record : dataSet.records) {
         NativeData *stringData = &record[replaceIndex];
         std::string pwdStr;
+        std::vector<uint8_t> pwdVec;
         if (auto ptr = std::get_if<std::string>(stringData); ptr != nullptr) {
             pwdStr = *ptr;
+        } else if (auto ptr = std::get_if<std::vector<uint8_t>>(stringData); ptr != nullptr) {
+            pwdVec = *ptr;
         }
         NativeData *editedStatus = &record[editedIndex];
         int64_t edited = 0;
@@ -284,8 +287,13 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
         }
         if (edited != 0 && !pwdStr.empty()) {
             isNeedUpdate = true;
-            DATA_STORAGE_LOGI("NeedUpdatePdpSharedPtrResult isNeedUpdate is true");
+            DATA_STORAGE_LOGI("NeedUpdatePdpSharedPtrResult isNeedUpdate is true string data");
             NativeData dePwdNativeData = DecryptData(pwdStr);
+            record[replaceIndex] = dePwdNativeData;
+        } else if (edited != 0 && (pwdVec.size() != 0)) {
+            isNeedUpdate = true;
+            DATA_STORAGE_LOGI("NeedUpdatePdpSharedPtrResult isNeedUpdate is true vec data");
+            NativeData dePwdNativeData = DecryptVecData(pwdVec);
             record[replaceIndex] = dePwdNativeData;
         }
         resultDataSet.records.emplace_back(record);
@@ -306,13 +314,12 @@ bool PdpProfileAbility::NeedUpdateValuesBucket(const DataShare::DataShareValuesB
         return false;
     }
     std::string pwdStr = authPwdKeyObject;
-    std::string encryptData;
+    std::vector<uint8_t> encryptData;
     if (pwdStr.empty()) {
         return false;
-    } else {
-        DATA_STORAGE_LOGI("NeedUpdateValuesBucket AUTH_PWD is not empty");
-        encryptData = EncryptData(pwdStr);
     }
+    DATA_STORAGE_LOGI("NeedUpdateValuesBucket AUTH_PWD is not empty");
+    encryptData = EncryptData(pwdStr);
 
     for (auto &[k, v] : valuesBucket.valuesMap) {
         if (strcmp(k.c_str(), PdpProfileData::AUTH_PWD) == 0) {

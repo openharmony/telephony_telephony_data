@@ -26,9 +26,11 @@ namespace Telephony {
 static const uint32_t AES_COMMON_SIZE = 1024;
 static const std::string APN_PWD_KEY_ALIAS = "ApnPwdSecret";
 
-std::string EncryptData(std::string encryptData);
+std::vector<uint8_t> EncryptData(std::string encryptData);
 
 std::string DecryptData(std::string decryptData);
+
+std::string DecryptVecData(std::vector<uint8_t> decryptData);
 } // namespace Telephony
 } // namespace OHOS
 
