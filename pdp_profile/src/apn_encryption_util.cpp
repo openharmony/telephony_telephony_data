@@ -210,6 +210,7 @@ std::vector<uint8_t> EncryptData(std::string encryptData)
 
 std::string DecryptData(std::string decryptData)
 {
+    DATA_STORAGE_LOGI("DecryptData enter");
     if (decryptData.empty()) {
         DATA_STORAGE_LOGI("decryptData is empty");
         return "";
@@ -226,10 +227,11 @@ std::string DecryptData(std::string decryptData)
     return result;
 }
 
-std::string DecryptVecData(std::vector<uint8_t> decryptVecData)
+std::string DecryptUintVecData(std::vector<uint8_t> decryptVecData)
 {
+    DATA_STORAGE_LOGI("DecryptUintVecData enter");
     if (decryptVecData.size() == 0) {
-        DATA_STORAGE_LOGI("DecryptVecData is empty");
+        DATA_STORAGE_LOGI("DecryptUintVecData is empty");
         return "";
     }
     struct HksBlob inDataBlob = { decryptVecData.size(), &decryptVecData[0] };
@@ -237,7 +239,7 @@ std::string DecryptVecData(std::vector<uint8_t> decryptVecData)
     struct HksBlob outDataBlob = {AES_COMMON_SIZE, outData};
     int32_t ret = AesCbcPkcs7Decrypt(APN_PWD_KEY_ALIAS.c_str(), &inDataBlob, &outDataBlob);
     if (ret != 0) {
-        DATA_STORAGE_LOGE("DecryptVecData error ret=%{public}d", ret);
+        DATA_STORAGE_LOGE("DecryptUintVecData error ret=%{public}d", ret);
         return "";
     }
     std::string result(reinterpret_cast<const char*>(outDataBlob.data), outDataBlob.size);

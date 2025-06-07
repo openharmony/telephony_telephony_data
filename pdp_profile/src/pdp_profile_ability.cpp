@@ -285,13 +285,11 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::NeedUpdatePdpS
         }
         if (edited != 0 && !pwdStr.empty()) {
             isNeedUpdate = true;
-            DATA_STORAGE_LOGI("NeedUpdatePdpSharedPtrResult isNeedUpdate is true string data");
             NativeData dePwdNativeData = DecryptData(pwdStr);
             record[replaceIndex] = dePwdNativeData;
         } else if (edited != 0 && (pwdVec.size() != 0)) {
             isNeedUpdate = true;
-            DATA_STORAGE_LOGI("NeedUpdatePdpSharedPtrResult isNeedUpdate is true vec data");
-            NativeData dePwdNativeData = DecryptVecData(pwdVec);
+            NativeData dePwdNativeData = DecryptUintVecData(pwdVec);
             record[replaceIndex] = dePwdNativeData;
         }
         resultDataSet.records.emplace_back(record);

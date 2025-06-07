@@ -30,7 +30,7 @@ std::vector<uint8_t> EncryptData(std::string encryptData);
 
 std::string DecryptData(std::string decryptData);
 
-std::string DecryptVecData(std::vector<uint8_t> decryptData);
+std::string DecryptUintVecData(std::vector<uint8_t> decryptData);
 } // namespace Telephony
 } // namespace OHOS
 
