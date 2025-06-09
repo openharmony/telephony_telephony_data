@@ -186,11 +186,13 @@ int AesCbcPkcs7Decrypt(const std::string &alias, struct HksBlob *inData, struct 
     return ret;
 }
 
-std::string EncryptData(std::string encryptData)
+std::vector<uint8_t> EncryptData(std::string encryptData)
 {
+    std::vector<uint8_t> result;
+    result.clear();
     if (encryptData.empty()) {
         DATA_STORAGE_LOGI("encryptData is empty");
-        return "";
+        return result;
     }
     struct HksBlob inDataBlob = { encryptData.length(), (uint8_t *)encryptData.c_str() };
     uint8_t outData[AES_COMMON_SIZE] = {0};
@@ -198,14 +200,17 @@ std::string EncryptData(std::string encryptData)
     int32_t ret = AesCbcPkcs7Encrypt(APN_PWD_KEY_ALIAS.c_str(), &inDataBlob, &outDataBlob);
     if (ret != 0) {
         DATA_STORAGE_LOGE("EncryptDataerror ret=%{public}d", ret);
-        return "";
+        return result;
     }
-    std::string result(reinterpret_cast<const char*>(outDataBlob.data), outDataBlob.size);
+    for (size_t i = 0; i < outDataBlob.size; i++) {
+        result.emplace_back(outDataBlob.data[i]);
+    }
     return result;
 }
 
 std::string DecryptData(std::string decryptData)
 {
+    DATA_STORAGE_LOGI("DecryptData enter");
     if (decryptData.empty()) {
         DATA_STORAGE_LOGI("decryptData is empty");
         return "";
@@ -221,5 +226,25 @@ std::string DecryptData(std::string decryptData)
     std::string result(reinterpret_cast<const char*>(outDataBlob.data), outDataBlob.size);
     return result;
 }
+
+std::string DecryptUintVecData(std::vector<uint8_t> decryptVecData)
+{
+    DATA_STORAGE_LOGI("DecryptUintVecData enter");
+    if (decryptVecData.size() == 0) {
+        DATA_STORAGE_LOGI("DecryptUintVecData is empty");
+        return "";
+    }
+    struct HksBlob inDataBlob = { decryptVecData.size(), &decryptVecData[0] };
+    uint8_t outData[AES_COMMON_SIZE] = {0};
+    struct HksBlob outDataBlob = {AES_COMMON_SIZE, outData};
+    int32_t ret = AesCbcPkcs7Decrypt(APN_PWD_KEY_ALIAS.c_str(), &inDataBlob, &outDataBlob);
+    if (ret != 0) {
+        DATA_STORAGE_LOGE("DecryptUintVecData error ret=%{public}d", ret);
+        return "";
+    }
+    std::string result(reinterpret_cast<const char*>(outDataBlob.data), outDataBlob.size);
+    return result;
+}
+
 }  // namespace Telephony
 }  // namespace OHOS
