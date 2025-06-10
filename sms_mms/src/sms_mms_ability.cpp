@@ -63,6 +63,7 @@ SmsMmsAbility* SmsMmsAbility::Create()
 
 void SmsMmsAbility::DoInit()
 {
+    std::lock_guard<std::mutex> lock(initMtx_);
     if (initDatabaseDir && initRdbStore) {
         DATA_STORAGE_LOGI("DoInit has done");
         return;
@@ -362,12 +363,20 @@ NativeRdb::AbsRdbPredicates *SmsMmsAbility::CreateAbsRdbPredicates(MessageUriTyp
 
 bool SmsMmsAbility::IsInitOk()
 {
-    if (!initDatabaseDir) {
-        DATA_STORAGE_LOGE("SmsMmsAbility::IsInitOk initDatabaseDir failed!");
-    } else if (!initRdbStore) {
-        DATA_STORAGE_LOGE("SmsMmsAbility::IsInitOk initRdbStore failed!");
+    bool needInit;
+    {
+        std::lock_guard<std::mutex> lock(initMtx_);
+        needInit = !initDatabaseDir || !initRdbStore;
     }
-    return initDatabaseDir && initRdbStore;
+    if (needInit) {
+        DATA_STORAGE_LOGW("SmsMmsAbility::IsInitOk failed!");
+        DoInit();
+        {
+            std::lock_guard<std::mutex> lock(initMtx_);
+            needInit = !initDatabaseDir || !initRdbStore;
+        }
+    }
+    return !needInit;
 }
 
 std::string SmsMmsAbility::GetType(const Uri &uri)
