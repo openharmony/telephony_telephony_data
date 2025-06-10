@@ -108,6 +108,7 @@ private:
     std::mutex lock_;
     bool initDatabaseDir = false;
     bool initRdbStore = false;
+    std::mutex initMtx_;
 };
 } // namespace Telephony
 } // namespace OHOS
