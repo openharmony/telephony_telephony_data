@@ -595,10 +595,7 @@ HWTEST_F(DataStorageGtest, DataStorage_001, TestSize.Level0)
     ASSERT_TRUE(HasVoiceCapability());
     std::shared_ptr<DataShare::DataShareHelper> smsHelper = CreateSmsHelper();
     std::shared_ptr<DataShare::DataShareHelper> simHelper = CreateSimHelper();
-    if (smsHelper == nullptr || simHelper == nullptr) {
-        DATA_STORAGE_LOGE("CreateDataShareHelper occur error");
-        return;
-    }
+    ASSERT_TRUE((smsHelper != nullptr) && (simHelper != nullptr));
     bool retSms = (smsHelper != nullptr);
     bool retSim = (simHelper != nullptr);
     smsHelper = nullptr;
