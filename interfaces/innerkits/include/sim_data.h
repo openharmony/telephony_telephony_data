@@ -96,6 +96,18 @@ public:
      * @brief The mnc of sim
      */
     static constexpr const char *MNC = "mnc";
+    /**
+     * @brief Is sim or not
+     */
+    static constexpr const char *IS_ESIM = "is_esim";
+    /**
+     * @brief The index of sim label
+     */
+    static constexpr const char *SIM_LABEL_INDEX = "sim_label_index";
+    /**
+     * @brief The operator name of esim
+     */
+    static constexpr const char *OPERATOR_NAME = "operator_name";
 };
 
 constexpr const char *TABLE_SIM_INFO = "sim_info";

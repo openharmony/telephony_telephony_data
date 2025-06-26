@@ -225,6 +225,9 @@ int SimInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
     value.Put(SimData::PHONE_NUMBER, "134xxxxxxxx");
     value.Put(SimData::ICC_ID, "icc_id");
     value.Put(SimData::CARD_ID, "card_id");
+    value.Put(SimData::IS_ESIM, "0");
+    value.Put(SimData::SIM_LABEL_INDEX, 1);
+    value.Put(SimData::OPERATOR_NAME, "中国联通");
     return helper->Insert(uri, value);
 }
 
