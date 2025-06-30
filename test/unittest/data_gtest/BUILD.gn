@@ -44,7 +44,7 @@ ohos_unittest("tel_telephony_data_gtest") {
     "ability_runtime:ability_manager",
     "ability_runtime:abilitykit_native",
     "access_token:libaccesstoken_sdk",
-    "access_token:libnativetoken",
+    "access_token:libnativetoken_shared",
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
