@@ -114,7 +114,10 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetGlobalParams
 std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetOpkeyVersionAbility()
 {
     if (opkeyVersionAbility_ == nullptr) {
-        opkeyVersionAbility_.reset(OpkeyVersionAbility::Create());
+        std::lock_guard<std::mutex> lock(opkeyVersionMutex_);
+        if (opkeyVersionAbility_ == nullptr) {
+            opkeyVersionAbility_.reset(OpkeyVersionAbility::Create());
+        }
     }
     return opkeyVersionAbility_;
 }

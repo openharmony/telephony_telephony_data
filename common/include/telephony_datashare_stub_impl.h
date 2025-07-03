@@ -73,6 +73,7 @@ private:
     std::mutex simMutex_;
     std::mutex smsMmsMutex_;
     std::mutex globalParamsMutex_;
+    std::mutex opkeyVersionMutex_;
 };
 } // namespace DataShare
 } // namespace OHOS
