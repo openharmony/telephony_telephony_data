@@ -83,6 +83,7 @@ void PdpProfileAbility::DoInit()
         int rdbInitCode = helper_.Init();
         if (rdbInitCode == NativeRdb::E_OK) {
             initRdbStore = true;
+            DoInitAPNDatabase();
         } else {
             DATA_STORAGE_LOGE("DoInit rdb init fail!");
             initRdbStore = false;
@@ -90,6 +91,18 @@ void PdpProfileAbility::DoInit()
     } else {
         DATA_STORAGE_LOGE("DoInit##databaseDir is empty!");
         initDatabaseDir = false;
+    }
+}
+
+void PdpProfileAbility::DoInitAPNDatabase()
+{
+    std::string opkey;
+    int32_t maxSimCount = CoreServiceClient::GetInstance().GetMaxSimCount();
+    for (int slotId = 0; slotId < maxSimCount; slotId++) {
+        GetTargetOpkey(slotId, opkey);
+        if (NativeRdb::E_OK != helper_.InitAPNDatabase(slotId, opkey, true)) {
+            DATA_STORAGE_LOGE("DoInitAPNDatabase fail, slotId:%{public}d, opkey:%{public}s", slotId, opkey.c_str());
+        }
     }
 }
 
