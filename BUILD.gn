@@ -133,6 +133,7 @@ ohos_shared_library("tel_telephony_data") {
     "zlib:libz",
     "huks:libhukssdk",
     "kv_store:distributeddata_inner",
+    "ipc:ipc_napi",
   ]
 
   cflags_cc = [
