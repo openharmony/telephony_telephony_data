@@ -58,7 +58,6 @@ public:
     virtual ~PdpProfileAbility() override;
     static PdpProfileAbility* Create();
     void DoInit();
-    void DoInitAPNDatabase();
     sptr<IRemoteObject> OnConnect(const AAFwk::Want &want) override;
     virtual void OnStart(const AppExecFwk::Want &want) override;
     virtual int Insert(const Uri &uri, const DataShare::DataShareValuesBucket &value) override;
