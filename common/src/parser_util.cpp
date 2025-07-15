@@ -513,7 +513,7 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
     long len = 0;
     char realPath[PATH_MAX] = { 0x00 };
     if (realpath(path, realPath) == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile realpath fail! #PATH: %{public}s", path);
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile realpath fail!");
         return static_cast<int>(LoadProFileErrorType::REALPATH_FAIL);
     }
     FILE *f = fopen(realPath, "rb");
