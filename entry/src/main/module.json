@@ -5,6 +5,7 @@
     "srcEntrance": "./ets/Application/TelephonyDataAbilityStage.ts",
     "description": "$string:app_name",
     "mainElement": "MainAbility",
+    "compressNativeLibs": true,
     "deviceTypes": [
       "default",
       "2in1",
