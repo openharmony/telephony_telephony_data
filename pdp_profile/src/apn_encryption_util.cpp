@@ -100,6 +100,10 @@ int AesCbcPkcs7EncryptInner(struct HksBlob *keyAlias, struct HksBlob *inData, st
         DATA_STORAGE_LOGE("hks finish encrypt invoke failed, error code: %{public}d", ret);
         return ret;
     }
+    if (outData->size + IV_SIZE > AES_COMMON_SIZE) {
+        DATA_STORAGE_LOGE("length error!");
+        return -1;
+    }
     if (memcpy_s(outData->data + outData->size, IV_SIZE, iv, IV_SIZE) != EOK) {
         DATA_STORAGE_LOGE("copy iv failed!");
         return -1;
