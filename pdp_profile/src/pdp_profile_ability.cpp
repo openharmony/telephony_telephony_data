@@ -48,6 +48,7 @@ static const std::map<std::string, PdpProfileUriType> pdpProfileUriMap_ = {
     { "/net/pdp_profile/reset", PdpProfileUriType::RESET },
     { "/net/pdp_profile/preferapn", PdpProfileUriType::PREFER_APN },
     { "/net/pse_base_station", PdpProfileUriType::PSE_BASE_STATION },
+    { "/net/searched_plmn_list", PdpProfileUriType::SEARCHED_PLMN_LIST },
 };
 
 PdpProfileAbility::PdpProfileAbility() : DataShareExtAbility() {}
@@ -350,6 +351,9 @@ int PdpProfileAbility::Insert(const Uri &uri, const DataShare::DataShareValuesBu
     } else if (pdpProfileUriType == PdpProfileUriType::PSE_BASE_STATION) {
         OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
         helper_.Insert(id, values, TABLE_PSE_BASE_STATION);
+    } else if (pdpProfileUriType == PdpProfileUriType::SEARCHED_PLMN_LIST) {
+        OHOS::NativeRdb::ValuesBucket values = RdbDataShareAdapter::RdbUtils::ToValuesBucket(value);
+        helper_.Insert(id, values, TABLE_SEARCHED_PLMN_LIST);
     } else {
         DATA_STORAGE_LOGE("PdpProfileAbility::Insert##uri = %{public}s", uri.ToString().c_str());
     }
@@ -431,9 +435,21 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::Query(const Ur
         return needUpdate ? newSharedPtrResult : sharedPtrResult;
     } else if (pdpProfileUriType == PdpProfileUriType::PSE_BASE_STATION) {
         return QueryPseBaseStation(uri, predicates, columns);
+    } else if (pdpProfileUriType == PdpProfileUriType::SEARCHED_PLMN_LIST) {
+        return QuerySearchedPlmnList(uri, predicates, columns);
     }
     DATA_STORAGE_LOGE("PdpProfileAbility::Query##uri = %{public}s", uri.ToString().c_str());
     return sharedPtrResult;
+}
+
+int PdpProfileAbility::HandleResetApn(const DataShare::DataShareValuesBucket &value)
+{
+    int result = ResetApn(value);
+    if (result != NativeRdb::E_OK) {
+        DATA_STORAGE_LOGE("PdpProfileAbility::Update  ResetApn fail!");
+        result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
+    }
+    return result;
 }
 
 int PdpProfileAbility::Update(const Uri &uri, const DataShare::DataSharePredicates &predicates,
@@ -454,13 +470,10 @@ int PdpProfileAbility::Update(const Uri &uri, const DataShare::DataSharePredicat
     switch (pdpProfileUriType) {
         case PdpProfileUriType::PDP_PROFILE:
         case PdpProfileUriType::PSE_BASE_STATION:
+        case PdpProfileUriType::SEARCHED_PLMN_LIST:
             break;
         case PdpProfileUriType::RESET: {
-            result = ResetApn(value);
-            if (result != NativeRdb::E_OK) {
-                DATA_STORAGE_LOGE("PdpProfileAbility::Update  ResetApn fail!");
-                result = static_cast<int>(LoadProFileErrorType::RESET_APN_FAIL);
-            }
+            result = HandleResetApn(value);
             break;
         }
         case PdpProfileUriType::PREFER_APN: {
@@ -738,6 +751,26 @@ std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::QueryPseBaseSt
     return sharedPtrResult;
 }
 
+std::shared_ptr<DataShare::DataShareResultSet> PdpProfileAbility::QuerySearchedPlmnList(const Uri &uri,
+    const DataShare::DataSharePredicates &predicates, std::vector<std::string> &columns)
+{
+    NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SEARCHED_PLMN_LIST);
+    if (absRdbPredicates == nullptr) {
+        return nullptr;
+    }
+    std::shared_ptr<NativeRdb::ResultSet> result = nullptr;
+    result = helper_.Query(ConvertPredicates(absRdbPredicates->GetTableName(), predicates), columns);
+    if (result == nullptr) {
+        DATA_STORAGE_LOGE("PdpProfileAbility::Query NativeRdb::ResultSet is null!");
+        delete absRdbPredicates;
+        return nullptr;
+    }
+    auto queryResultSet = RdbDataShareAdapter::RdbUtils::ToResultSetBridge(result);
+    auto sharedPtrResult = std::make_shared<DataShare::DataShareResultSet>(queryResultSet);
+    delete absRdbPredicates;
+    return sharedPtrResult;
+}
+
 NativeRdb::AbsRdbPredicates* PdpProfileAbility::CreateAbsRdbPredicates(PdpProfileUriType type)
 {
     NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
@@ -747,6 +780,9 @@ NativeRdb::AbsRdbPredicates* PdpProfileAbility::CreateAbsRdbPredicates(PdpProfil
             break;
         case PdpProfileUriType::PSE_BASE_STATION:
             absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_PSE_BASE_STATION);
+            break;
+        case PdpProfileUriType::SEARCHED_PLMN_LIST:
+            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SEARCHED_PLMN_LIST);
             break;
         default:
             break;

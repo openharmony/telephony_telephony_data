@@ -134,6 +134,34 @@ public:
     static constexpr const char *COUNT = "count";
 };
 
+class SearchedPlmnListData {
+public:
+    /**
+    * @brief Operator id
+    */
+    static constexpr const char *ID = "id";
+    /**
+     * @brief STAT
+     */
+    static constexpr const char *STAT = "stat";
+    /**
+     * @brief PLMN
+     */
+    static constexpr const char *PLMN = "plmn";
+    /**
+     * @brief RAT
+     */
+    static constexpr const char *RAT = "rat";
+    /**
+     * @brief RSCP
+     */
+    static constexpr const char *RSCP = "rscp";
+    /**
+     * @brief TIMESTAMP
+     */
+    static constexpr const char *TIMESTAMP = "timestamp";
+};
+
 struct PdpProfile {
     int profileId = 0;
     std::string profileName = "";
@@ -207,9 +235,11 @@ constexpr const int32_t INVALID_PROFILE_ID = -1;
 constexpr const char *INVALID_OPKEY = "-1";
 constexpr const char *TABLE_PDP_PROFILE = "pdp_profile";
 constexpr const char *TABLE_PSE_BASE_STATION = "pse_base_station";
+constexpr const char *TABLE_SEARCHED_PLMN_LIST = "searched_plmn_list";
 constexpr const char *TEMP_TABLE_PDP_PROFILE = "temp_pdp_profile";
 constexpr const char *PDP_PROFILE_URI = "datashare:///com.ohos.pdpprofileability";
 constexpr const char *PSE_BASE_STATION_URI = "datashare:///com.ohos.pdpprofileability/net/pse_base_station";
+constexpr const char *SEARCHED_PLMN_LIST_URI = "datashare:///com.ohos.pdpprofileability/net/searched_plmn_list";
 } // namespace Telephony
 } // namespace OHOS
 #endif // DATA_STORAGE_PDP_PROFILE_DATA_H

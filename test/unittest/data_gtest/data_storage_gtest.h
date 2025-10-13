@@ -86,6 +86,9 @@ public:
     int PseBaseStationInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PseBaseStationUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     bool PseBaseStationQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SearchedPlmnInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int SearchedPlmnUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    bool SearchedPlmnQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
 
 private:
     std::shared_ptr<DataShare::DataShareHelper> simDataHelper = nullptr;
