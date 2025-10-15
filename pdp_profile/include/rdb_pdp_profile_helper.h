@@ -115,6 +115,22 @@ private:
      */
     void CreatePseBaseStationTriggerStr(std::string &createTableStr, const std::string &tableName);
 
+    /**
+     * Create searched_plmn_list table
+     *
+     * @param createTableStr Create table statement
+     * @param tableName tableName
+     */
+    void CreateSearchedPlmnListTableStr(std::string &createTableStr, const std::string &tableName);
+
+    /**
+     * Create searched_plmn_list trigger
+     *
+     * @param createTableStr Create table statement
+     * @param tableName tableName
+     */
+    void CreateSearchedPlmnListTriggerStr(std::string &createTableStr, const std::string &tableName);
+    
 private:
     const std::string DB_NAME = "net.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;
