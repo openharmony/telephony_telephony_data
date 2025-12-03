@@ -641,7 +641,7 @@ bool ParserUtil::IsNeedInsertToTable(cJSON *value)
         return false;
     }
     std::string res = tempChar;
-    free(tempChar);
+    cJSON_free(tempChar);
     tempChar = nullptr;
     return DelayedRefSingleton<CoreServiceClient>::GetInstance().IsAllowedInsertApn(res);
 }
