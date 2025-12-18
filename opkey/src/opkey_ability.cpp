@@ -163,6 +163,7 @@ std::shared_ptr<DataShare::DataShareResultSet> OpKeyAbility::Query(const Uri &ur
     OpKeyUriType opKeyUriType = ParseUriType(tempUri);
     if (opKeyUriType == OpKeyUriType::OPKEY_INFO) {
         NativeRdb::AbsRdbPredicates *absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_OPKEY_INFO);
+        std::lock_guard<std::mutex> guard(lock_);
         if (absRdbPredicates != nullptr) {
             NativeRdb::RdbPredicates rdbPredicates = ConvertPredicates(absRdbPredicates->GetTableName(), predicates);
             auto resultSet = helper_.Query(rdbPredicates, columns);
