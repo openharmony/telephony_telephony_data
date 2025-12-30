@@ -64,7 +64,8 @@ int PreferencesUtil::SaveInt(const std::string &key, int value)
         return NativePreferences::E_ERROR;
     }
     int ret = ptr->PutInt(key, value);
-    ptr->Flush();
+    ptr->FlushSync();
+    NativePreferences::PreferencesHelper::RemovePreferencesFromCache(path_);
     return ret;
 }
 
@@ -74,7 +75,9 @@ int PreferencesUtil::ObtainInt(const std::string &key, int defValue)
     if (ptr == nullptr) {
         return defValue;
     }
-    return ptr->GetInt(key, defValue);
+    int ret = ptr->GetInt(key, defValue);
+    NativePreferences::PreferencesHelper::RemovePreferencesFromCache(path_);
+    return ret;
 }
 
 int PreferencesUtil::SaveBool(const std::string &key, bool value)
