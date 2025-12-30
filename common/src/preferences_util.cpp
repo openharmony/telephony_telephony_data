@@ -75,9 +75,7 @@ int PreferencesUtil::ObtainInt(const std::string &key, int defValue)
     if (ptr == nullptr) {
         return defValue;
     }
-    int ret = ptr->GetInt(key, defValue);
-    NativePreferences::PreferencesHelper::RemovePreferencesFromCache(path_);
-    return ret;
+    return ptr->GetInt(key, defValue);
 }
 
 int PreferencesUtil::SaveBool(const std::string &key, bool value)
