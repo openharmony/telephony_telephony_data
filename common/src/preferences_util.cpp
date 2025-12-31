@@ -64,7 +64,8 @@ int PreferencesUtil::SaveInt(const std::string &key, int value)
         return NativePreferences::E_ERROR;
     }
     int ret = ptr->PutInt(key, value);
-    ptr->Flush();
+    ptr->FlushSync();
+    NativePreferences::PreferencesHelper::RemovePreferencesFromCache(path_);
     return ret;
 }
 
