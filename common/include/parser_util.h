@@ -30,8 +30,8 @@ struct OpKey;
 struct PdpProfile;
 struct NumMatch;
 struct EccNum;
-const std::string ECC_DATA_HASH = "ecc_data_hash";
-const std::string NUM_MATCH_HASH = "num_match_hash";
+inline const std::string ECC_DATA_HASH = "ecc_data_hash";
+inline const std::string NUM_MATCH_HASH = "num_match_hash";
 class ParserUtil {
 public:
     int GetPdpProfilePath(int slotId, std::string &path);
