@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -134,6 +134,24 @@ void RdbBaseHelper::CreateRdbStore(
 {
     DATA_STORAGE_LOGD("RdbBaseHelper::CreateRdbStore");
     store_ = NativeRdb::RdbHelper::GetRdbStore(config, version, openCallback, errCode);
+}
+
+int RdbBaseHelper::GetRebuilt(NativeRdb::RebuiltType &type)
+{
+    int ret = IsExistStore();
+    if (ret == NativeRdb::E_OK) {
+        ret = store_->GetRebuilt(type);
+    }
+    return ret;
+}
+
+int RdbBaseHelper::Restore(const std::string &bakDBName)
+{
+    int ret = IsExistStore();
+    if (ret == NativeRdb::E_OK) {
+        ret = store_->Restore(bakDBName);
+    }
+    return ret;
 }
 
 int RdbBaseHelper::BeginTransaction()

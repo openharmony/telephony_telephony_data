@@ -23,8 +23,8 @@
 
 namespace OHOS {
 namespace Telephony {
-inline static const uint32_t AES_COMMON_SIZE = 1024;
-inline static const std::string APN_PWD_KEY_ALIAS = "ApnPwdSecret";
+static const uint32_t AES_COMMON_SIZE = 1024;
+static const std::string APN_PWD_KEY_ALIAS = "ApnPwdSecret";
 
 std::vector<uint8_t> EncryptData(std::string encryptData);
 

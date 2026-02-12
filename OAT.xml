@@ -20,10 +20,16 @@
 
 <configuration>
     <oatconfig>
+        <policylist>
+            <policy name="projectPolicy" desc="">
+                <policyitem type="copyright" name="Huawei Technologies Co." path=".*" rule="may" group="defaultGroup" filefilter="copyrightPolicyFilter" desc=""/>
+            </policy>
+        </policylist>
         <filefilterlist>
             <filefilter name="binaryFileTypePolicyFilter" desc="Filters for binary file policies">
                 <filteritem type="filepath" name="figures/zh-cn_architecture-of-the-data-storage-module.png" desc="png文件,不参与打包不影响兼容性"/>
                 <filteritem type="filepath" name="figures/en-us_architecture-of-the-data-storage-module.png" desc="png文件,不参与打包不影响兼容性"/>
+                <filteritem type="filename" name="*icon.png" desc="png文件,不参与打包不影响兼容性"/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
