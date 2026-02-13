@@ -30,8 +30,8 @@ struct OpKey;
 struct PdpProfile;
 struct NumMatch;
 struct EccNum;
-inline const std::string ECC_DATA_HASH = "ecc_data_hash";
-inline const std::string NUM_MATCH_HASH = "num_match_hash";
+const std::string ECC_DATA_HASH = "ecc_data_hash";
+const std::string NUM_MATCH_HASH = "num_match_hash";
 class ParserUtil {
 public:
     int GetPdpProfilePath(int slotId, std::string &path);
@@ -73,6 +73,8 @@ private:
     std::string ParseString(const cJSON *value);
     std::string ParseAsString(const cJSON *value);
     int LoaderJsonFile(char *&content, const char *path) const;
+    void FileMemsetsFailed(char *content, FILE *f) const;
+    void FileRetreadNotLen(char *content, FILE *f) const;
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
     std::string GetCustFile(const char *&file, const char *key);

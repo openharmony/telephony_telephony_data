@@ -1,0 +1,7 @@
+{
+  "path": "sms_mms/session",
+  "type": "rdb",
+  "scope": "application",
+  "allowLists":[
+  ]
+}
