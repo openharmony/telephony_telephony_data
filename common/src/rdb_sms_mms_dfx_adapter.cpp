@@ -27,7 +27,7 @@ void RdbSmsMmsDFXAdapter::ReportDataBaseError(uint32_t scene, const std::string&
     int ret = HiSysEventWrite(MMS_UE, "SMS_DATABASE_ERROR",
         HiSysEventNameSpace::EventType::BEHAVIOR,
         "PNAMEID", PNAMEID,
-        "PVERSIONID",PVERSIONID,
+        "PVERSIONID", PVERSIONID,
         "SCENE", scene,
         "URI", uri,
         "DURATION", duration);
@@ -42,7 +42,7 @@ void RdbSmsMmsDFXAdapter::ReportDataBaseUpdate(const std::string& updateRoute, u
     int ret = HiSysEventWrite(MMS_UE, "SMS_DATA_UPDATE",
         HiSysEventNameSpace::EventType::BEHAVIOR,
         "PNAMEID", PNAMEID,
-        "PVERSIONID",PVERSIONID,
+        "PVERSIONID", PVERSIONID,
         "UPDATE_ROUTE", updateRoute,
         "UPDATE_RESULT", result,
         "FAIL_REASON", failReason);

@@ -109,7 +109,8 @@ void SmsMmsAbility::CheckAndReportTimeoutError(RDBOperation operation, const int
     }
 }
 
-void SmsMmsAbility::InitializeQueryHandlers() {
+void SmsMmsAbility::InitializeQueryHandlers() 
+{
     queryHandlers_ = {
         {MessageUriType::QUERY_MMS_INFO_VIEW_CUSTOMIZED, [this](const DataShare::DataSharePredicates& p) {
             return GetQueryMmsInfoResultSet(p);
@@ -985,16 +986,13 @@ NativeRdb::AbsRdbPredicates *SmsMmsAbility::CreateAbsRdbPredicates(MessageUriTyp
     NativeRdb::AbsRdbPredicates *absRdbPredicates = nullptr;
     switch (messageUriType) {
         case MessageUriType::SMS_MMS: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_MMS_INFO);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_SMS_MMS_INFO);
         }
         case MessageUriType::RCS: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_RCS_INFO);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_RCS_INFO);
         }
         case MessageUriType::MMS: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_INFO);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_MMS_INFO);
         }
         case MessageUriType::THIRTY: {
             result = helper_.DeleteDataByThirty();
@@ -1005,29 +1003,23 @@ NativeRdb::AbsRdbPredicates *SmsMmsAbility::CreateAbsRdbPredicates(MessageUriTyp
             return absRdbPredicates;
         }
         case MessageUriType::MMS_PROTOCOL: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PROTOCOL);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_MMS_PROTOCOL);
         }
         case MessageUriType::SMS_SUBSECTION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SMS_SUBSECTION);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_SMS_SUBSECTION);
         }
         case MessageUriType::MMS_PART: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_MMS_PART);
         }
         case MessageUriType::SESSION: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_SESSION);
         }
         case MessageUriType::MMS_PDU_LT:
         case MessageUriType::MMS_PDU: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_MMS_PDU);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_MMS_PDU);
         }
         case MessageUriType::RISK_URL_RECORD: {
-            absRdbPredicates = new NativeRdb::AbsRdbPredicates(TABLE_RISK_URL_RECORD);
-            return absRdbPredicates;
+            return new NativeRdb::AbsRdbPredicates(TABLE_RISK_URL_RECORD);
         }
         default:
             return CreateAbsRdbPredicatesEx(messageUriType);

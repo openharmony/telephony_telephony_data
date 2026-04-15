@@ -56,7 +56,7 @@ const std::string MOVE_TO_EL2_RESULT = "move_to_el2_result";
 constexpr char MMS_UE[] = "MMS_UE";
 namespace {
 std::mutex g_mutex;
-bool moveToEl2Result = false;
+bool g_moveToEl2Result = false;
 }
 
 RdbSmsMmsHelper::RdbSmsMmsHelper()
@@ -76,7 +76,7 @@ int RdbSmsMmsHelper::Init()
     int errCode = OHOS::NativeRdb::E_OK;
     if (MoveDbFileToEl2()) {
         DATA_STORAGE_LOGE("RdbSmsMmsHelper Database file moved el2 successfully.");
-        moveToEl2Result = true;
+        g_moveToEl2Result = true;
     } else {
         DATA_STORAGE_LOGE("RdbSmsMmsHelper Database file moved el2 failed, use el1 database.");
     }
@@ -84,7 +84,7 @@ int RdbSmsMmsHelper::Init()
     int el1ErrCode = OHOS::NativeRdb::E_OK;
     int el2ErrCode = OHOS::NativeRdb::E_OK;
     //不再强制使用el1下面的数据库,根据迁移结果来选择，迁移失败，只开el1的 sms_mms.db，成功，开el1的smsmms_el1.db和el5的smsmms.db
-    if (!moveToEl2Result) {
+    if (!g_moveToEl2Result) {
         errCode = ForceCreateEl1RdbStore();
         if (errCode != OHOS::NativeRdb::E_OK) {
             DATA_STORAGE_LOGE("RdbSmsMmsHelper::ForceCreateEl1RdbStore create el1 sms_mms.db Fail");
@@ -128,8 +128,7 @@ int RdbSmsMmsHelper::ForceCreateEl1RdbStore()
     dbName_ = OHOS::NativeRdb::RdbSqlUtils::GetDefaultDatabasePath(dbPath, "sms_mms.db", getDataBasePathErrCode);
     if (getDataBasePathErrCode != OHOS::NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("GetDefaultDatabasePath err :%{public}d, dbName_ = %{public}s, rdb path = %{public}s,"
-                          "ts = %{public}lld", getDataBasePathErrCode, dbName_.c_str(), dbPathLT_.c_str(),
-                          (long long) time(NULL));
+                          "ts = %{public}lld", getDataBasePathErrCode, dbName_.c_str(), dbPathLT_.c_str(), (long long) time(NULL));
         return getDataBasePathErrCode;
     }
     NativeRdb::RdbStoreConfig config(dbName_);
@@ -156,8 +155,7 @@ int RdbSmsMmsHelper::CreateLtDataBase()
         dbPathLT_, "sms_mms_el1.db", getDataBasePathErrCode);
     if (getDataBasePathErrCode != OHOS::NativeRdb::E_OK) {
         DATA_STORAGE_LOGE("GetDefaultDatabasePath err :%{public}d, dbName_ = %{public}s, rdb path = %{public}s,"
-            "ts = %{public}lld", getDataBasePathErrCode,
-            dbName_.c_str(), dbPathLT_.c_str(), (long long) time(NULL));
+            "ts = %{public}lld", getDataBasePathErrCode, dbName_.c_str(), dbPathLT_.c_str(), (long long) time(NULL));
         return getDataBasePathErrCode;
     }
     OHOS::NativeRdb::RdbStoreConfig config(dbName_);
@@ -338,7 +336,8 @@ std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryConversionList(std::
     return QuerySql(sql);
 }
 
-std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMatchedRecipient(std::string recipients) {
+std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMatchedRecipient(std::string recipients) 
+{
     std::string sql;
     std::string recipientsFormat = addQuotes(recipients);
     // 通过比较 `telephone` 字段中逗号的数量 + 1，判断电话号码数量是否一致。
@@ -359,7 +358,8 @@ std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMatchedRecipient(std
     return QuerySql(sql);
 }
 
-std::string RdbSmsMmsHelper::addQuotes(const std::string& input) {
+std::string RdbSmsMmsHelper::addQuotes(const std::string& input) 
+{
     std::string result;
     bool inNumber = false;
     for (char ch : input) {
@@ -892,7 +892,7 @@ int RdbSmsMmsHelper::StatisticsUpdateRcsPartWithSessionID(std::string arr, std::
             " AND " + std::string(TABLE_SMS_MMS_INFO) + ".is_blocked != 1)";
     } else {
         sql = "UPDATE " + std::string(TABLE_MMS_PART) + " SET reference_count = reference_count -1 " +
-            " WHERE reference_count > 1 " + 
+            " WHERE reference_count > 1 " +
             " AND rcs_id IN (" +
             " SELECT " + std::string(TABLE_SMS_MMS_INFO) + ".rcs_id" +
             " FROM " + std::string(TABLE_SMS_MMS_INFO) +
@@ -968,7 +968,7 @@ int RdbSmsMmsHelper::StatisticsDeleteInfoWithSessionID(std::string arr, std::str
     } else {
         sql = "DELETE FROM " + std::string(TABLE_SMS_MMS_INFO) +
            " WHERE " + std::string(TABLE_SMS_MMS_INFO) + ".session_id " +
-           std::string(limit) + " (" + std::string(arr) + ") " + 
+           std::string(limit) + " (" + std::string(arr) + ") " +
             " AND " +  std::string(TABLE_SMS_MMS_INFO) + ".is_blocked != 1" +
             " AND " + "EXISTS ( SELECT 1 FROM " + std::string(TABLE_SESSION) +
            " WHERE " + std::string(TABLE_SESSION) + ".id = " + std::string(TABLE_SMS_MMS_INFO) + ".session_id AND " +
@@ -1075,7 +1075,7 @@ std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMmsPathsWithSessionI
     return RdbSmsMmsHelper::QueryMmsPathsWithSessionIdsExe(sessionStr, limit, equals);
 }
 
-std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMmsPathsWithSessionIdsExe(std::string arr, 
+std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMmsPathsWithSessionIdsExe(std::string arr,
     std::string limit, std::string equals)
 {
     std::string sql;
@@ -1092,7 +1092,7 @@ std::shared_ptr<NativeRdb::ResultSet> RdbSmsMmsHelper::QueryMmsPathsWithSessionI
     return QuerySql(sql);
 }
 
-std::string RdbSmsMmsHelper::GetDeleteMmsPartWhereSql(std::string arr,std::string limit, std::string equals)
+std::string RdbSmsMmsHelper::GetDeleteMmsPartWhereSql(std::string arr, std::string limit, std::string equals)
 {
     std::string whereSql;
     if (equals.empty()) {
@@ -1127,7 +1127,7 @@ std::string RdbSmsMmsHelper::GetDeleteMmsPartWhereSql(std::string arr,std::strin
     return whereSql;
 }
 
-std::string RdbSmsMmsHelper::GetDeleteRcsPartWhereSql(std::string arr,std::string limit, std::string equals)
+std::string RdbSmsMmsHelper::GetDeleteRcsPartWhereSql(std::string arr, std::string limit, std::string equals)
 {
     std::string whereSql;
     if (equals.empty()) {
@@ -1398,8 +1398,8 @@ void RdbSmsMmsHelper::ChangeStore(bool toEl5)
 
 void RdbSmsMmsHelper::ChangeStoreToEl5AndMoveData()
 {
-    if (!moveToEl2Result) {
-        DATA_STORAGE_LOGI("moveToEl2Result is false, no need to ChangeStoreToEl5AndMoveData");
+    if (!g_moveToEl2Result) {
+        DATA_STORAGE_LOGI("g_moveToEl2Result is false, no need to ChangeStoreToEl5AndMoveData");
         return;
     }
     std::thread thread([this]() {
@@ -2417,7 +2417,6 @@ void RdbSmsMmsHelper::CalcGroupId(int32_t &groupId)
     }
     resultSet->Close();
 }
-
 int64_t RdbSmsMmsHelper::InsertToE(OHOS::NativeRdb::ValuesBucket &bucket, std::string tableName)
 {
     int64_t dataBaseId = 0;
@@ -2503,7 +2502,7 @@ bool RdbSmsMmsHelper::BackupEl1ToEl2()
     
     int err = ForceCreateEl1RdbStore();
     if (err != NativeRdb::E_OK) {
-       DATA_STORAGE_LOGE("HandleFile ForceCreateEl1RdbStore failed"); 
+       DATA_STORAGE_LOGE("HandleFile ForceCreateEl1RdbStore failed");
        return false;
     }
     // 删除融合表格ddms_data_search_aux_config

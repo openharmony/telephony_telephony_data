@@ -35,7 +35,7 @@ class ValuesBucket;
 class DataAbilityPredicates;
 } // namespace NativeRdb
 namespace Telephony {
-  enum class RdbType {
+    enum class RdbType {
     /**
      * The APP_KEY2 is destroyed due to screen lock. The database directory is moved to class C.
      */
@@ -190,7 +190,7 @@ public:
     
     /**
      * query mms paths with sessionIds
-     * 
+     *
      * @param session
      * @param limit
      * @param equals
@@ -200,13 +200,13 @@ public:
     
     /**
      * query mms paths with sessionIds
-     * 
+     *
      * @param session
      * @param limit
      * @param equals
      * @return mms paths
      */
-    std::shared_ptr<NativeRdb::ResultSet> QueryMmsPathsWithSessionIdsExe(std::string arr, std::string limit, 
+    std::shared_ptr<NativeRdb::ResultSet> QueryMmsPathsWithSessionIdsExe(std::string arr, std::string limit,
                                                                          std::string equals);
 
     /**

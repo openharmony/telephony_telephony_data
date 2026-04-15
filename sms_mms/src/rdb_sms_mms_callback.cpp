@@ -318,7 +318,7 @@ void RdbSmsMmsCallback::CheckAndCompleteFields(NativeRdb::RdbStore &rdbStore)
     if (!IsFieldExistInTable(rdbStore, std::string(TABLE_MMS_PART), MmsPart::REFERENCE_COUNT)) {
         rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_MMS_PART) + " ADD COLUMN " +
             std::string(MmsPart::REFERENCE_COUNT) + " INTEGER DEFAULT " + "-1;");
-		needBackup = true;
+        needBackup = true;
     }
     if (!IsFieldExistInTable(rdbStore, std::string(TABLE_SESSION), Session::PINNING_TIME)) {
         rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SESSION) + " ADD COLUMN " +
@@ -329,60 +329,60 @@ void RdbSmsMmsCallback::CheckAndCompleteFields(NativeRdb::RdbStore &rdbStore)
 
 void RdbSmsMmsCallback::CheckAndCompleteTrigger(NativeRdb::RdbStore &rdbStore)
 {
-    if(!IsComponentExistInDb(rdbStore, "trigger", "insertSms_unread_count")) {
+    if (!IsComponentExistInDb(rdbStore, "trigger", "insertSms_unread_count")) {
         std::string createInsertSmsTriggerStr;
         CreateInsertSmsTriggerStrCb(createInsertSmsTriggerStr);
         rdbStore.ExecuteSql(createInsertSmsTriggerStr);
-		needBackup = true;
+        needBackup = true;
     }
-    if(!IsComponentExistInDb(rdbStore, "trigger", "insertRcs_unread_count")) {
+    if (!IsComponentExistInDb(rdbStore, "trigger", "insertRcs_unread_count")) {
         std::string createInsertRcsTriggerStr;
         CreateInsertRcsTriggerStrCb(createInsertRcsTriggerStr);
         rdbStore.ExecuteSql(createInsertRcsTriggerStr);
-		needBackup = true;
+        needBackup = true;
     }
-    if(!IsComponentExistInDb(rdbStore, "trigger", "updateBlockSms_unread_count")) {
+    if (!IsComponentExistInDb(rdbStore, "trigger", "updateBlockSms_unread_count")) {
         std::string createUpdateBlockSmsTriggerStr;
         CreateUpdateBlockSmsTriggerStrCb(createUpdateBlockSmsTriggerStr);
         rdbStore.ExecuteSql(createUpdateBlockSmsTriggerStr);
-		needBackup = true;
+        needBackup = true;
     }
-    if(!IsComponentExistInDb(rdbStore, "trigger", "updateBlockRcs_unread_count")) {
+    if (!IsComponentExistInDb(rdbStore, "trigger", "updateBlockRcs_unread_count")) {
         std::string createUpdateBlockRcsTriggerStr;
         CreateUpdateBlockRcsTriggerStrCb(createUpdateBlockRcsTriggerStr);
         rdbStore.ExecuteSql(createUpdateBlockRcsTriggerStr);
-		needBackup = true;
+        needBackup = true;
     }
-    if(IsComponentExistInDb(rdbStore, "trigger", "updateSms_unread_count")) {
-	    rdbStore.ExecuteSql("DROP TRIGGER IF EXISTS updateSms_unread_count");
-		needBackup = true;
-	}
-	if(IsComponentExistInDb(rdbStore, "trigger", "updateRcs_unread_count")) {
-	    rdbStore.ExecuteSql("DROP TRIGGER IF EXISTS updateRcs_unread_count");
-		needBackup = true;
-	}
+    if (IsComponentExistInDb(rdbStore, "trigger", "updateSms_unread_count")) {
+        rdbStore.ExecuteSql("DROP TRIGGER IF EXISTS updateSms_unread_count");
+        needBackup = true;
+    }
+    if (IsComponentExistInDb(rdbStore, "trigger", "updateRcs_unread_count")) {
+        rdbStore.ExecuteSql("DROP TRIGGER IF EXISTS updateRcs_unread_count");
+        needBackup = true;
+    }
 }
 
 void RdbSmsMmsCallback::CheckAndCompleteComponent(NativeRdb::RdbStore &rdbStore)
 {
     CheckAndCompleteTrigger(rdbStore);
-    if(!IsComponentExistInDb(rdbStore, "view", std::string(TABLE_MMS_INFO))) {
+    if (!IsComponentExistInDb(rdbStore, "view", std::string(TABLE_MMS_INFO))) {
         std::string mms_InfoStr;
         CreateMmsInfoViewStrCb(mms_InfoStr);
         rdbStore.ExecuteSql(mms_InfoStr);
-		needBackup = true;
+        needBackup = true;
     }
-    if(!IsComponentExistInDb(rdbStore, "index", "session_time_IDX")) {
+    if (!IsComponentExistInDb(rdbStore, "index", "session_time_IDX")) {
         rdbStore.ExecuteSql(VERSION_22_CREATE_INDEX_ON_SESSION_TABLE);
-		needBackup = true;
+        needBackup = true;
     }
-    if(!IsComponentExistInDb(rdbStore, "index", "sms_mms_info_sessionId_IDX")) {
+    if (!IsComponentExistInDb(rdbStore, "index", "sms_mms_info_sessionId_IDX")) {
         rdbStore.ExecuteSql(VERSION_22_CREATE_INDEX_ON_SMS_MMS_INFO_TABLE);
-		needBackup = true;
+        needBackup = true;
     }
-    if(!IsComponentExistInDb(rdbStore, "index", "rcs_info_sessionId_IDX")) {
+    if (!IsComponentExistInDb(rdbStore, "index", "rcs_info_sessionId_IDX")) {
         rdbStore.ExecuteSql(VERSION_22_CREATE_INDEX_ON_RCS_TABLE);
-		needBackup = true;
+        needBackup = true;
     }
 }
 

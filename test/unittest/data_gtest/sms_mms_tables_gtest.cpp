@@ -49,7 +49,8 @@ void RdbSmsMmsTablesGtest::TearDown(void)
     NativeRdb::RdbHelper::DeleteRdbStore(SMS_DB_DIR + "sms_mms_test.db");
 }
 
-std::shared_ptr<NativeRdb::RdbStore> RdbSmsMmsTablesGtest::Subject(int version) {
+std::shared_ptr<NativeRdb::RdbStore> RdbSmsMmsTablesGtest::Subject(int version) 
+{
     RdbSmsMmsTables tables;
     std::vector<std::string> createTableVec = tables.InitCreateTableVec();
     RdbSmsMmsCallback callback(createTableVec);

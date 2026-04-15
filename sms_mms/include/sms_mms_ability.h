@@ -66,7 +66,7 @@ enum class MessageUriType {
     CLEAN_INVALID_SESSION,
     DELETE_SESSION,
     QUERY_MMS_PATHS_WITH_SESSIONIDS,
-	QUERY_MMS_INFO_VIEW_CUSTOMIZED,
+    QUERY_MMS_INFO_VIEW_CUSTOMIZED,
     MMS_PDU_LT,
     CHATBOTS,
     SPECIFICCHATBOTS,
@@ -144,7 +144,7 @@ private:
     NativeRdb::AbsRdbPredicates *GetPredicates(MessageUriType messageUriType, const Uri &uri);
     NativeRdb::AbsRdbPredicates *GetPredicatesEx(MessageUriType messageUriType);
     std::shared_ptr<DataShare::DataShareResultSet> GetResultSet(MessageUriType messageUriType);
-	std::shared_ptr<DataShare::DataShareResultSet> GetQueryMmsInfoResultSet(
+    std::shared_ptr<DataShare::DataShareResultSet> GetQueryMmsInfoResultSet(
         const DataShare::DataSharePredicates &predicates);
     int InsertEx(MessageUriType type, const NativeRdb::ValuesBucket &values);
     NativeRdb::AbsRdbPredicates *CreateAbsRdbPredicatesEx(MessageUriType messageUriType);

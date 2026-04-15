@@ -90,7 +90,7 @@ private:
     int VersionUpTo20(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion);
     int VersionUpTo21(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion);
     void RcsInfoInsertSmsMmsInfo(NativeRdb::RdbStore &rdbStore);
-	std::shared_ptr<NativeRdb::ResultSet> QueryRcsInfo(NativeRdb::RdbStore &rdbStore);
+    std::shared_ptr<NativeRdb::ResultSet> QueryRcsInfo(NativeRdb::RdbStore &rdbStore);
     void InsertSmsMmsInfoFromResultSet(NativeRdb::RdbStore &rdbStore, std::shared_ptr<NativeRdb::ResultSet> resultSet);
     NativeRdb::ValuesBucket GetValuesFromRow(std::shared_ptr<NativeRdb::ResultSet> resultSet, int row);
     void ProcessRcsInfoToSmsInfo(NativeRdb::RdbStore &rdbStore, NativeRdb::ResultSet);
@@ -133,7 +133,7 @@ private:
     bool IsComponentExistInDb(NativeRdb::RdbStore &rdb, const std::string &componentType,
         const std::string &componentName);
     void CheckAndCompleteComponent(NativeRdb::RdbStore &rdbStore);
-	void DoBackUpDB(NativeRdb::RdbStore &rdbStore);
+    void DoBackUpDB(NativeRdb::RdbStore &rdbStore);
     void CheckAndCompleteTrigger(NativeRdb::RdbStore &rdbStore);
     int ExecuteSqlAndReportEvent(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion,
         std::string sql);
