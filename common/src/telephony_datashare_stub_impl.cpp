@@ -24,7 +24,7 @@
 #include "global_params_ability.h"
 #include "opkey_version_ability.h"
 #include "telephony_datashare_stub_impl.h"
-
+#include "sms_mms_observer.h"
 
 namespace OHOS {
 namespace DataShare {
@@ -97,7 +97,11 @@ std::shared_ptr<DataShareExtAbility> TelephonyDataShareStubImpl::GetSmsMmsAbilit
 {
     std::lock_guard<std::mutex> lock(smsMmsMutex_);
     if (smsMmsAbility_ == nullptr) {
-        smsMmsAbility_.reset(SmsMmsAbility::Create());
+        std::shared_ptr<SmsMmsAbility> sma(SmsMmsAbility::Create());
+        smsMmsAbility_ = sma;
+        if (!SmsMmsObserver::GetInstance().IsInit()) {
+            SmsMmsObserver::GetInstance().Init(sma);
+        }
     }
     return smsMmsAbility_;
 }

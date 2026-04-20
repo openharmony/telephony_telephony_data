@@ -225,6 +225,7 @@ int DataStorageGtest::SimInsert(const std::shared_ptr<DataShare::DataShareHelper
     value.Put(SimData::PHONE_NUMBER, "134xxxxxxxx");
     value.Put(SimData::ICC_ID, "icc_id");
     value.Put(SimData::CARD_ID, "card_id");
+    value.Put(SimData::OPKEY, "46001");
     return helper->Insert(uri, value);
 }
 
@@ -271,6 +272,9 @@ int DataStorageGtest::SmsBatchInsert(const std::shared_ptr<DataShare::DataShareH
         value.Put(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
         value.Put(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
         value.Put(SmsMmsInfo::GROUP_ID, 1);
+        value.Put(SmsMmsInfo::IS_SENDER, 0);
+        value.Put(SmsMmsInfo::IS_LOCK, 0);
+        value.Put(SmsMmsInfo::RETRY_NUMBER, 0);
         values.push_back(value);
         value.Clear();
     }
@@ -547,6 +551,20 @@ int DataStorageGtest::GlobalEccDelete(const std::shared_ptr<DataShare::DataShare
     return helper->Delete(uri, predicates);
 }
 
+int DataStorageGtest::GlobalEccGetColumn(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
+{
+    Uri uri("datashare:///com.ohos.globalparamsability/globalparams/ecc_data");
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
+    if (resultSet != nullptr) {
+        int ret = resultSet->GetAllColumnNames(columns);
+        std::cout << "ret is " << ret;
+        return ret;
+    }
+    return -1;
+}
+
 std::shared_ptr<DataShare::DataShareHelper> DataStorageGtest::CreateOpKeyVersionCustHelper()
 {
     if (opKeyVersionCustHelper == nullptr) {
@@ -578,11 +596,7 @@ int DataStorageGtest::OpKeyVersionQuery(const std::shared_ptr<DataShare::DataSha
     std::vector<std::string> columns;
     DataShare::DataSharePredicates predicates;
     std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
-#ifdef OHOS_BUILD_ENABLE_TELEPHONY_EXT
     return resultSet != nullptr;
-#else
-    return resultSet == nullptr;
-#endif
 }
 #ifndef TEL_TEST_UNSUPPORT
 /**
@@ -1042,6 +1056,16 @@ HWTEST_F(DataStorageGtest, GlobalEccDelete_004, Function | MediumTest | Level1)
     EXPECT_GE(ret, DATA_STORAGE_ERROR);
 }
 
+HWTEST_F(DataStorageGtest, GlobalEccGetColumn_005, Function | MediumTest | Level1)
+{
+    ASSERT_TRUE(HasVoiceCapability());
+    std::shared_ptr<DataShare::DataShareHelper> helper = CreateGlobalParamsHelper();
+    ASSERT_NE(helper, nullptr);
+    int ret = GlobalEccGetColumn(helper);
+    helper = nullptr;
+    EXPECT_EQ(ret, DATA_STORAGE_SUCCESS);
+}
+
 /**
  * @tc.number   OpkeyVersion_001
  * @tc.name     Query cust param version
@@ -1125,48 +1149,6 @@ HWTEST_F(DataStorageGtest, PseBaseStationQuery_001, Function | MediumTest | Leve
     helper = nullptr;
 }
 
-/**
- * @tc.number   SearchedPlmnListInsert_001
- * @tc.name     insert searched plmn list data
- * @tc.desc     Function test
- */
-HWTEST_F(DataStorageGtest, SearchedPlmnListInsert_001, Function | MediumTest | Level1)
-{
-    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
-    ASSERT_NE(helper, nullptr);
-    int ret = SearchedPlmnInsert(helper);
-    helper = nullptr;
-    EXPECT_GE(ret, DATA_STORAGE_ERROR);
-}
-
-/**
- * @tc.number   SearchedPlmnListUpdate_001
- * @tc.name     update searched plmn list data
- * @tc.desc     Function test
- */
-HWTEST_F(DataStorageGtest, SearchedPlmnListUpdate_001, Function | MediumTest | Level2)
-{
-    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
-    ASSERT_NE(helper, nullptr);
-    int ret = SearchedPlmnUpdate(helper);
-    helper = nullptr;
-    EXPECT_GE(ret, DATA_STORAGE_ERROR);
-}
-
-/**
- * @tc.number   SearchedPlmnListQuery_001
- * @tc.name     query searched plmn list data
- * @tc.desc     Function test
- */
-HWTEST_F(DataStorageGtest, SearchedPlmnListQuery_001, Function | MediumTest | Level2)
-{
-    std::shared_ptr<DataShare::DataShareHelper> helper = CreatePdpProfileHelper();
-    ASSERT_NE(helper, nullptr);
-    bool ret = SearchedPlmnQuery(helper);
-    EXPECT_TRUE(ret);
-    helper = nullptr;
-}
-
 int DataStorageGtest::PseBaseStationInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
 {
     Uri uri("datashare:///com.ohos.pdpprofileability/net/pse_base_station");
@@ -1193,56 +1175,6 @@ bool DataStorageGtest::PseBaseStationQuery(const std::shared_ptr<DataShare::Data
     std::vector<std::string> columns;
     DataShare::DataSharePredicates predicates;
     predicates.EqualTo(PseBaseStationData::DATE, "01234567");
-    std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
-    return resultSet != nullptr;
-}
-
-int DataStorageGtest::SearchedPlmnInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
-{
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/searched_plmn_list");
-    DataShare::DataShareValuesBucket value;
-    int32_t stat = 1; // 1: available type
-    std::string plmn = "46011";
-    int32_t rat = 12; // 12: NR type
-    int32_t rscp = -80; // -80: valid rscp value
-    std::string timestamp_str = "012345678";
-    value.Put(SearchedPlmnListData::STAT, stat);
-    value.Put(SearchedPlmnListData::PLMN, plmn);
-    value.Put(SearchedPlmnListData::RAT, rat);
-    value.Put(SearchedPlmnListData::RSCP, rscp);
-    value.Put(SearchedPlmnListData::TIMESTAMP, timestamp_str);
-    return helper->Insert(uri, value);
-}
-
-int DataStorageGtest::SearchedPlmnUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
-{
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/searched_plmn_list");
-    DataShare::DataShareValuesBucket value;
-    int32_t stat = 2; // 2: current type
-    std::string plmn = "46011";
-    int32_t rat = 12; // 12: NR type
-    int32_t rscp = -90; // -90: valid rscp value
-    std::string timestamp_str = "012345679";
-    value.Put(SearchedPlmnListData::STAT, stat);
-    value.Put(SearchedPlmnListData::RSCP, rscp);
-    value.Put(SearchedPlmnListData::TIMESTAMP, timestamp_str);
-    DataShare::DataSharePredicates predicates;
-    predicates.EqualTo(SearchedPlmnListData::PLMN, plmn);
-    predicates.And();
-    predicates.EqualTo(SearchedPlmnListData::RAT, rat);
-    return helper->Update(uri, predicates, value);
-}
-
-bool DataStorageGtest::SearchedPlmnQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper) const
-{
-    Uri uri("datashare:///com.ohos.pdpprofileability/net/searched_plmn_list");
-    std::string plmn = "46011";
-    int32_t rat = 12; // 12: NR type
-    std::vector<std::string> columns;
-    DataShare::DataSharePredicates predicates;
-    predicates.EqualTo(SearchedPlmnListData::PLMN, plmn);
-    predicates.And();
-    predicates.EqualTo(SearchedPlmnListData::RAT, rat);
     std::shared_ptr<DataShare::DataShareResultSet> resultSet = helper->Query(uri, predicates, columns);
     return resultSet != nullptr;
 }

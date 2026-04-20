@@ -1,0 +1,14 @@
+{
+  "allowToBackupRestore": true,
+  "extraInfo": {
+    "supportScene": [
+      "ohos2next",
+      "next2next"
+    ]
+  },
+  "fullBackupOnly": true,
+  "includes": [
+    "data/storage/el1/database/",
+    "data/storage/el2/base/files/next2ohos/"
+  ]
+}

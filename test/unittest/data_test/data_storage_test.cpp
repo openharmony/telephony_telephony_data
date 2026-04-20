@@ -206,6 +206,7 @@ int OpKeySelect(std::shared_ptr<DataShare::DataShareHelper> helper)
         std::cout << "count is " << count;
         return count;
     }
+    
     return -1;
 }
 
@@ -287,6 +288,8 @@ int SmsInsert(std::shared_ptr<DataShare::DataShareHelper> helper)
     value.Put(SmsMmsInfo::RECEIVER_NUMBER, "134xxxxxxxx");
     value.Put(SmsMmsInfo::MSG_CONTENT, "The first test text message content");
     value.Put(SmsMmsInfo::GROUP_ID, 1);
+    value.Put(SmsMmsInfo::IS_LOCK, 0);
+    value.Put(SmsMmsInfo::RETRY_NUMBER, 0);
     return helper->Insert(uri, value);
 }
 
@@ -615,6 +618,11 @@ int VerifyCmd(char inputCMD, std::shared_ptr<DataShare::DataShareHelper> &helper
             return 0;
         }
     }
+    return VerifyCmdEx(inputCMD, helper);
+}
+
+int VerifyCmdEx(char inputCMD, std::shared_ptr<DataShare::DataShareHelper> &helper)
+{
     auto itFunOpKey = g_opKeyFuncMap.find(inputCMD);
     if (itFunOpKey != g_opKeyFuncMap.end()) {
         auto memberFunc = itFunOpKey->second;
