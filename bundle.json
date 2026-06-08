@@ -45,6 +45,7 @@
                 "libphonenumber",
                 "napi",
                 "preferences",
+                "protobuf",
                 "resource_management",
                 "safwk",
                 "samgr",
