@@ -508,6 +508,22 @@ void ParserUtil::ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, con
     value.PutString(EccData::ECC_FAKE, bean.ecc_fake);
 }
 
+void ParserUtil::FileMemsetsFailed(char *content, FILE *f) const
+{
+    DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile memset_s failed");
+    free(content);
+    content = nullptr;
+    CloseFile(f);
+}
+
+void ParserUtil::FileRetreadNotLen(char *content, FILE *f) const
+{
+    DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
+    free(content);
+    content = nullptr;
+    CloseFile(f);
+}
+
 int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
 {
     long len = 0;
@@ -546,27 +562,15 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     if (memset_s(content, len + 1, 0, len + 1) != EOK) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile memset_s failed");
-        free(content);
-        content = nullptr;
-        CloseFile(f);
+        FileMemsetsFailed(content, f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     size_t ret_read = fread(content, 1, len, f);
     if (ret_read != static_cast<size_t>(len)) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
-        free(content);
-        content = nullptr;
-        CloseFile(f);
+        FileRetreadNotLen(content, f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    auto ret = CloseFile(f);
-    if (ret != DATA_STORAGE_SUCCESS) {
-        free(content);
-        content = nullptr;
-        return ret;
-    }
-    return ret;
+    return CloseFile(f);
 }
 
 int ParserUtil::CloseFile(FILE *f) const

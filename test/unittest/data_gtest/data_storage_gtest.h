@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,13 +82,11 @@ public:
     int GlobalEccUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccSelect(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int GlobalEccDelete(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
+    int GlobalEccGetColumn(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int OpKeyVersionQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper, Uri uri) const;
     int PseBaseStationInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     int PseBaseStationUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
     bool PseBaseStationQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
-    int SearchedPlmnInsert(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
-    int SearchedPlmnUpdate(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
-    bool SearchedPlmnQuery(const std::shared_ptr<DataShare::DataShareHelper> &helper) const;
 
 private:
     std::shared_ptr<DataShare::DataShareHelper> simDataHelper = nullptr;
@@ -101,4 +99,4 @@ private:
 };
 } // namespace Telephony
 } // namespace OHOS
-#endif // STATE_REGISTER_GTEST_H
+#endif // DATA_STORAGE_GTEST_H

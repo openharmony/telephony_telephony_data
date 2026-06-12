@@ -224,15 +224,15 @@
 
 ## 相关仓<a name="section206mcpsimp"></a>
 
-[电话服务子系统](https://gitee.com/openharmony/docs/blob/master/zh-cn/readme/电话服务子系统.md)
+[电话服务子系统]()
 
 **telephony_data_storage**
 
-[telephony_core_service](https://gitee.com/openharmony/telephony_core_service/blob/master/README_zh.md)
+[telephony_core_service]()
 
-[telephony_sms_mms](https://gitee.com/openharmony/telephony_sms_mms/blob/master/README_zh.md)
+[telephony_sms_mms]()
 
-[telephony_cellular_call](https://gitee.com/openharmony/telephony_cellular_call/blob/master/README_zh.md)
+[telephony_cellular_call]()
 
-[telephony_call_manager](https://gitee.com/openharmony/telephony_call_manager/blob/master/README_zh.md)
+[telephony_call_manager]()
 

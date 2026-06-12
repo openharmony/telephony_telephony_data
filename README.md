@@ -228,14 +228,14 @@ The following provides the procedure and sample code for you to query, insert, d
 
 ## Repositories Involved<a name="section206mcpsimp"></a>
 
-[Telephony Subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/telephony.md)
+[Telephony Subsystem]
 
 **telephony_data_storage**
 
-[telephony_core_service](https://gitee.com/openharmony/telephony_core_service/blob/master/README.md)
+[telephony_core_service]
 
-[telephony_sms_mms](https://gitee.com/openharmony/telephony_sms_mms/blob/master/README.md)
+[telephony_sms_mms]
 
-[telephony_cellular_call](https://gitee.com/openharmony/telephony_cellular_call/blob/master/README.md)
+[telephony_cellular_call]
 
-[telephony_call_manager](https://gitee.com/openharmony/telephony_call_manager/blob/master/README.md)
+[telephony_call_manager]

@@ -1,0 +1,16 @@
+{
+  "string":[
+    {
+      "name": "app_name",
+      "value": "短信存储"
+    },
+    {
+      "name": "backup_restore",
+      "value": "备份迁移"
+    },
+    {
+      "name": "permission_read_write_messages",
+      "value": "用于管理短信"
+    }
+  ]
+}

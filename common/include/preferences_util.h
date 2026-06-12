@@ -32,7 +32,9 @@ public:
     int SaveString(const std::string &key, const std::string &value);
     std::string ObtainString(const std::string &key, const std::string &defValue);
     int SaveInt(const std::string &key, int value);
+    int SaveIntSms(const std::string &key, int value);
     int ObtainInt(const std::string &key, int defValue);
+    int ObtainIntSms(const std::string &key, int defValue);
     int SaveBool(const std::string &key, bool value);
     bool ObtainBool(const std::string &key, bool defValue);
     int SaveLong(const std::string &key, int64_t value);
@@ -51,6 +53,8 @@ private:
 
 private:
     std::string path_ = "/data/storage/el1/database/telephony_data_preferences.xml";
+    // js应用访问首选项，只能是 /data/storage/el1/base/preferences, 不能放到database目录下
+    std::string smsPath_ = "/data/storage/el1/base/preferences/telephony_data_sms_preferences";
     int errCode_ = NativePreferences::E_OK;
     const std::string error_ = "error";
 };

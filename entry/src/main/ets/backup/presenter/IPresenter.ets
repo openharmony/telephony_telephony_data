@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,19 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import AbilityStage from "@ohos.app.ability.AbilityStage"
-import LogUtils from '../common/utils/LogUtils'
-
-const TAG = "TelephonyDataAbilityStage";
-
-export default class TelephonyDataAbilityStage extends AbilityStage {
-  onCreate() {
-    LogUtils.i(TAG, "onCreate")
-  }
-
-  onDestroy() {
-    LogUtils.i(TAG, "onDestroy")
-  }
+export default interface IPresenter {
+  init(): void;
 }
-

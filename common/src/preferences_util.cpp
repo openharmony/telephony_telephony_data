@@ -64,14 +64,33 @@ int PreferencesUtil::SaveInt(const std::string &key, int value)
         return NativePreferences::E_ERROR;
     }
     int ret = ptr->PutInt(key, value);
-    ptr->FlushSync();
-    NativePreferences::PreferencesHelper::RemovePreferencesFromCache(path_);
+    ptr->Flush();
+    return ret;
+}
+
+int PreferencesUtil::SaveIntSms(const std::string &key, int value)
+{
+    std::shared_ptr<NativePreferences::Preferences> ptr = GetProfiles(smsPath_, errCode_);
+    if (ptr == nullptr) {
+        return NativePreferences::E_ERROR;
+    }
+    int ret = ptr->PutInt(key, value);
+    ptr->Flush();
     return ret;
 }
 
 int PreferencesUtil::ObtainInt(const std::string &key, int defValue)
 {
     std::shared_ptr<NativePreferences::Preferences> ptr = GetProfiles(path_, errCode_);
+    if (ptr == nullptr) {
+        return defValue;
+    }
+    return ptr->GetInt(key, defValue);
+}
+
+int PreferencesUtil::ObtainIntSms(const std::string &key, int defValue)
+{
+    std::shared_ptr<NativePreferences::Preferences> ptr = GetProfiles(smsPath_, errCode_);
     if (ptr == nullptr) {
         return defValue;
     }

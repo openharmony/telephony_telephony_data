@@ -3,6 +3,14 @@
     {
       "name": "app_name",
       "value": "TelephonyData"
+    },
+    {
+      "name": "backup_restore",
+      "value": "backup_restore"
+    },
+    {
+      "name": "permission_read_write_messages",
+      "value": "permission_read_write_messages"
     }
   ]
 }

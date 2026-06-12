@@ -21,7 +21,9 @@ ohos_unittest("tel_telephony_data_gtest") {
   test_suite = "tel_telephony_data_gtest"
   module_out_path = part_name + "/" + test_module + "/" + test_suite
 
-  sources = [ "$SOURCE_DIR/test/unittest/data_gtest/data_storage_gtest.cpp" ]
+  sources = [
+   "$SOURCE_DIR/test/unittest/data_gtest/data_storage_gtest.cpp",
+   "$SOURCE_DIR/test/unittest/data_gtest/sms_mms_tables_gtest.cpp"]
 
   include_dirs = [
     "$SOURCE_DIR/common/include",
@@ -60,6 +62,7 @@ ohos_unittest("tel_telephony_data_gtest") {
     "relational_store:rdb_data_share_adapter",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "telephony_data:tel_telephony_data",
   ]
 
   cflags = [
@@ -74,14 +77,6 @@ ohos_unittest("tel_telephony_data_gtest") {
     "-fsanitize=cfi",
     "-fsanitize-cfi-cross-dso",
   ]
-
-  if (defined(global_parts_info) &&
-      defined(global_parts_info.telephony_telephony_enhanced) &&
-      global_parts_info.telephony_telephony_enhanced) {
-    print(
-        "telephony_telephony_enhanced = ${global_parts_info.telephony_telephony_enhanced}")
-    defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_EXT" ]
-  }
 }
 
 group("unittest") {

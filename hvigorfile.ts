@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,11 @@
  * limitations under the License.
  */
 
-/**
- * log utils class
- */
-export class LogUtils {
-  d(TAG, msg): void {
-    console.debug("[TelephonyData:]" + TAG + ":" + msg);
-  }
+// Script for compiling build behavior. It is built in the build plug-in and cannot be modified currently.
+import { appTasks } from '@ohos/hvigor-ohos-plugin';
 
-  i(TAG, msg): void {
-    console.info("[TelephonyData:]" + TAG + ":" + msg);
-  }
-
-  w(TAG, msg): void {
-    console.warn("[TelephonyData:]" + TAG + ":" + msg);
-  }
-
-  e(TAG, msg): void {
-    console.error("[TelephonyData:]" + TAG + ":" + msg);
-  }
+export default {
+    system: appTasks,  /* Built-in plugin of Hvigor. It cannot be modified. */
+    plugins:[]         /* Custom plugin to extend the functionality of Hvigor. */
 }
-
-let mLogUtil = new LogUtils();
-
-export default mLogUtil as LogUtils;
 
