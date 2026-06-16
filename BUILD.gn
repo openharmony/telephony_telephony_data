@@ -156,7 +156,10 @@ ohos_shared_library("tel_telephony_data") {
     "ipc:ipc_napi",
   ]
   external_deps += [ "screenlock_mgr:screenlock_client", ]
-  external_deps += [ "libphonenumber:phonenumber_standard", ]
+  external_deps += [
+    "libphonenumber:phonenumber_standard",
+    "protobuf:protobuf_lite",
+  ]
   external_deps += [ "hisysevent:libhisysevent", ]
 
   cflags_cc = [
