@@ -111,6 +111,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *p
     }
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail!");
+        free(content);
         return ret;
     }
     if (content == nullptr) {
@@ -238,6 +239,7 @@ int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
     int ret = LoaderJsonFile(content, path);
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyJson LoaderJsonFile is fail!");
+        free(content);
         return ret;
     }
     if (content == nullptr) {
@@ -350,6 +352,7 @@ int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCh
     }
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson LoaderJsonFile is fail!\n");
+        free(content);
         return ret;
     }
     if (content == nullptr) {
@@ -443,6 +446,7 @@ int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck
     }
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson LoaderJsonFile is fail!");
+        free(content);
         return ret;
     }
     if (content == nullptr) {
