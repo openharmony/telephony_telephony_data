@@ -72,9 +72,7 @@ private:
     int32_t ParseInt(const cJSON *value);
     std::string ParseString(const cJSON *value);
     std::string ParseAsString(const cJSON *value);
-    int LoaderJsonFile(char *&content, const char *path) const;
-    void FileMemsetsFailed(char *content, FILE *f) const;
-    void FileRetreadNotLen(char *content, FILE *f) const;
+    int LoaderJsonFile(std::string &content, const char *path) const;
     int CloseFile(FILE *f) const;
     int GetRuleId(OpKey &bean);
     std::string GetCustFile(const char *&file, const char *key);

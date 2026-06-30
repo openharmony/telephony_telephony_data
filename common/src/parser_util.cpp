@@ -104,7 +104,7 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec)
 
 int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *path)
 {
-    char *content = nullptr;
+    std::string content;
     int ret = DATA_STORAGE_SUCCESS;
     if (path && *path != '\0') {
         ret = LoaderJsonFile(content, path);
@@ -113,14 +113,12 @@ int ParserUtil::ParserPdpProfileJson(std::vector<PdpProfile> &vec, const char *p
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson LoaderJsonFile is fail!");
         return ret;
     }
-    if (content == nullptr) {
+    if (content.empty()) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
 
-    cJSON *root = cJSON_Parse(content);
-    free(content);
-    content = nullptr;
+    cJSON *root = cJSON_Parse(content.c_str());
     if (root == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileJson root is error!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
@@ -234,20 +232,18 @@ int ParserUtil::GetOpKeyFilePath(std::string &path)
 
 int ParserUtil::ParserOpKeyJson(std::vector<OpKey> &vec, const char *path)
 {
-    char *content = nullptr;
+    std::string content;
     int ret = LoaderJsonFile(content, path);
     if (ret != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyJson LoaderJsonFile is fail!");
         return ret;
     }
-    if (content == nullptr) {
+    if (content.empty()) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
 
-    cJSON *root = cJSON_Parse(content);
-    free(content);
-    content = nullptr;
+    cJSON *root = cJSON_Parse(content.c_str());
     if (root == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::ParserOpKeyInfos root is error!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
@@ -339,7 +335,7 @@ void ParserUtil::ParserOpKeyToValuesBucket(NativeRdb::ValuesBucket &value, const
 
 int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCheck)
 {
-    char *content = nullptr;
+    std::string content;
     char buf[MAX_PATH_LEN];
     std::string file = GetCustFile(NUM_MATCH_PATH, CUST_NETWORK_PATH_KEY);
     char *path = GetOneCfgFile(file.c_str(), buf, MAX_PATH_LEN);
@@ -352,17 +348,14 @@ int ParserUtil::ParserNumMatchJson(std::vector<NumMatch> &vec, const bool hashCh
         DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson LoaderJsonFile is fail!\n");
         return ret;
     }
-    if (content == nullptr) {
+    if (content.empty()) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     if (hashCheck && !IsDigestChanged(path, NUM_MATCH_HASH)) {
-        free(content);
         return FILE_HASH_NO_CHANGE;
     }
-    cJSON *root = cJSON_Parse(content);
-    free(content);
-    content = nullptr;
+    cJSON *root = cJSON_Parse(content.c_str());
     if (root == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::ParserNumMatchJson root is error!\n");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
@@ -433,7 +426,7 @@ void ParserUtil::ParserNumMatchToValuesBucket(NativeRdb::ValuesBucket &value, co
 
 int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck)
 {
-    char *content = nullptr;
+    std::string content;
     char buf[MAX_PATH_LEN];
     std::string file = GetCustFile(ECC_DATA_PATH, CUST_NETWORK_PATH_KEY);
     char *path = GetOneCfgFile(file.c_str(), buf, MAX_PATH_LEN);
@@ -445,17 +438,14 @@ int ParserUtil::ParserEccDataJson(std::vector<EccNum> &vec, const bool hashCheck
         DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson LoaderJsonFile is fail!");
         return ret;
     }
-    if (content == nullptr) {
+    if (content.empty()) {
         DATA_STORAGE_LOGE("ParserUtil::content is nullptr!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
     }
     if (hashCheck && !IsDigestChanged(path, ECC_DATA_HASH)) {
-        free(content);
         return FILE_HASH_NO_CHANGE;
     }
-    cJSON *root = cJSON_Parse(content);
-    free(content);
-    content = nullptr;
+    cJSON *root = cJSON_Parse(content.c_str());
     if (root == nullptr) {
         DATA_STORAGE_LOGE("ParserUtil::ParserEccDataJson root is error!");
         return static_cast<int>(LoadProFileErrorType::FILE_PARSER_ERROR);
@@ -508,23 +498,7 @@ void ParserUtil::ParserEccDataToValuesBucket(NativeRdb::ValuesBucket &value, con
     value.PutString(EccData::ECC_FAKE, bean.ecc_fake);
 }
 
-void ParserUtil::FileMemsetsFailed(char *content, FILE *f) const
-{
-    DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile memset_s failed");
-    free(content);
-    content = nullptr;
-    CloseFile(f);
-}
-
-void ParserUtil::FileRetreadNotLen(char *content, FILE *f) const
-{
-    DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
-    free(content);
-    content = nullptr;
-    CloseFile(f);
-}
-
-int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
+int ParserUtil::LoaderJsonFile(std::string &content, const char *path) const
 {
     long len = 0;
     char realPath[PATH_MAX] = { 0x00 };
@@ -555,19 +529,11 @@ int ParserUtil::LoaderJsonFile(char *&content, const char *path) const
         CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
-    content = static_cast<char *>(malloc(len + 1));
-    if (content == nullptr) {
-        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile malloc content fail!");
-        CloseFile(f);
-        return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
-    }
-    if (memset_s(content, len + 1, 0, len + 1) != EOK) {
-        FileMemsetsFailed(content, f);
-        return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
-    }
-    size_t ret_read = fread(content, 1, len, f);
+    content.resize(len);
+    size_t ret_read = fread(&content[0], 1, len, f);
     if (ret_read != static_cast<size_t>(len)) {
-        FileRetreadNotLen(content, f);
+        DATA_STORAGE_LOGE("ParserUtil::LoaderJsonFile ret_read != len!");
+        CloseFile(f);
         return static_cast<int>(LoadProFileErrorType::LOAD_FILE_ERROR);
     }
     return CloseFile(f);
@@ -704,18 +670,16 @@ bool ParserUtil::GetJsonItemStringVaule(const std::string &path, const std::stri
         DATA_STORAGE_LOGE("realpath is fail!");
         return false;
     }
-    char* content = nullptr;
+    std::string content;
     if (LoaderJsonFile(content, realPath) != DATA_STORAGE_SUCCESS) {
         DATA_STORAGE_LOGE("LoaderJsonFile is fail!");
         return false;
     }
-    if (content == nullptr) {
+    if (content.empty()) {
         DATA_STORAGE_LOGE("content is nullptr!");
         return false;
     }
-    cJSON *root = cJSON_Parse(content);
-    free(content);
-    content = nullptr;
+    cJSON *root = cJSON_Parse(content.c_str());
     if (root == nullptr) {
         DATA_STORAGE_LOGE("root is error!");
         return false;
