@@ -14,6 +14,12 @@
     "deliveryWithInstall": true,
     "installationFree": false,
     "pages": "$profile:main_pages",
+    "metadata": [
+      {
+        "name": "ohos.ability.loadNativeLibraryForApplication",
+        "value": "true"
+      }
+    ],
     "abilities": [],
     "extensionAbilities": [
       {
