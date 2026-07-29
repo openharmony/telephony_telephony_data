@@ -108,6 +108,38 @@ public:
      * @brief The operator name of esim
      */
     static constexpr const char *OPERATOR_NAME = "operator_name";
+    /**
+     * @brief Physical card index
+     */
+    static constexpr const char *PHY_CARD = "phy_card";
+    /**
+     * @brief Logical slot index
+     */
+    static constexpr const char *LSI = "lsi";
+    /**
+     * @brief MNC length of the SIM card
+     */
+    static constexpr const char *MNC_LEN = "mnc_len";
+    /**
+     * @brief Efuse the SIM card
+     */
+    static constexpr const char *EFUST = "efust";
+    /**
+     * @brief Group identifier level 1 of the SIM card
+     */
+    static constexpr const char *GID1 = "gid1";
+    /**
+     * @brief Group identifier level 2 of the SIM card
+     */
+    static constexpr const char *GID2 = "gid2";
+    /**
+     * @brief Service provider name of the SIM card
+     */
+    static constexpr const char *SPN = "spn";
+    /**
+     * @brief Equivalent home PLMN of the SIM card
+     */
+    static constexpr const char *EHPLMN = "ehplmn";
 };
 
 constexpr const char *TABLE_SIM_INFO = "sim_info";
