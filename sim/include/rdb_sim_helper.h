@@ -90,7 +90,7 @@ private:
 private:
     const std::string DB_NAME = "sim.db";
     std::string dbPath_ = FOLDER_PATH + DB_NAME;
-    const int VERSION = 4;
+    const int VERSION = 5;
 };
 } // namespace Telephony
 } // namespace OHOS
