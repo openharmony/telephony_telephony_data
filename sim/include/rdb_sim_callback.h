@@ -35,6 +35,8 @@ public:
     int OnOpen(NativeRdb::RdbStore &rdbStore) override;
 
 private:
+    void UpgradeToV5(NativeRdb::RdbStore &rdbStore);
+
     const int VERSION_2 = 2;
     const int VERSION_3 = 3;
     const int VERSION_4 = 4;
