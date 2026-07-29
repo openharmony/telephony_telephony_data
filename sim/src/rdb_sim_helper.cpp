@@ -72,6 +72,14 @@ void RdbSimHelper::CreateSimInfoTableStr(std::string &createTableStr)
     createTableStr.append(SimData::IS_ESIM).append(" INTEGER DEFAULT 0, ");
     createTableStr.append(SimData::SIM_LABEL_INDEX).append(" INTEGER DEFAULT 1, ");
     createTableStr.append(SimData::OPERATOR_NAME).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::PHY_CARD).append(" INTEGER DEFAULT 0, ");
+    createTableStr.append(SimData::LSI).append(" INTEGER DEFAULT 1, ");
+    createTableStr.append(SimData::MNC_LEN).append(" INTEGER DEFAULT 1, ");
+    createTableStr.append(SimData::EFUST).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::GID1).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::GID2).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::SPN).append(" TEXT DEFAULT '', ");
+    createTableStr.append(SimData::EHPLMN).append(" TEXT DEFAULT '', ");
     createTableStr.append("UNIQUE (");
     createTableStr.append(SimData::ICC_ID).append(", ");
     createTableStr.append(SimData::CARD_ID).append("))");
