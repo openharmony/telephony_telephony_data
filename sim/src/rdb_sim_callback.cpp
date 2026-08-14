@@ -52,11 +52,35 @@ int RdbSimCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int
                             std::string(SimData::OPERATOR_NAME) + " TEXT DEFAULT " + " '' ;");
         oldVersion = VERSION_4;
     }
+    if (oldVersion < VERSION_5 && newVersion >= VERSION_5) {
+        UpgradeToV5(rdbStore);
+        oldVersion = VERSION_5;
+    }
     if (oldVersion != newVersion) {
         DATA_STORAGE_LOGE("upgrade error oldVersion = %{public}d, newVersion = %{public}d ", oldVersion, newVersion);
         return NativeRdb::E_ERROR;
     }
     return NativeRdb::E_OK;
+}
+
+void RdbSimCallback::UpgradeToV5(NativeRdb::RdbStore &rdbStore)
+{
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                        std::string(SimData::PHY_CARD) + " INTEGER DEFAULT " + "0;");
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                        std::string(SimData::LSI) + " INTEGER DEFAULT " + "-1;");
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO)+ " ADD COLUMN " +
+                        std::string(SimData::MNC_LEN) + " INTEGER DEFAULT " + "-1;");
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                        std::string(SimData::EFUST) + " TEXT DEFAULT " + " '' ;");
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                        std::string(SimData::GID1) + " TEXT DEFAULT " + " '' ;");
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO)+ " ADD COLUMN " +
+                        std::string(SimData::GID2) + " TEXT DEFAULT " + " '' ;");
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                        std::string(SimData::SPN) + " TEXT DEFAULT " + " '' ;");
+    rdbStore.ExecuteSql("ALTER TABLE " + std::string(TABLE_SIM_INFO) + " ADD COLUMN " +
+                        std::string(SimData::EHPLMN) + " TEXT DEFAULT " + " '' ;");
 }
 
 int RdbSimCallback::OnDowngrade(NativeRdb::RdbStore &rdbStore, int currentVersion, int targetVersion)
