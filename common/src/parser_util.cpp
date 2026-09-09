@@ -566,6 +566,9 @@ int ParserUtil::GetPdpProfilePath(int slotId, std::string &path)
     if (slotId == SimSlotId::SIM_SLOT_1) {
         mode = MODE_SLOT_1;
     }
+    if (slotId == SimSlotId::SIM_SLOT_3) {
+        mode = MODE_SLOT_3;
+    }
     char buf[MAX_PATH_LEN];
     char *ret = GetOneCfgFileEx(PATH, buf, MAX_PATH_LEN, mode, nullptr);
     if (ret && *ret != '\0') {
