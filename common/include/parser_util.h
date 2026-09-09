@@ -58,6 +58,7 @@ public:
 public:
     inline static const int MODE_SLOT_0 = 11;
     inline static const int MODE_SLOT_1 = 12;
+    inline static const int MODE_SLOT_3 = 13;
     enum class RuleID {
         RULE_EMPTY = 0x0,
         RULE_MCCMNC = 0x1,
