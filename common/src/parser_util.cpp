@@ -31,6 +31,7 @@
 #include "core_service_client.h"
 #include "data_storage_errors.h"
 #include "data_storage_log_wrapper.h"
+#include "parse_json_int.h"
 #include "global_params_data.h"
 #include "memory"
 #include "new"
@@ -152,7 +153,12 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, cJSON *item
         bean.authUser = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_USER));
         bean.authPwd = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_PWD));
         std::string authTypeStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_AUTH_TYPE));
-        int authType = authTypeStr.empty() ? static_cast<int>(ApnAuthType::INIT) : atoi(authTypeStr.c_str());
+        int32_t authType = static_cast<int32_t>(ApnAuthType::INIT);
+        if (!authTypeStr.empty() && !ParseJsonInt32(authTypeStr, authType)) {
+            DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileInfos invalid auth_type: %{public}s",
+                authTypeStr.c_str());
+            authType = 0;
+        }
         if (authType == static_cast<int>(ApnAuthType::INIT)) {
             authType = bean.authUser.empty() ?
                 static_cast<int>(ApnAuthType::NONE) : static_cast<int>(ApnAuthType::PAP_OR_CHAP);
@@ -169,11 +175,29 @@ void ParserUtil::ParserPdpProfileInfos(std::vector<PdpProfile> &vec, cJSON *item
         bean.mvnoMatchData = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_MVNO_MATCH_DATA));
         bean.server = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_SERVER));
         std::string editedStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_EDITED_STATUS));
-        bean.edited = editedStr.empty() ? 0 : atoi(editedStr.c_str());
+        int32_t edited = 0;
+        if (!editedStr.empty() && !ParseJsonInt32(editedStr, edited)) {
+            DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileInfos invalid edited: %{public}s",
+                editedStr.c_str());
+            edited = 0;
+        }
+        bean.edited = edited;
         std::string bearingStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_BEARER));
-        bean.bearingSystemType = bearingStr.empty() ? 0 : atoi(bearingStr.c_str());
+        int32_t bearingSystemType = 0;
+        if (!bearingStr.empty() && !ParseJsonInt32(bearingStr, bearingSystemType)) {
+            DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileInfos invalid bearing_system_type: %{public}s",
+                bearingStr.c_str());
+            bearingSystemType = 0;
+        }
+        bean.bearingSystemType = bearingSystemType;
         std::string isRoamingApnStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_IS_ROAMING_APN));
-        bean.isRoamingApn = isRoamingApnStr.empty() ? 0 : atoi(isRoamingApnStr.c_str());
+        int32_t isRoamingApn = 0;
+        if (!isRoamingApnStr.empty() && !ParseJsonInt32(isRoamingApnStr, isRoamingApn)) {
+            DATA_STORAGE_LOGE("ParserUtil::ParserPdpProfileInfos invalid is_roaming_apn: %{public}s",
+                isRoamingApnStr.c_str());
+            isRoamingApn = 0;
+        }
+        bean.isRoamingApn = isRoamingApn;
         std::string pdpProtocolStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_APN_PROTOCOL));
         bean.pdpProtocol = pdpProtocolStr.empty() ? "IP" : pdpProtocolStr;
         std::string roamPdpProtocolStr = ParseString(cJSON_GetObjectItem(itemRoot, ITEM_ROAMING_PROTOCOL));
